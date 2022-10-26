@@ -14,8 +14,9 @@ RUN apt-get update && \
 
 # Keep from having to reinstall all the dependencies every time we
 # rebuild
-COPY requirements.txt dist/*.whl /data
+COPY requirements.txt /data
 RUN pip3 install --no-cache-dir -r /data/requirements.txt
+
 COPY dist/*.whl /data
 RUN pip3 install --no-cache-dir /data/*.whl
 
