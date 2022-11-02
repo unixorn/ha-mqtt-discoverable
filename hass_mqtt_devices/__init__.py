@@ -7,6 +7,8 @@ import logging
 
 import paho.mqtt.client as mqtt
 
+__version__ = "0.2.0"
+
 
 class Discoverable:
     """
@@ -35,7 +37,7 @@ class Discoverable:
                 unique_id
         """
         logging.warning("In Discoverable __init__")
-        settings_error_base = f"You must specify a server and a client_name"
+        settings_error_base = "You must specify a server and a client_name"
 
         assert "client_name" in settings, f"client_name is unset. {settings_error_base}"
         self.client_name = settings["client_name"]
@@ -90,7 +92,7 @@ class Discoverable:
             logging.warning(f"Connecting to {self.mqtt_server}...")
             self._connect()
         if not self.wrote_configuration:
-            logging.debug(f"Writing sensor configuration")
+            logging.debug("Writing sensor configuration")
             self.write_config()
         if not topic:
             logging.debug(f"topic unset, using default of '{self.state_topic}'")

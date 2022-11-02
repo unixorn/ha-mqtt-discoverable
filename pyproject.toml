@@ -1,15 +1,16 @@
 [tool.poetry]
 name = "hass-mqtt-devices"
-version = "0.1.0"
+version = "0.2.0"
 description = ""
 authors = ["Joe Block <jpb@unixorn.net>"]
 readme = "README.md"
 packages = [{include = "hass_mqtt_devices"}]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = ">=3.9,<4.0"
 pyaml = "^21.10.1"
 paho-mqtt = "^1.6.1"
+gitlike-commands = "^0.2.1"
 
 
 [tool.poetry.group.dev.dependencies]
