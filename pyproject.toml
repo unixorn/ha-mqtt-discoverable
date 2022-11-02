@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "hass-mqtt-devices"
+version = "0.1.0"
+description = ""
+authors = ["Joe Block <jpb@unixorn.net>"]
+readme = "README.md"
+packages = [{include = "hass_mqtt_devices"}]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+pyaml = "^21.10.1"
+paho-mqtt = "^1.6.1"
+
+
+[tool.poetry.group.dev.dependencies]
+thelogrus = "^0.7.0"
+flake8 = "^5.0.4"
+black = "^22.10.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+ham-create-binary-sensor = 'hass_mqtt_devices.cli.sensors:create_binary_sensor'
