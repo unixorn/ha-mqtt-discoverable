@@ -12,8 +12,8 @@ import argparse
 import logging
 
 from hass_mqtt_devices.cli import create_base_parser
-from hass_mqtt_devices.settings import binary_sensor_settings
 from hass_mqtt_devices.sensors import BinarySensor
+from hass_mqtt_devices.settings import binary_sensor_settings
 
 
 def binary_sensor_parser():

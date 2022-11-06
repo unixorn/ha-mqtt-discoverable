@@ -4,6 +4,7 @@
 
 import yaml
 import re
+
 from hass_mqtt_devices import CONFIGURATION_KEY_NAMES
 
 

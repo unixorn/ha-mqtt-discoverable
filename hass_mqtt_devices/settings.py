@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import logging
+
 from hass_mqtt_devices.utils import read_yaml_file
 
 
