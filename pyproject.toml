@@ -23,5 +23,5 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-ham-create-binary-sensor = 'hass_mqtt_devices.cli.sensors:create_binary_sensor'
-ham-create-device = 'hass_mqtt_devices.cli.device_driver:create_device'
+hmd-create-binary-sensor = 'hass_mqtt_devices.cli.sensors:create_binary_sensor'
+hmd-create-device = 'hass_mqtt_devices.cli.device_driver:create_device'
