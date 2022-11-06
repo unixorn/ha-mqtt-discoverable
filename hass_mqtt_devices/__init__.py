@@ -7,7 +7,7 @@ import logging
 
 import paho.mqtt.client as mqtt
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 CONFIGURATION_KEY_NAMES = {
     "act_t": "action_topic",
