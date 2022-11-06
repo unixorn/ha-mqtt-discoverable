@@ -2,7 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ## Table of Contents
 
-- [hass-mqtt-devices](#hass-mqtt-devices)
+- [ha-mqtt-discoverable](#ha-mqtt-discoverable)
   - [Supported Types](#supported-types)
     - [Binary Sensors](#binary-sensors)
       - [Usage](#usage)
@@ -15,7 +15,7 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# hass-mqtt-devices
+# ha-mqtt-discoverable
 
 A python 3 module that takes advantage of HA(Home Assistant('s MQTT discovery protocol to create sensors without having to define anything on the HA side.
 
@@ -28,7 +28,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 #### Usage
 
 ```py
-from hass_mqtt_devices.sensors import BinarySensor
+from ha_mqtt_discoverable.sensors import BinarySensor
 
 # Create a settings dictionary
 #
@@ -67,7 +67,7 @@ mysensor.off()
 #### Usage
 
 ```py
-from hass_mqtt_devices.device import Device
+from ha_mqtt_discoverable.device import Device
 
 # Create a settings dictionary
 #
@@ -115,6 +115,8 @@ device.add_metric(
 # Nothing gets written to MQTT until we publish
 device.publish()
 
+# Do your own code
+
 # If we add a metric using the same name as an existing metric, the value is updated
 device.add_metric(
     name="Right skate thrust",
@@ -126,7 +128,7 @@ device.publish()
 
 ## Scripts Provided
 
-hass_mqtt_devices creates the following helper scripts you can use in your own shell scripts.
+ha_mqtt_discoverable creates the following helper scripts you can use in your own shell scripts.
 
 ### `hmd`
 

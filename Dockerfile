@@ -7,7 +7,7 @@ RUN apt-get update && \
 		update-ca-certificates && \
 		rm -fr /tmp/* /var/lib/apt/lists/* && \
     /usr/bin/python3 -m pip install --upgrade pip --no-cache-dir && \
-    pip3 install --no-cache-dir hass_mqtt_devices && \
+    pip3 install --no-cache-dir ha_mqtt_discoverable && \
     pip3 cache purge
 
 CMD ["bash", "-l"]

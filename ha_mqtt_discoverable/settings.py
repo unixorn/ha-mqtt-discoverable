@@ -2,7 +2,7 @@
 
 import logging
 
-from hass_mqtt_devices.utils import read_yaml_file
+from ha_mqtt_discoverable.utils import read_yaml_file
 
 
 def load_mqtt_settings(path: str = None, cli=None) -> dict:

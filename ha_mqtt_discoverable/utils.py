@@ -5,7 +5,7 @@
 import yaml
 import re
 
-from hass_mqtt_devices import CONFIGURATION_KEY_NAMES
+from ha_mqtt_discoverable import CONFIGURATION_KEY_NAMES
 
 
 def clean_string(raw: str = None) -> str:

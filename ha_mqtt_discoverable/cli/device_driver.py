@@ -8,13 +8,12 @@
 Code to support the hmd-create-device script
 """
 
-import argparse
 import json
 import logging
 
-from hass_mqtt_devices.cli import create_base_parser
-from hass_mqtt_devices.device import Device
-from hass_mqtt_devices.settings import device_settings
+from ha_mqtt_discoverable.cli import create_base_parser
+from ha_mqtt_discoverable.device import Device
+from ha_mqtt_discoverable.settings import device_settings
 
 
 def device_parser():

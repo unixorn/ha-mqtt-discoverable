@@ -66,7 +66,7 @@ check-for-image-update() {
 load-settings(){
   SETTINGS_D=${SETTINGS_D:-"$HOME/.hass-tools"}
   CONTAINER_TOOL=${CONTAINER_TOOL:-'NONE'}
-  HASS_COMMAND_IMAGE=${HASS_COMMAND_IMAGE:-'unixorn/hass-mqtt-devices-test'}
+  HASS_COMMAND_IMAGE=${HASS_COMMAND_IMAGE:-'unixorn/ha-mqtt-discoverable-test'}
   PULL_COOKIE_F=${PULL_COOKIE_F:-"$SETTINGS_D/last-image-pull"}
   PULL_INTERVAL_IN_DAYS=${PULL_INTERVAL_IN_DAYS:-"${PULL_INTERVAL_IN_DAYS:-14}"}
 
@@ -80,23 +80,24 @@ load-settings(){
 find-container-tool(){
   # List in descending preference order so we use `nerdctl` instead of `docker`
   # when both are present - we prefer to use `nerdctl` because on my
-  # M1 MacBook Pro, it runs 30% faster than `docker` does.
+  # M1 MacBook Pro, it runs faster than `docker` does.
   for tool in docker nerdctl
   do
     if has $tool; then
-      debug "Setting CONTAINER_TOOL to $tool"
+      debug "Found '$tool'"
       CONTAINER_TOOL="$tool"
     fi
   done
   if [[ -r "$SETTINGS_D/container-tool" ]]; then
     # Force a specific container engine
     CONTAINER_TOOL=$(cat "${SETTINGS_D}/container-tool")
-    echo "FORCING $CONTAINER_TOOL"
+    debug "Forcing use of '$CONTAINER_TOOL'"
   fi
   if [[ $CONTAINER_TOOL == 'NONE' ]]; then
     fail "Can't find a tool to run hass-mqtt-test commands in a container"
   fi
 }
+debug "Using $tool to run containers"
 
 load-settings
 find-container-tool

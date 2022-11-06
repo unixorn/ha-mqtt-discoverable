@@ -22,17 +22,17 @@ clean:
 	rm -fv dist/*.tar dist/*.whl
 
 format:
-	poetry run black hass_mqtt_devices/*.py \
-		hass_mqtt_devices/*/*.py \
+	poetry run black ha_mqtt_discoverable/*.py \
+		ha_mqtt_discoverable/*/*.py \
 		tests/*.py
 test:
 	nosestests -v
 
 local: wheel requirements.txt
-	docker buildx build --load -t unixorn/hass-mqtt-devices-test -f Dockerfile.testing .
+	docker buildx build --load -t unixorn/ha-mqtt-discoverable-test -f Dockerfile.testing .
 
 fatimage: wheel
-	docker buildx build --platform linux/arm64,linux/amd64 --push -t unixorn/hass-mqtt-devices .
+	docker buildx build --platform linux/arm64,linux/amd64 --push -t unixorn/ha-mqtt-discoverable .
 	make local
 
 wheel: clean format

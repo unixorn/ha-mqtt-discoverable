@@ -5,7 +5,7 @@
 
 import logging
 
-from hass_mqtt_devices import Discoverable
+from ha_mqtt_discoverable import Discoverable
 
 
 class BinarySensor(Discoverable):

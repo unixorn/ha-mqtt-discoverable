@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "hass-mqtt-devices"
-version = "0.2.1"
+name = "ha-mqtt-discoverable"
+version = "0.3.0"
 description = ""
 authors = ["Joe Block <jpb@unixorn.net>"]
 readme = "README.md"
-packages = [{include = "hass_mqtt_devices"}]
+packages = [{include = "ha_mqtt_discoverable"}]
 
 [tool.poetry.dependencies]
 python = ">=3.9,<4.0"
@@ -23,6 +23,6 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-hmd = 'hass_mqtt_devices.cli.main_driver:hmd_driver'
-hmd-create-binary-sensor = 'hass_mqtt_devices.cli.sensors:create_binary_sensor'
-hmd-create-device = 'hass_mqtt_devices.cli.device_driver:create_device'
+hmd = 'ha_mqtt_discoverable.cli.main_driver:hmd_driver'
+hmd-create-binary-sensor = 'ha_mqtt_discoverable.cli.sensors:create_binary_sensor'
+hmd-create-device = 'ha_mqtt_discoverable.cli.device_driver:create_device'
