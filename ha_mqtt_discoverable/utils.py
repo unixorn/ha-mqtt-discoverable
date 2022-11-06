@@ -2,10 +2,10 @@
 # Copyright 2022 Joe Block <jpb@unixorn.net>
 # License: Apache 2.0
 
-import yaml
 import re
+import yaml
 
-from hass_mqtt_devices import CONFIGURATION_KEY_NAMES
+from ha_mqtt_discoverable import CONFIGURATION_KEY_NAMES
 
 
 def clean_string(raw: str = None) -> str:
@@ -27,7 +27,7 @@ def read_yaml_file(path: str = None) -> dict:
         Data decoded from YAML file content
     """
     with open(path) as yamlFile:
-        data = yaml.load(yamlFile, Loader=yaml.FullLoader)
+        data = yaml.safe_load(yamlFile, Loader=yaml.FullLoader)
         return data
 
 

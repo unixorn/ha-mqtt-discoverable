@@ -2,7 +2,7 @@
 
 import logging
 
-from hass_mqtt_devices.utils import read_yaml_file
+from ha_mqtt_discoverable.utils import read_yaml_file
 
 
 def load_mqtt_settings(path: str = None, cli=None) -> dict:
@@ -38,11 +38,13 @@ def load_mqtt_settings(path: str = None, cli=None) -> dict:
         settings["unique_id"] = cli.unique_id
 
     # Validate that we have all the settings data we need
-    assert "device_class" in settings, "device_class is unset."
-    assert "device_id" in settings, "device_id is unset."
-    assert "device_name" in settings, "device_name is unset."
-    assert "client_name" in settings, "client_name is unset."
 
+    if "client_name" not in settings:
+        raise RuntimeError("No client_name was specified")
+    if "device_class" not in settings:
+        raise RuntimeError("No device_class was specified")
+    if "device_id" not in settings:
+        raise RuntimeError("No device_id was specified")
     if "device_name" not in settings:
         raise RuntimeError("No device_name was specified")
     if "mqtt_prefix" not in settings:
@@ -82,10 +84,10 @@ def sensor_delete_settings(path: str = None, cli=None) -> dict:
         settings["mqtt_user"] = cli.mqtt_user
 
     # Validate that we have all the settings data we need
-    assert "device_id" in settings, "device_id is unset."
-    assert "device_name" in settings, "device_name is unset."
-    assert "client_name" in settings, "client_name is unset."
-
+    if "client_name" not in settings:
+        raise RuntimeError("No client_name was specified")
+    if "device_id" not in settings:
+        raise RuntimeError("No device_id was specified")
     if "device_name" not in settings:
         raise RuntimeError("No device_name was specified")
     if "mqtt_prefix" not in settings:

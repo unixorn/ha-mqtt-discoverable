@@ -7,7 +7,7 @@ import logging
 
 import paho.mqtt.client as mqtt
 
-__version__ = "0.2.1"
+__version__ = "0.3.0"
 
 CONFIGURATION_KEY_NAMES = {
     "act_t": "action_topic",
@@ -476,43 +476,49 @@ class Discoverable:
         """
         settings_error_base = "You must specify a server and a client_name"
 
-        assert "client_name" in settings, f"client_name is unset. {settings_error_base}"
+        if "client_name" not in settings:
+            raise RuntimeError(f"client_name is unset. {settings_error_base}")
         self.client_name = settings["client_name"]
 
-        assert "mqtt_server" in settings, f"mqtt_server is unset. {settings_error_base}"
+        if "mqtt_server" not in settings:
+            raise RuntimeError(f"mqtt_server is unset. {settings_error_base}")
         self.mqtt_server = settings["mqtt_server"]
 
-        assert "mqtt_prefix" in settings, f"mqtt_prefix is unset. {settings_error_base}"
+        if "mqtt_prefix" not in settings:
+            raise RuntimeError(f"mqtt_prefix is unset. {settings_error_base}")
         self.mqtt_prefix = settings["mqtt_prefix"]
 
-        assert (
-            "mqtt_password" in settings
-        ), f"mqtt_password is unset. {settings_error_base}"
-
-        self.debug = settings["debug"]
-
+        if "mqtt_password" not in settings:
+            raise RuntimeError(f"mqtt_password is unset. {settings_error_base}")
         self.mqtt_password = settings["mqtt_password"]
 
-        assert "mqtt_user" in settings, f"mqtt_user is unset. {settings_error_base}"
+        if "debug" not in settings:
+            settings["debug"] = False
+        self.debug = settings["debug"]
+
+        if "mqtt_user" not in settings:
+            raise RuntimeError(f"mqtt_user is unset. {settings_error_base}")
         self.mqtt_user = settings["mqtt_user"]
 
-        assert "device_id" in settings, f"device_id is unset. {settings_error_base}"
+        if "device_id" not in settings:
+            raise RuntimeError(f"device_id is unset. {settings_error_base}")
         self.device_id = settings["device_id"]
 
-        assert "device_name" in settings, f"device_name is unset. {settings_error_base}"
+        if "device_name" not in settings:
+            raise RuntimeError(f"device_name is unset. {settings_error_base}")
         self.device_name = settings["device_name"]
 
-        assert (
-            "device_class" in settings
-        ), f"device_class is unset. {settings_error_base}"
-
+        if "device_class" not in settings:
+            raise RuntimeError(f"device_class is unset. {settings_error_base}")
         self.device_class = settings["device_class"]
+
         if "icon" in settings:
             self.icon = settings["icon"]
         if "manufacturer" in settings:
             self.manufacturer = settings["manufacturer"]
         else:
             self.manufacturer = "Acme Products"
+
         if "model" in settings:
             self.model = settings["model"]
         if "unique_id" in settings:

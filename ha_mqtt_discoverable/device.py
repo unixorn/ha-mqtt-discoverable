@@ -6,8 +6,8 @@
 import json
 import logging
 
-from hass_mqtt_devices import Discoverable, __version__
-from hass_mqtt_devices.utils import clean_string, valid_configuration_key
+from ha_mqtt_discoverable import Discoverable, __version__
+from ha_mqtt_discoverable.utils import clean_string, valid_configuration_key
 
 
 class Device(Discoverable):
