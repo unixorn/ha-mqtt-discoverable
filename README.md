@@ -98,17 +98,30 @@ configd = {
     "model": "Rocket Skates",
 }
 
-sensor = Device(settings=configd)
-sensor.add_metric(
+device = Device(settings=configd)
+
+# You can add more than one metric to a device
+device.add_metric(
     name="Left skate thrust",
     value=33,
     configuration={"name": f"Left Skate Thrust"},
 )
-sensor.add_metric(
+device.add_metric(
     name="Right skate thrust",
     value=33,
     configuration={"name": f"Right Skate Thrust"},
 )
+
+# Nothing gets written to MQTT until we publish
+device.publish()
+
+# If we add a metric using the same name as an existing metric, the value is updated
+device.add_metric(
+    name="Right skate thrust",
+    value=99,
+    configuration={"name": f"Right Skate Thrust"},
+)
+device.publish()
 ```
 
 ## Scripts Provided
