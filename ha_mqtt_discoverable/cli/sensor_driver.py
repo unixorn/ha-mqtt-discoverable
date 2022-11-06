@@ -8,7 +8,6 @@
 Code to support the hmd-create-binary-sensor script
 """
 
-import argparse
 import logging
 
 from ha_mqtt_discoverable.cli import create_base_parser

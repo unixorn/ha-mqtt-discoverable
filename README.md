@@ -128,7 +128,7 @@ device.publish()
 
 ## Scripts Provided
 
-ha_mqtt_discoverable creates the following helper scripts you can use in your own shell scripts.
+The **ha_mqtt_discoverable** module also installs the following helper scripts you can use in your own shell scripts.
 
 ### `hmd`
 
