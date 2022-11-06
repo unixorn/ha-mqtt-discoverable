@@ -34,7 +34,7 @@ class BinarySensor(Discoverable):
         """
         Generate the config blob
 
-        Add binary_sensor-specific items to the configuration dictionary.
+        Add device-specific items to the configuration dictionary.
         """
         config = super().generate_config()
         if hasattr(self, "unique_id"):

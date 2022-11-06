@@ -43,5 +43,5 @@ publish: fatimage
 
 # We only use this to enable the Dockerfile.testing have a layer for the python
 # dependencies so we don't have to reinstall every time we test a new change
-requirements.txt: poetry.lock Makefile
+requirements.txt: poetry.lock pyproject.toml Makefile
 	poetry export -o requirements.txt

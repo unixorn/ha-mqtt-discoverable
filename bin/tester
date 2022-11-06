@@ -102,4 +102,4 @@ load-settings
 find-container-tool
 check-for-image-update
 
-exec "$CONTAINER_TOOL" run -v "${SETTINGS_D}":/config --rm -it "$HASS_COMMAND_IMAGE" $@
+exec "$CONTAINER_TOOL" run -v "${SETTINGS_D}":/config --rm -it "$HASS_COMMAND_IMAGE" "$@"
