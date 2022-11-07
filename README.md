@@ -3,6 +3,9 @@
 ## Table of Contents
 
 - [ha-mqtt-discoverable](#ha-mqtt-discoverable)
+  - [Installing](#installing)
+    - [Python](#python)
+    - [Docker](#docker)
   - [Supported Types](#supported-types)
     - [Binary Sensors](#binary-sensors)
       - [Usage](#usage)
@@ -21,11 +24,23 @@ A python 3 module that takes advantage of HA(Home Assistant('s MQTT discovery pr
 
 Using MQTT discoverable devices lets us add new sensors and devices to HA without having to restart HA. This module includes scripts to make it easy to create discoverable devices from the command line if you don't want to bother writing python.
 
+## Installing
+
+### Python
+
+`pip install ha-mqtt-discoverable` if you want to use it in your python scripts. This will also install the `hmd` utility scripts.
+
+### Docker
+
+If all you want to do is use the command line tools, the simplest way is to use them with `docker` or `nerdctl`. It won't interfere with your system python and potentially cause you issues there. You can use the [unixorn/ha-mqtt-discoverable](https://hub.docker.com/repository/docker/unixorn/ha-mqtt-discoverable) image on dockerhub directly, but if you add `$reporoot/bin` to your `$PATH`, the `hmd` script in there will automatically run the command line tools inside a docker container with `docker` or `nerdctl`, depending on what it finds in your `$PATH`.
+
 ## Supported Types
 
 ### Binary Sensors
 
 #### Usage
+
+Here is an example that creates a binary sensor.
 
 ```py
 from ha_mqtt_discoverable.sensors import BinarySensor
@@ -65,6 +80,8 @@ mysensor.off()
 ### Devices
 
 #### Usage
+
+Here's an example that will create a MQTT device and add multiple sensors to it.
 
 ```py
 from ha_mqtt_discoverable.device import Device
@@ -128,7 +145,7 @@ device.publish()
 
 ## Scripts Provided
 
-The **ha_mqtt_discoverable** module also installs the following helper scripts you can use in your own shell scripts.
+The `ha_mqtt_discoverable` module also installs the following helper scripts you can use in your own shell scripts.
 
 ### `hmd`
 
