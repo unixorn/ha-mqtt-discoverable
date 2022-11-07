@@ -1,6 +1,6 @@
 FROM unixorn/debian-py3:latest
 LABEL maintainer="Joe Block <jpb@unixorn.net>"
-LABEL description="Test image for hass-mqtt-devices"
+LABEL description="Test image for ha-mqtt-discoverable module"
 
 RUN mkdir /data && \
   mkdir /config
