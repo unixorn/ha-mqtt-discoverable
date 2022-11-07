@@ -10,7 +10,9 @@ Code to support the hmd-create-device script
 
 import json
 import logging
+import sys
 
+from ha_mqtt_discoverable import __version__ as TOOL_VERSION
 from ha_mqtt_discoverable.cli import create_base_parser
 from ha_mqtt_discoverable.device import Device
 from ha_mqtt_discoverable.settings import device_settings
@@ -59,6 +61,9 @@ def create_device():
     Create a device from the command line, and set its state.
     """
     cli = device_cli()
+    if cli.version:
+        print(f"ha-mqtt-discoverable version {TOOL_VERSION}")
+        sys.exit(0)
     logging.debug(f"cli: {cli}")
     settings = device_settings(path=cli.settings_file, cli=cli)
     sensor = Device(settings=settings)
