@@ -1,6 +1,6 @@
 FROM unixorn/debian-py3:latest
 LABEL maintainer="Joe Block <jpb@unixorn.net>"
-LABEL description="hass-mqtt-devices utility image"
+LABEL description="ha-mqtt-discoverable utility image"
 
 RUN apt-get update && \
     apt-get install -y apt-utils ca-certificates --no-install-recommends && \

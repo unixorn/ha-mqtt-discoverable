@@ -6,6 +6,8 @@
 
 import argparse
 
+from ha_mqtt_discoverable import __version__ as MODULE_VERSION
+
 
 def create_base_parser(description: str = None):
     """
@@ -40,4 +42,11 @@ def create_base_parser(description: str = None):
     parser.add_argument("--mqtt-password", type=str, help="MQTT password.")
     parser.add_argument("--mqtt-server", type=str, help="MQTT server.")
     parser.add_argument("--settings-file", type=str, help="Settings file.")
+    parser.add_argument(
+        "--version", "-v", help="Show version and exit", action="store_true"
+    )
     return parser
+
+
+def module_version():
+    print(MODULE_VERSION)

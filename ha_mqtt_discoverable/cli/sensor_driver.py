@@ -9,7 +9,9 @@ Code to support the hmd-create-binary-sensor script
 """
 
 import logging
+import sys
 
+from ha_mqtt_discoverable import __version__ as TOOL_VERSION
 from ha_mqtt_discoverable.cli import create_base_parser
 from ha_mqtt_discoverable.sensors import BinarySensor
 from ha_mqtt_discoverable.settings import binary_sensor_settings
@@ -46,6 +48,9 @@ def create_binary_sensor():
     Create a binary sensor from the command line, and set its state.
     """
     cli = binary_sensor_cli()
+    if cli.version:
+        print(f"ha-mqtt-discoverable version {TOOL_VERSION}")
+        sys.exit(0)
     logging.info(f"cli: {cli}")
     settings = binary_sensor_settings(path=cli.settings_file, cli=cli)
     logging.info(f"{settings}")
