@@ -12,6 +12,9 @@ c: clean
 f: format
 t: test
 
+# If this pukes trying to import paho, try 'poetry install'
+MODULE_VERSION=$(shell poetry run python3 -c 'from ha_mqtt_discoverable import __version__;print(__version__)' )
+
 help:
 	@echo "Options:"
 	@echo "format: Reformat all python files with black"
@@ -29,10 +32,11 @@ test:
 	nosestests -v
 
 local: wheel requirements.txt
-	docker buildx build --load -t unixorn/ha-mqtt-discoverable-test -f Dockerfile.testing .
+	docker buildx build --load -t unixorn/ha-mqtt-discoverable-test:$(MODULE_VERSION) -f Dockerfile.testing .
+	docker tag unixorn/ha-mqtt-discoverable-test:$(MODULE_VERSION) unixorn/ha-mqtt-discoverable-test:latest
 
 fatimage: wheel
-	docker buildx build --platform linux/arm64,linux/amd64 --push -t unixorn/ha-mqtt-discoverable .
+	docker buildx build --platform linux/arm64,linux/amd64 --push -t unixorn/ha-mqtt-discoverable:$(MODULE_VERSION) .
 	make local
 
 wheel: clean format
