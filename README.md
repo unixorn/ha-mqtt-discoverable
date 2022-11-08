@@ -149,7 +149,7 @@ The `ha_mqtt_discoverable` module also installs the following helper scripts you
 
 ### `hmd`
 
-A gitlike command, you can `hmd create binary sensor` and it'll find and run `hmd-create-binary-sensor` and pass it all the command line options.
+Uses the [gitlike-commands](https://github.com/unixorn/gitlike-commands/) module to find and execute `hmd` subcommands. Allows you to run `hmd create binary sensor` and `hmd` will find and run `hmd-create-binary-sensor` and pass it all the command line options.
 
 ### `hmd create binary sensor`
 
