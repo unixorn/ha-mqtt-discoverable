@@ -4,10 +4,11 @@
 
 import json
 import logging
+import ssl
 
 import paho.mqtt.client as mqtt
 
-__version__ = "0.3.1"
+__version__ = "0.4.0"
 
 CONFIGURATION_KEY_NAMES = {
     "act_t": "action_topic",
@@ -480,6 +481,10 @@ class Discoverable:
             raise RuntimeError(f"client_name is unset. {settings_error_base}")
         self.client_name = settings["client_name"]
 
+        if "debug" not in settings:
+            settings["debug"] = False
+        self.debug = settings["debug"]
+
         if "mqtt_server" not in settings:
             raise RuntimeError(f"mqtt_server is unset. {settings_error_base}")
         self.mqtt_server = settings["mqtt_server"]
@@ -491,10 +496,6 @@ class Discoverable:
         if "mqtt_password" not in settings:
             raise RuntimeError(f"mqtt_password is unset. {settings_error_base}")
         self.mqtt_password = settings["mqtt_password"]
-
-        if "debug" not in settings:
-            settings["debug"] = False
-        self.debug = settings["debug"]
 
         if "mqtt_user" not in settings:
             raise RuntimeError(f"mqtt_user is unset. {settings_error_base}")
@@ -523,6 +524,16 @@ class Discoverable:
             self.model = settings["model"]
         if "unique_id" in settings:
             self.unique_id = settings["unique_id"]
+
+        # SSL setup
+
+        self.use_tls = False
+        if "use_tls" in settings:
+            if settings["use_tls"]:
+                self.tls_ca_cert = settings["tls_ca_cert"]
+                self.tls_certfile = settings["tls_certfile"]
+                self.tls_key = settings["tls_key"]
+                self.use_tls = settings["use_tls"]
 
         self.topic_prefix = f"{self.mqtt_prefix}/{self.device_class}/{self.device_name}"
         self.config_topic = f"{self.topic_prefix}/config"
@@ -559,7 +570,24 @@ wrote_configuration: {self.wrote_configuration}
                 f"Creating mqtt client({self.client_name}) for {self.mqtt_server}"
             )
             self.mqtt_client = mqtt.Client(self.client_name)
-            logging.info(f"Connecting to {self.mqtt_server}...")
+            if self.use_tls:
+                logging.info(f"Connecting to {self.mqtt_server}...")
+                logging.info("Configuring SSL")
+                logging.debug(f"ca_certs=s{elf.tls_ca_cert}")
+                logging.debug(f"certfile={self.tls_certfile}")
+                logging.debug(f"keyfile={self.tls_key}")
+                self.mqtt_client.tls_set(
+                    ca_certs=self.tls_ca_cert,
+                    certfile=self.tls_certfile,
+                    keyfile=self.tls_key,
+                    cert_reqs=ssl.CERT_REQUIRED,
+                    tls_version=ssl.PROTOCOL_TLS,
+                )
+            else:
+                logging.warning(f"Connecting to {self.mqtt_server} without SSL")
+                self.mqtt_client.username_pw_set(
+                    self.mqtt_user, password=self.mqtt_password
+                )
             self.mqtt_client.connect(self.mqtt_server)
         else:
             logging.debug("Reusing existing mqtt_client...")
