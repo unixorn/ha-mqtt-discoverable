@@ -37,6 +37,13 @@ def load_mqtt_settings(path: str = None, cli=None) -> dict:
     if hasattr(cli, "unique_id"):
         settings["unique_id"] = cli.unique_id
 
+    # ssl
+    settings["use_tls"] = cli.use_tls
+    if cli.use_tls:
+        settings["certfile"] = cli.tls_certfile
+        settings["keyfile"] = cli.tls_key
+        settings["ca_certs"] = cli.tls_ca_cert
+
     # Validate that we have all the settings data we need
 
     if "client_name" not in settings:

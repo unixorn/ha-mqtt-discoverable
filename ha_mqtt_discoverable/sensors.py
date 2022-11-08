@@ -29,6 +29,7 @@ class BinarySensor(Discoverable):
         logging.debug(f"metric_name: {self.metric_name}")
         logging.debug(f"topic_prefix: {self.topic_prefix}")
         logging.debug(f"self.state_topic: {self.state_topic}")
+        logging.debug(f"settings: {settings}")
 
     def generate_config(self) -> dict:
         """
