@@ -4,8 +4,8 @@
 # License: Apache 2.0
 
 import re
-import yaml
 
+import yaml
 from ha_mqtt_discoverable import CONFIGURATION_KEY_NAMES
 
 
@@ -28,7 +28,7 @@ def read_yaml_file(path: str = None) -> dict:
         Data decoded from YAML file content
     """
     with open(path) as yamlFile:
-        data = yaml.safe_load(yamlFile, Loader=yaml.FullLoader)
+        data = yaml.safe_load(yamlFile)
         return data
 
 
