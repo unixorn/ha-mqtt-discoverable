@@ -5,10 +5,20 @@
 
 import json
 import logging
+from typing import Optional, TypedDict
 
 from ha_mqtt_discoverable import Discoverable, __version__
 from ha_mqtt_discoverable.utils import clean_string, valid_configuration_key
 
+class SensorConfig(TypedDict):
+    '''Optional configuration of a sensor belonging to a device'''
+    device: Optional[dict]
+    '''Optional information about the device this sensor belongs to. If not set defaults to the information of the device itself'''
+    object_id: Optional[str]
+    name: Optional[str]
+    '''Friendly name of this sensor. Default to the name given when adding the sensor to the device parent'''
+    unit_of_measurement: Optional[str]
+    unique_id: Optional[str]
 
 class Device(Discoverable):
     def __init__(self, settings: dict = {}) -> None:
@@ -66,7 +76,7 @@ configured: {self.configured}
         return device
 
     def add_metric(
-        self, name, value, unit_of_measurement: str = "%", configuration: dict = None
+        self, name, value, unit_of_measurement: str = "%", configuration: SensorConfig = {}
     ) -> None:
         """
         Add a metric to our device
@@ -74,8 +84,7 @@ configured: {self.configured}
         logging.info(f"Adding {name} with {value}")
         self.metrics[name] = value
 
-        if not configuration:
-            configuration = {}
+        if not len(configuration):
             logging.warning(f"No configuration passed in, using {configuration}")
 
         if "device" not in configuration:
