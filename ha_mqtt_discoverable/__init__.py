@@ -494,7 +494,7 @@ class Discoverable:
         self.mqtt_prefix = settings["mqtt_prefix"]
 
         if "mqtt_password" not in settings:
-            raise RuntimeError(f"mqtt_password is unset.")
+            raise RuntimeError("mqtt_password is unset.")
         self.mqtt_password = settings["mqtt_password"]
 
         if "mqtt_user" not in settings:
@@ -510,7 +510,7 @@ class Discoverable:
         self.device_name = settings["device_name"]
 
         if "device_class" not in settings:
-            raise RuntimeError(f"device_class is unset.")
+            raise RuntimeError("device_class is unset.")
         self.device_class = settings["device_class"]
 
         if "icon" in settings:
@@ -573,7 +573,7 @@ wrote_configuration: {self.wrote_configuration}
             if self.use_tls:
                 logging.info(f"Connecting to {self.mqtt_server}...")
                 logging.info("Configuring SSL")
-                logging.debug(f"ca_certs=s{elf.tls_ca_cert}")
+                logging.debug(f"ca_certs=s{self.tls_ca_cert}")
                 logging.debug(f"certfile={self.tls_certfile}")
                 logging.debug(f"keyfile={self.tls_key}")
                 self.mqtt_client.tls_set(
@@ -618,8 +618,11 @@ wrote_configuration: {self.wrote_configuration}
         Delete a synthetic sensor from Home Assistant via MQTT message.
 
         Based on https://www.home-assistant.io/docs/mqtt/discovery/
-        mosquitto_pub -r -h 127.0.0.1 -p 1883 -t "homeassistant/binary_sensor/garden/config" \
-            -m '{"name": "garden", "device_class": "motion", "state_topic": "homeassistant/binary_sensor/garden/state"}'
+
+        mosquitto_pub -r -h 127.0.0.1 -p 1883 \
+            -t "homeassistant/binary_sensor/garden/config" \
+            -m '{"name": "garden", "device_class": "motion", \
+            "state_topic": "homeassistant/binary_sensor/garden/state"}'
         """
 
         config_message = ""
@@ -648,8 +651,10 @@ wrote_configuration: {self.wrote_configuration}
 
     def write_config(self) -> None:
         """
-        mosquitto_pub -r -h 127.0.0.1 -p 1883 -t "homeassistant/binary_sensor/garden/config" \
-            -m '{"name": "garden", "device_class": "motion", "state_topic": "homeassistant/binary_sensor/garden/state"}'
+        mosquitto_pub -r -h 127.0.0.1 -p 1883 \
+            -t "homeassistant/binary_sensor/garden/config" \
+            -m '{"name": "garden", "device_class": "motion", \
+                "state_topic": "homeassistant/binary_sensor/garden/state"}'
         """
 
         self._connect()
