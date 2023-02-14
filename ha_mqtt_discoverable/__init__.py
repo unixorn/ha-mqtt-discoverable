@@ -8,7 +8,7 @@ import ssl
 
 import paho.mqtt.client as mqtt
 
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 
 CONFIGURATION_KEY_NAMES = {
     "act_t": "action_topic",
@@ -490,11 +490,11 @@ class Discoverable:
         self.mqtt_server = settings["mqtt_server"]
 
         if "mqtt_prefix" not in settings:
-            raise RuntimeError(f"mqtt_prefix is unset. {settings_error_base}")
+            raise RuntimeError("mqtt_prefix is unset.")
         self.mqtt_prefix = settings["mqtt_prefix"]
 
         if "mqtt_password" not in settings:
-            raise RuntimeError(f"mqtt_password is unset. {settings_error_base}")
+            raise RuntimeError("mqtt_password is unset.")
         self.mqtt_password = settings["mqtt_password"]
 
         if "mqtt_user" not in settings:
@@ -502,15 +502,15 @@ class Discoverable:
         self.mqtt_user = settings["mqtt_user"]
 
         if "device_id" not in settings:
-            raise RuntimeError(f"device_id is unset. {settings_error_base}")
+            raise RuntimeError("device_id is unset.")
         self.device_id = settings["device_id"]
 
         if "device_name" not in settings:
-            raise RuntimeError(f"device_name is unset. {settings_error_base}")
+            raise RuntimeError("device_name is unset.")
         self.device_name = settings["device_name"]
 
         if "device_class" not in settings:
-            raise RuntimeError(f"device_class is unset. {settings_error_base}")
+            raise RuntimeError("device_class is unset.")
         self.device_class = settings["device_class"]
 
         if "icon" in settings:
@@ -573,7 +573,7 @@ wrote_configuration: {self.wrote_configuration}
             if self.use_tls:
                 logging.info(f"Connecting to {self.mqtt_server}...")
                 logging.info("Configuring SSL")
-                logging.debug(f"ca_certs=s{elf.tls_ca_cert}")
+                logging.debug(f"ca_certs=s{self.tls_ca_cert}")
                 logging.debug(f"certfile={self.tls_certfile}")
                 logging.debug(f"keyfile={self.tls_key}")
                 self.mqtt_client.tls_set(
@@ -618,8 +618,11 @@ wrote_configuration: {self.wrote_configuration}
         Delete a synthetic sensor from Home Assistant via MQTT message.
 
         Based on https://www.home-assistant.io/docs/mqtt/discovery/
-        mosquitto_pub -r -h 127.0.0.1 -p 1883 -t "homeassistant/binary_sensor/garden/config" \
-            -m '{"name": "garden", "device_class": "motion", "state_topic": "homeassistant/binary_sensor/garden/state"}'
+
+        mosquitto_pub -r -h 127.0.0.1 -p 1883 \
+            -t "homeassistant/binary_sensor/garden/config" \
+            -m '{"name": "garden", "device_class": "motion", \
+            "state_topic": "homeassistant/binary_sensor/garden/state"}'
         """
 
         config_message = ""
@@ -648,8 +651,10 @@ wrote_configuration: {self.wrote_configuration}
 
     def write_config(self) -> None:
         """
-        mosquitto_pub -r -h 127.0.0.1 -p 1883 -t "homeassistant/binary_sensor/garden/config" \
-            -m '{"name": "garden", "device_class": "motion", "state_topic": "homeassistant/binary_sensor/garden/state"}'
+        mosquitto_pub -r -h 127.0.0.1 -p 1883 \
+            -t "homeassistant/binary_sensor/garden/config" \
+            -m '{"name": "garden", "device_class": "motion", \
+                "state_topic": "homeassistant/binary_sensor/garden/state"}'
         """
 
         self._connect()
