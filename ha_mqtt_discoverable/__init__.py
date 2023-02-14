@@ -8,7 +8,7 @@ import ssl
 
 import paho.mqtt.client as mqtt
 
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 
 CONFIGURATION_KEY_NAMES = {
     "act_t": "action_topic",
@@ -490,11 +490,11 @@ class Discoverable:
         self.mqtt_server = settings["mqtt_server"]
 
         if "mqtt_prefix" not in settings:
-            raise RuntimeError(f"mqtt_prefix is unset. {settings_error_base}")
+            raise RuntimeError("mqtt_prefix is unset.")
         self.mqtt_prefix = settings["mqtt_prefix"]
 
         if "mqtt_password" not in settings:
-            raise RuntimeError(f"mqtt_password is unset. {settings_error_base}")
+            raise RuntimeError(f"mqtt_password is unset.")
         self.mqtt_password = settings["mqtt_password"]
 
         if "mqtt_user" not in settings:
@@ -502,15 +502,15 @@ class Discoverable:
         self.mqtt_user = settings["mqtt_user"]
 
         if "device_id" not in settings:
-            raise RuntimeError(f"device_id is unset. {settings_error_base}")
+            raise RuntimeError("device_id is unset.")
         self.device_id = settings["device_id"]
 
         if "device_name" not in settings:
-            raise RuntimeError(f"device_name is unset. {settings_error_base}")
+            raise RuntimeError("device_name is unset.")
         self.device_name = settings["device_name"]
 
         if "device_class" not in settings:
-            raise RuntimeError(f"device_class is unset. {settings_error_base}")
+            raise RuntimeError(f"device_class is unset.")
         self.device_class = settings["device_class"]
 
         if "icon" in settings:
