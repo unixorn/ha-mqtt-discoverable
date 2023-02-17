@@ -1,4 +1,3 @@
-
 import pytest
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Sensor, SensorInfo
@@ -22,11 +21,11 @@ def test_required_config():
 
 def test_generate_config(sensor: Sensor):
     config = sensor.generate_config()
-    
+
     assert config is not None
     # If we have defined a custom unit of measurement, check that is part of the output config
     if sensor._sensor.unit_of_measurement:
-        assert config['unit_of_measurement'] == sensor._sensor.unit_of_measurement
+        assert config["unit_of_measurement"] == sensor._sensor.unit_of_measurement
 
 
 def test_update_state(sensor: Sensor):

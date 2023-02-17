@@ -453,8 +453,10 @@ CONFIGURATION_KEY_NAMES = {
     "xy_value_template": "xy_val_tpl",
 }
 
+
 class DeviceInfo(BaseModel):
     """Information about a device a sensor belongs to"""
+
     name: str
     model: Optional[str] = None
     manufacturer: Optional[str] = None
@@ -462,73 +464,77 @@ class DeviceInfo(BaseModel):
     """Firmware version of the device"""
     hw_version: Optional[str] = None
     """Hardware version of the device"""
-    identifiers: Optional[list[str]|str] = None
+    identifiers: Optional[list[str] | str] = None
     """A list of IDs that uniquely identify the device. For example a serial number."""
     connections: Optional[list[tuple]] = None
     """A list of connections of the device to the outside world as a list of tuples [connection_type, connection_identifier]"""
     configuration_url: Optional[str] = None
     """A link to the webpage that can manage the configuration of this device. Can be either an HTTP or HTTPS link."""
 
+
 class EntityInfo(BaseModel):
     component: str
-    '''One of the supported MQTT components, for instance `binary_sensor`'''
-    '''Information about the sensor'''
+    """One of the supported MQTT components, for instance `binary_sensor`"""
+    """Information about the sensor"""
     device: Optional[DeviceInfo] = None
-    '''Information about the device this sensor belongs to'''
+    """Information about the device this sensor belongs to"""
     device_class: Optional[str] = None
-    '''Sets the class of the device, changing the device state and icon that is displayed on the frontend.'''
+    """Sets the class of the device, changing the device state and icon that is displayed on the frontend."""
     enabled_by_default: Optional[bool] = None
-    '''Flag which defines if the entity should be enabled when first added.'''
+    """Flag which defines if the entity should be enabled when first added."""
     expire_after: Optional[int] = None
-    '''If set, it defines the number of seconds after the sensor’s state expires, if it’s not updated. 
-    After expiry, the sensor’s state becomes unavailable. Default the sensors state never expires.'''
+    """If set, it defines the number of seconds after the sensor’s state expires, if it’s not updated. 
+    After expiry, the sensor’s state becomes unavailable. Default the sensors state never expires."""
     force_update: Optional[bool] = None
-    '''Sends update events even if the value hasn’t changed. Useful if you want to have meaningful value graphs in history.'''
+    """Sends update events even if the value hasn’t changed. Useful if you want to have meaningful value graphs in history."""
     icon: Optional[str] = None
     name: str
-    '''Name of the sensor inside Home Assistant'''
+    """Name of the sensor inside Home Assistant"""
     object_id: Optional[str] = None
-    '''Set this to generate the `entity_id` in HA instead of using `name`'''
+    """Set this to generate the `entity_id` in HA instead of using `name`"""
     qos: Optional[int] = None
-    '''The maximum QoS level to be used when receiving messages.'''
+    """The maximum QoS level to be used when receiving messages."""
     unique_id: Optional[str] = None
-    '''Set this to enable editing sensor from the HA ui and to integrate with a device'''
+    """Set this to enable editing sensor from the HA ui and to integrate with a device"""
 
     @root_validator
     def device_need_unique_id(cls, values):
-        '''Check that `unique_id` is set if `device` is provided, otherwise Home Assistant will not link the sensor to the device'''
-        device, unique_id = values.get('device'), values.get('unique_id')
+        """Check that `unique_id` is set if `device` is provided, otherwise Home Assistant will not link the sensor to the device"""
+        device, unique_id = values.get("device"), values.get("unique_id")
         if device is not None and unique_id is None:
-            raise ValueError('A unique_id is required if a device is defined')
+            raise ValueError("A unique_id is required if a device is defined")
         return values
 
 
-SensorType = TypeVar('SensorType', bound=EntityInfo)
+SensorType = TypeVar("SensorType", bound=EntityInfo)
+
 
 class Settings(GenericModel, Generic[SensorType]):
     class MQTT(BaseModel):
-        '''Connection settings for the MQTT broker'''
+        """Connection settings for the MQTT broker"""
+
         host: str
         username: Optional[str] = None
         password: Optional[str] = None
         client_name: Optional[str] = None
         tls_key: Optional[str] = None
-        tls_certfile: Optional[str] = None 
+        tls_certfile: Optional[str] = None
         tls_ca_cert: Optional[str] = None
-        
+
         topic_prefix: str = "homeassistant"
-    
+
     mqtt: MQTT
-    '''Connection to MQTT broker'''
+    """Connection to MQTT broker"""
     sensor: SensorType
     debug: bool = False
-    '''Print out the message that would be sent over MQTT'''
+    """Print out the message that would be sent over MQTT"""
 
 
 class Discoverable(Generic[SensorType]):
     """
     Base class for making MQTT discoverable objects
     """
+
     _settings: Settings
     _sensor: SensorType
 
@@ -539,12 +545,11 @@ class Discoverable(Generic[SensorType]):
     config_topic: str
     state_topic: str
     availability_topic: str
-    
+
     class Config:
         arbitrary_types_allowed = True
 
     def __init__(self, settings: Settings[SensorType]) -> None:
-        
         """
         Setup the base discoverable object class
 
@@ -557,7 +562,7 @@ class Discoverable(Generic[SensorType]):
 
         self._settings = settings
         self._sensor = settings.sensor
-        
+
         self.topic_prefix = f"{self._settings.mqtt.topic_prefix}/{self._sensor.component}/{clean_string(self._sensor.name)}"
         self.config_topic = f"{self.topic_prefix}/config"
         self.state_topic = f"{self.topic_prefix}/state"
@@ -608,7 +613,9 @@ wrote_configuration: {self.wrote_configuration}
             else:
                 logging.warning(f"Connecting to {mqtt_settings.host} without SSL")
                 if mqtt_settings.username:
-                    self.mqtt_client.username_pw_set(mqtt_settings.username, password=mqtt_settings.password)
+                    self.mqtt_client.username_pw_set(
+                        mqtt_settings.username, password=mqtt_settings.password
+                    )
             self.mqtt_client.connect(mqtt_settings.host)
         else:
             logging.debug("Reusing existing MQTT client")
@@ -625,11 +632,11 @@ wrote_configuration: {self.wrote_configuration}
             logging.debug(f"State topic unset, using default '{self.state_topic}'")
             topic = self.state_topic
         logging.debug(f"Writing '{state}' to {topic}")
-        
+
         if self._settings.debug:
             logging.warning(f"Debug is {self.debug}, skipping state write")
             return
-        
+
         logging.warning(self.mqtt_client.publish(topic, state, retain=True))
 
     def debug_mode(self, mode: bool):

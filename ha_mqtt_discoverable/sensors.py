@@ -8,27 +8,29 @@ from typing import Optional
 
 from ha_mqtt_discoverable import Discoverable, EntityInfo
 
+
 class BinarySensorInfo(EntityInfo):
     """Binary sensor specific information"""
+
     component: str = "binary_sensor"
     off_delay: Optional[int] = None
-    '''For sensors that only send on state updates (like PIRs), 
-    this variable sets a delay in seconds after which the sensor’s state will be updated back to off.'''
+    """For sensors that only send on state updates (like PIRs), 
+    this variable sets a delay in seconds after which the sensor’s state will be updated back to off."""
     payload_off: str = "on"
-    '''Payload to send for the ON state'''
+    """Payload to send for the ON state"""
     payload_on: str = "off"
-    '''Payload to send for the OFF state'''
+    """Payload to send for the OFF state"""
 
 
 class SensorInfo(EntityInfo):
     """Sensor specific information"""
+
     component: str = "sensor"
     unit_of_measurement: Optional[str] = None
-    '''Defines the units of measurement of the sensor, if any.'''
+    """Defines the units of measurement of the sensor, if any."""
 
 
 class BinarySensor(Discoverable[BinarySensorInfo]):
-    
     def off(self):
         """
         Set binary sensor to off
@@ -52,13 +54,14 @@ class BinarySensor(Discoverable[BinarySensorInfo]):
             state_message = self._sensor.payload_on
         else:
             state_message = self._sensor.payload_off
-        logging.info(f"Setting {self._sensor.name} to {state_message} using {self.state_topic}")
+        logging.info(
+            f"Setting {self._sensor.name} to {state_message} using {self.state_topic}"
+        )
         self._state_helper(state=state_message)
 
 
 class Sensor(Discoverable[SensorInfo]):
-    
-    def set_state(self, state: str|int|float) -> None:
+    def set_state(self, state: str | int | float) -> None:
         """
         Update the sensor state
 

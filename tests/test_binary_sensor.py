@@ -1,8 +1,7 @@
-
-
 import pytest
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import BinarySensor, BinarySensorInfo
+
 
 @pytest.fixture(name="sensor", params=["on", "custom_on"])
 def binary_sensor(request) -> BinarySensor:
@@ -22,11 +21,11 @@ def test_required_config():
 
 def test_generate_config(sensor: BinarySensor):
     config = sensor.generate_config()
-    
+
     assert config is not None
     # If we have defined a custom payload, check that is part of the output config
     if sensor._sensor.payload_on:
-        assert config['payload_on'] == sensor._sensor.payload_on
+        assert config["payload_on"] == sensor._sensor.payload_on
 
 
 def test_update_state(sensor: BinarySensor):
