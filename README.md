@@ -6,6 +6,7 @@
   - [Installing](#installing)
     - [Python](#python)
     - [Docker](#docker)
+  - [Contributing](#contributing)
   - [Supported Types](#supported-types)
     - [Binary Sensors](#binary-sensors)
       - [Usage](#usage)
@@ -15,6 +16,7 @@
     - [`hmd`](#hmd)
     - [`hmd create binary sensor`](#hmd-create-binary-sensor)
     - [`hmd create device`](#hmd-create-device)
+  - [Contributors](#contributors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -33,6 +35,10 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 ### Docker
 
 If all you want to do is use the command line tools, the simplest way is to use them with `docker` or `nerdctl`. It won't interfere with your system python and potentially cause you issues there. You can use the [unixorn/ha-mqtt-discoverable](https://hub.docker.com/repository/docker/unixorn/ha-mqtt-discoverable) image on dockerhub directly, but if you add `$reporoot/bin` to your `$PATH`, the `hmd` script in there will automatically run the command line tools inside a docker container with `docker` or `nerdctl`, depending on what it finds in your `$PATH`.
+
+## Contributing
+
+Please run `black` on your code before submitting. There are `git` hooks already configured to run `black` every commit, you can run `./hooks/autohook install` to enable them.
 
 ## Supported Types
 
@@ -162,3 +168,11 @@ Usage: `hmd create binary sensor --device-name mfsmaster --device-id 8675309 --m
 Create/Update a device and set the state of multiple metrics on it.
 
 Usage: `hmd create device --device-name coyote --device-id 8675309 --mqtt-user HASS_MQTT_USER --mqtt-password HASS_MQTT_PASSWORD --mqtt-server mqtt.example.com --model 'Rocket Skates' --manufacturer 'Acme Products' --metric-data '{"name":"Left Rocket Skate","value":93}' --metric-data '{"name":"Right Rocket Skate","value":155}' --unique-id 'hmd-26536'`
+
+## Contributors
+
+<a href="https://github.com/unixorn/ha-mqtt-discovery/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=unixorn/ha-mqtt-discovery" />
+</a>
+
+Made with [contributors-img](https://contributors-img.web.app).
