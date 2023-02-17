@@ -52,6 +52,7 @@ jobs:
         uses: megalinter/megalinter@v6
         env:
           VALIDATE_ALL_CODEBASE: false
+          PAT: {{secrets.PAT}}
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SPELL_MISSPELL_DISABLE_ERRORS: true
