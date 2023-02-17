@@ -8,7 +8,7 @@ import ssl
 from typing import Any, Optional
 
 import paho.mqtt.client as mqtt
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, root_validator
 from pydantic.generics import GenericModel
 from typing import Generic, TypeVar
 
@@ -469,33 +469,41 @@ class DeviceInfo(BaseModel):
     configuration_url: Optional[str] = None
     """A link to the webpage that can manage the configuration of this device. Can be either an HTTP or HTTPS link."""
 
-class SensorInfo(BaseModel):
+class EntityInfo(BaseModel):
     component: str
     '''One of the supported MQTT components, for instance `binary_sensor`'''
     '''Information about the sensor'''
-    name: str
-    '''Name of the sensor inside Home Assistant'''
-    device_class: Optional[str] = None
-    '''Type of sensor, used in the HA ui. For instance `motion`'''
-    
-    unique_id: Optional[str] = None
-    '''Set this to enable editing sensor from the HA ui and to integrate with a device'''
-    object_id: Optional[str] = None
-    '''Set this to generate the `entity_id` in HA instead of using `name`'''
-    
-    icon: Optional[str] = None
     device: Optional[DeviceInfo] = None
     '''Information about the device this sensor belongs to'''
+    device_class: Optional[str] = None
+    '''Sets the class of the device, changing the device state and icon that is displayed on the frontend.'''
+    enabled_by_default: Optional[bool] = None
+    '''Flag which defines if the entity should be enabled when first added.'''
+    expire_after: Optional[int] = None
+    '''If set, it defines the number of seconds after the sensor’s state expires, if it’s not updated. 
+    After expiry, the sensor’s state becomes unavailable. Default the sensors state never expires.'''
+    force_update: Optional[bool] = None
+    '''Sends update events even if the value hasn’t changed. Useful if you want to have meaningful value graphs in history.'''
+    icon: Optional[str] = None
+    name: str
+    '''Name of the sensor inside Home Assistant'''
+    object_id: Optional[str] = None
+    '''Set this to generate the `entity_id` in HA instead of using `name`'''
+    qos: Optional[int] = None
+    '''The maximum QoS level to be used when receiving messages.'''
+    unique_id: Optional[str] = None
+    '''Set this to enable editing sensor from the HA ui and to integrate with a device'''
 
-    @validator('device')
-    def device_needs_unique_id(cls, v, values):
-        '''Check that unique_id is set if DeviceInfo are provided, otherwise Home Assistant will not link the sensor to the device'''
-        if 'unique_id' in values and values['unique_id'] is None:
-            raise ValueError('A unique_id is required')
-        return v
+    @root_validator
+    def device_need_unique_id(cls, values):
+        '''Check that `unique_id` is set if `device` is provided, otherwise Home Assistant will not link the sensor to the device'''
+        device, unique_id = values.get('device'), values.get('unique_id')
+        if device is not None and unique_id is None:
+            raise ValueError('A unique_id is required if a device is defined')
+        return values
 
 
-SensorType = TypeVar('SensorType', bound=SensorInfo)
+SensorType = TypeVar('SensorType', bound=EntityInfo)
 
 class Settings(GenericModel, Generic[SensorType]):
     class MQTT(BaseModel):

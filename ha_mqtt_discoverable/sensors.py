@@ -4,16 +4,27 @@
 # License: Apache 2.0
 
 import logging
+from typing import Optional
 
-from ha_mqtt_discoverable import Discoverable, SensorInfo
+from ha_mqtt_discoverable import Discoverable, EntityInfo
 
-class BinarySensorInfo(SensorInfo):
+class BinarySensorInfo(EntityInfo):
     """Binary sensor specific information"""
     component: str = "binary_sensor"
+    off_delay: Optional[int] = None
+    '''For sensors that only send on state updates (like PIRs), 
+    this variable sets a delay in seconds after which the sensor’s state will be updated back to off.'''
     payload_off: str = "on"
     '''Payload to send for the ON state'''
     payload_on: str = "off"
     '''Payload to send for the OFF state'''
+
+
+class SensorInfo(EntityInfo):
+    """Sensor specific information"""
+    component: str = "sensor"
+    unit_of_measurement: Optional[str] = None
+    '''Defines the units of measurement of the sensor, if any.'''
 
 
 class BinarySensor(Discoverable[BinarySensorInfo]):
@@ -32,7 +43,7 @@ class BinarySensor(Discoverable[BinarySensorInfo]):
 
     def _update_state(self, state: bool) -> None:
         """
-        Update MQTT device state
+        Update MQTT sensor state
 
         Args:
             state(bool): What state to set the sensor to
@@ -43,3 +54,16 @@ class BinarySensor(Discoverable[BinarySensorInfo]):
             state_message = self._sensor.payload_off
         logging.info(f"Setting {self._sensor.name} to {state_message} using {self.state_topic}")
         self._state_helper(state=state_message)
+
+
+class Sensor(Discoverable[SensorInfo]):
+    
+    def set_state(self, state: str|int|float) -> None:
+        """
+        Update the sensor state
+
+        Args:
+            state(str): What state to set the sensor to
+        """
+        logging.info(f"Setting {self._sensor.name} to {state} using {self.state_topic}")
+        self._state_helper(str(state))

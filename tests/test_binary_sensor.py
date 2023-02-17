@@ -30,5 +30,5 @@ def test_generate_config(sensor: BinarySensor):
 
 
 def test_update_state(sensor: BinarySensor):
-    sensor._update_state(state=True)
-    sensor._update_state(state=False)
+    sensor.on()
+    sensor.off()
