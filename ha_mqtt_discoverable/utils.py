@@ -9,7 +9,7 @@ import yaml
 from ha_mqtt_discoverable import CONFIGURATION_KEY_NAMES
 
 
-def clean_string(raw: str = None) -> str:
+def clean_string(raw: str) -> str:
     """
     MQTT Discovery protocol only allows [a-zA-Z0-9_-]
     """

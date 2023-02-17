@@ -36,111 +36,70 @@ If all you want to do is use the command line tools, the simplest way is to use 
 
 ## Supported Types
 
-### Binary Sensors
+### Binary sensor
 
 #### Usage
 
-Here is an example that creates a binary sensor.
+The following example creates a binary sensor and sets its state:
 
 ```py
-from ha_mqtt_discoverable.sensors import BinarySensor
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import BinarySensor, BinarySensorInfo
 
-# Create a settings dictionary
-#
-# Mandatory Keys:
-#  mqtt_server
-#  mqtt_user
-#  mqtt_password
-#  device_id
-#  device_name
-#  device_class
-#
-# Optional Keys:
-#  mqtt_prefix - defaults to homeassistant
-#  payload_off
-#  payload_on
-#  unique_id
 
-configd = {
-    "mqtt_server": "mqtt.example.com",
-    "mqtt_prefix": "homeassistant",
-    "mqtt_user": "mqtt_user",
-    "mqtt_password": "mqtt_password",
-    "device_id": "device_id",
-    "device_name":"MySensor",
-    "device_class":"motion",
-}
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+# Information about the sensor
+sensor_info = BinarySensorInfo(name="MySensor", device_class="motion")
 
-mysensor = BinarySensor(settings=configd)
+settings = Settings(mqtt=mqtt_settings, sensor=sensor_info)
+# Instantiate the sensor
+mysensor = BinarySensor(settings)
+
+# Change the state of the sensor, publishing an MQTT message that gets picked up by HA
 mysensor.on()
 mysensor.off()
 
 ```
 
-### Devices
+### Device
 
 #### Usage
 
-Here's an example that will create a MQTT device and add multiple sensors to it.
+The following example associates multiple sensors to a device.
 
 ```py
-from ha_mqtt_discoverable.device import Device
+from ha_mqtt_discoverable import Settings, DeviceInfo
+from ha_mqtt_discoverable.sensors import BinarySensor, BinarySensorInfo
 
-# Create a settings dictionary
-#
-# Mandatory Keys:
-#  mqtt_server
-#  mqtt_user
-#  mqtt_password
-#  device_id
-#  device_name
-#  device_class
-#  unique_id
-#
-# Optional Keys:
-#  client_name
-#  manufacturer
-#  model
-#  mqtt_prefix - defaults to homeassistant
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
 
-configd = {
-    "mqtt_server": "mqtt.example.com",
-    "mqtt_prefix": "homeassistant",
-    "mqtt_user": "mqtt_user",
-    "mqtt_password": "mqtt_password",
-    "device_id": "device_id",
-    "device_name":"MySensor",
-    "device_class":"motion",
-    "manufacturer":"Acme Products",
-    "model": "Rocket Skates",
-}
+# Define the device. At least one of `identifiers` or `connections` must be supplied
+device_info = DeviceInfo(name="My device", identifiers="device_id")
 
-device = Device(settings=configd)
+# Associate the sensor with the device via the `device` parameter
+# `unique_id` must also be set, otherwise Home Assistant will not display the device in the UI
+motion_sensor_info = BinarySensorInfo(name="My motion sensor", device_class="motion", unique_id="my_motion_sensor", device=device_info)
 
-# You can add more than one metric to a device
-device.add_metric(
-    name="Left skate thrust",
-    value=33,
-    configuration={"name": f"Left Skate Thrust"},
-)
-device.add_metric(
-    name="Right skate thrust",
-    value=33,
-    configuration={"name": f"Right Skate Thrust"},
-)
+motion_settings = Settings(mqtt=mqtt_settings, sensor=sensor_info)
+# Instantiate the sensor
+motion_sensor = BinarySensor(motion_settings)
 
-# Nothing gets written to MQTT until we publish
-device.publish()
+# Change the state of the sensor, publishing an MQTT message that gets picked up by HA
+motion_sensor.on()
 
-# Do your own code
+# An additional sensor can be added to the same device, by re-using the DeviceInfo instance previously defined
+door_sensor_info = BinarySensorInfo(name="My door sensor", device_class="door", unique_id="my_door_sensor", device=device_info)
+door_settings = Settings(mqtt=mqtt_settings, sensor=door_sensor_info)
 
-# If we add a metric using the same name as an existing metric, the value is updated
-device.add_metric(
-    name="Right skate thrust",
-    value=99,
-    configuration={"name": f"Right Skate Thrust"},
-)
-device.publish()
+# Instantiate the sensor
+door_sensor = BinarySensor(settings)
+
+# Change the state of the sensor, publishing an MQTT message that gets picked up by HA
+door_sensor.on()
+
+# The two sensors should be visible inside Home Assistant under the device `My device`
 ```
 
 ## Scripts Provided
