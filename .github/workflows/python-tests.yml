@@ -16,6 +16,17 @@ permissions:
 jobs:
   # Inspired by https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md#caching-packages
   test:
+    # Add mosquitto broker for running tests
+    services:
+      # Label used to access the service container
+      mqtt:
+        # Docker Hub image
+        image: eclipse-mosquitto
+        ports:
+          # Opens tcp port 1883 on the host and service container
+          - 1883:1883
+        volumes:
+          - "$GITHUB_WORKSPACE/tests/mosquitto.conf:/mosquitto/config/mosquitto.conf"
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
