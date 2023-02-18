@@ -136,3 +136,6 @@ dmypy.json
 # VSCode configuration files
 .vscode/settings.json
 .vscode/launch.json
+
+# Mega-linter reports dir
+megalinter-reports
