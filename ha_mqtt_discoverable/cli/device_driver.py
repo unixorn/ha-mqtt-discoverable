@@ -56,6 +56,8 @@ def device_cli():
     logging.basicConfig(level=loglevel, format=logFormat)
     logging.info("Set log level to %s", cli.log_level.upper())
     return cli
+
+
 # jscpd:ignore-end
 
 

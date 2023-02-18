@@ -26,7 +26,7 @@ jobs:
           # Opens tcp port 1883 on the host and service container
           - 1883:1883
         volumes:
-          - "$GITHUB_WORKSPACE/tests/mosquitto.conf:/mosquitto/config/mosquitto.conf"
+          - "./tests/mosquitto.conf:/mosquitto/config/mosquitto.conf"
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
