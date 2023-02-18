@@ -13,7 +13,15 @@ DISABLE_LINTERS:
   - PYTHON_PYRIGHT
   - MAKEFILE_CHECKMAKE
 
+PYTHON_PYLINT_PRE_COMMANDS:
+  # Help pylint understand pydantic models
+  - command: pip install pylint-pydantic
+    venv: pylint
+    continue_if_failed: false
+
 PYTHON_PYLINT_ARGUMENTS:
   # Disable import check because it needs all the Python dependencies installed in the linter
   # https://github.com/oxsecurity/megalinter/issues/2030
   - "--disable=E0401"
+  # Help pylint understand pydantic models
+  - "--load-plugins pylint_pydantic"
