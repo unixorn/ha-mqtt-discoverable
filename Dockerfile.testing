@@ -10,7 +10,6 @@ RUN apt-get update && \
     apt-get install -y apt-utils ca-certificates --no-install-recommends && \
 		update-ca-certificates && \
 		rm -fr /tmp/* /var/lib/apt/lists/* && \
-    pip install --upgrade pip --no-cache-dir && \
     pip cache purge
 
 # Keep from having to reinstall all the dependencies every time we
