@@ -686,7 +686,7 @@ wrote_configuration: {self.wrote_configuration}
         self.config_message = config_message
 
         if self._settings.debug:
-            logging.warning(f"Debug mode is enabled, skipping config write.")
+            logging.warning("Debug mode is enabled, skipping config write.")
             return None
 
         return self.mqtt_client.publish(self.config_topic, config_message, retain=True)

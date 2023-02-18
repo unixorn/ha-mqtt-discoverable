@@ -14,7 +14,7 @@ class BinarySensorInfo(EntityInfo):
 
     component: str = "binary_sensor"
     off_delay: Optional[int] = None
-    """For sensors that only send on state updates (like PIRs), 
+    """For sensors that only send on state updates (like PIRs),
     this variable sets a delay in seconds after which the sensor’s state will be updated back to off."""
     payload_off: str = "on"
     """Payload to send for the ON state"""

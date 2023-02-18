@@ -24,7 +24,7 @@ def test_missing_config():
     sensor_info = EntityInfo(name="test", component="binary_sensor")
     # Missing MQTT settings
     with pytest.raises(ValueError):
-        settings = Settings(sensor=sensor_info)  # type: ignore
+        Settings(sensor=sensor_info)  # type: ignore
 
 
 def test_generate_config(discoverable: Discoverable):
