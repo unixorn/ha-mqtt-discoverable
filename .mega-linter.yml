@@ -12,3 +12,8 @@ DISABLE_LINTERS:
   - PYTHON_MYPY
   - PYTHON_PYRIGHT
   - MAKEFILE_CHECKMAKE
+
+PYTHON_PYLINT_ARGUMENTS:
+  # Disable import check because it needs all the Python dependencies installed in the linter
+  # https://github.com/oxsecurity/megalinter/issues/2030
+  - "--disable=E0401"
