@@ -12,4 +12,6 @@ RUN apt-get update && \
     pip3 install --no-cache-dir ha-mqtt-discoverable && \
     pip3 cache purge
 
+USER nobody
+
 CMD ["bash", "-l"]
