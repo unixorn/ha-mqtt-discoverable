@@ -20,4 +20,6 @@ RUN pip3 install --no-cache-dir -r /data/requirements.txt
 COPY dist/*.whl /data
 RUN pip3 install --no-cache-dir /data/*.whl
 
+USER nobody
+
 CMD ["bash", "-l"]
