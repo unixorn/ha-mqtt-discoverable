@@ -31,6 +31,6 @@ jobs:
       # Setup mosquitto broker for running tests
     - name: Setup mosquitto
       run: |
-        docker run -d -v "./tests/mosquitto.conf:/mosquitto/config/mosquitto.conf" -p 1883:1883 eclipse-mosquitto
+        docker run -d -v "${GITHUB_WORKSPACE}/tests/mosquitto.conf:/mosquitto/config/mosquitto.conf" -p 1883:1883 eclipse-mosquitto
     - name: Run tests
       run: poetry run pytest
