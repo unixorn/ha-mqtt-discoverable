@@ -106,3 +106,9 @@ def test_custom_object_id():
     settings = Settings(mqtt=mqtt_settings, sensor=sensor_info)
     d = Discoverable[EntityInfo](settings)
     d.write_config()
+
+
+def test_str(discoverable: Discoverable[EntityInfo]):
+    string = str(discoverable)
+    print(string)
+    assert "settings" in string

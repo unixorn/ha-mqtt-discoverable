@@ -574,21 +574,12 @@ class Discoverable(Generic[SensorType]):
         Generate a string representation of the Discoverable object
         """
         dump = f"""
+settings: {self._settings}
 topic_prefix: {self.topic_prefix}
-mqtt_prefix: {self.mqtt_prefix}
-mqtt_server: {self.mqtt_server}
-mqtt_user: {self.mqtt_user}
-device_class: {self.device_class}
-device_id: {self.device_id}
-device_name: {self.device_name}
-device_class: {self.device_class}
 config_topic: {self.config_topic}
 state_topic: {self.state_topic}
 wrote_configuration: {self.wrote_configuration}
         """
-        if self.icon:
-            dump = f"""{dump}
-            icon: {self.icon}"""
         return dump
 
     def _connect(self) -> None:
