@@ -467,7 +467,8 @@ class DeviceInfo(BaseModel):
     identifiers: Optional[list[str] | str] = None
     """A list of IDs that uniquely identify the device. For example a serial number."""
     connections: Optional[list[tuple]] = None
-    """A list of connections of the device to the outside world as a list of tuples [connection_type, connection_identifier]"""
+    """A list of connections of the device to the outside world as a list of tuples\
+        [connection_type, connection_identifier]"""
     configuration_url: Optional[str] = None
     """A link to the webpage that can manage the configuration of this device. Can be either an HTTP or HTTPS link."""
 
@@ -483,10 +484,11 @@ class EntityInfo(BaseModel):
     enabled_by_default: Optional[bool] = None
     """Flag which defines if the entity should be enabled when first added."""
     expire_after: Optional[int] = None
-    """If set, it defines the number of seconds after the sensor’s state expires, if it’s not updated. 
+    """If set, it defines the number of seconds after the sensor’s state expires, if it’s not updated.\
     After expiry, the sensor’s state becomes unavailable. Default the sensors state never expires."""
     force_update: Optional[bool] = None
-    """Sends update events even if the value hasn’t changed. Useful if you want to have meaningful value graphs in history."""
+    """Sends update events even if the value hasn’t changed.\
+    Useful if you want to have meaningful value graphs in history."""
     icon: Optional[str] = None
     name: str
     """Name of the sensor inside Home Assistant"""
@@ -499,7 +501,8 @@ class EntityInfo(BaseModel):
 
     @root_validator
     def device_need_unique_id(cls, values):
-        """Check that `unique_id` is set if `device` is provided, otherwise Home Assistant will not link the sensor to the device"""
+        """Check that `unique_id` is set if `device` is provided,\
+            otherwise Home Assistant will not link the sensor to the device"""
         device, unique_id = values.get("device"), values.get("unique_id")
         if device is not None and unique_id is None:
             raise ValueError("A unique_id is required if a device is defined")
@@ -554,7 +557,8 @@ class Discoverable(Generic[SensorType]):
         Setup the base discoverable object class
 
         Args:
-            settings: Settings for the sensor we want to create in Home Assistant. See the `Settings` class for the available options.
+            settings: Settings for the sensor we want to create in Home Assistant. \
+                See the `Settings` class for the available options.
         """
         # Import here to avoid circular dependency on imports
         # TODO how to better handle this?
@@ -563,7 +567,8 @@ class Discoverable(Generic[SensorType]):
         self._settings = settings
         self._sensor = settings.sensor
 
-        self.topic_prefix = f"{self._settings.mqtt.topic_prefix}/{self._sensor.component}/{clean_string(self._sensor.name)}"
+        self.topic_prefix = f"{self._settings.mqtt.topic_prefix}/\
+            {self._sensor.component}/{clean_string(self._sensor.name)}"
         self.config_topic = f"{self.topic_prefix}/config"
         self.state_topic = f"{self.topic_prefix}/state"
         logging.info(f"topic_prefix: {self.topic_prefix}")

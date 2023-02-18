@@ -10,3 +10,6 @@ insert_final_newline = true
 
 [*.{yaml,yml}]
 trim_trailing_whitespace = true
+
+[*.py]
+trim_trailing_whitespace = true
