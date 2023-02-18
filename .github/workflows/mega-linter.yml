@@ -51,11 +51,7 @@ jobs:
       - name: Lint Code Base
         uses: megalinter/megalinter@v6
         env:
-          VALIDATE_ALL_CODEBASE: false
-          DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SPELL_MISSPELL_DISABLE_ERRORS: true
-          DISABLE_LINTERS: SPELL_CSPELL,MARKDOWN_MARKDOWN_LINK_CHECK,REPOSITORY_CHECKOV,PYTHON_MYPY,PYTHON_PYRIGHT,PYTHON_DEVSKIM,MAKEFILE_CHECKMAKE
 
       # Upload Mega-Linter artifacts.
       # They will be available on Github action page "Artifacts" section
@@ -65,5 +61,5 @@ jobs:
         with:
           name: Mega-Linter reports
           path: |
-            report
+            megalinter-reports
             mega-linter.log
