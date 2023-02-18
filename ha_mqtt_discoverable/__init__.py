@@ -567,8 +567,10 @@ class Discoverable(Generic[SensorType]):
         self._settings = settings
         self._sensor = settings.sensor
 
-        self.topic_prefix = f"{self._settings.mqtt.topic_prefix}/\
-            {self._sensor.component}/{clean_string(self._sensor.name)}"
+        self.topic_prefix = (
+            f"{self._settings.mqtt.topic_prefix}/"
+            f"{self._sensor.component}/{clean_string(self._sensor.name)}"
+        )
         self.config_topic = f"{self.topic_prefix}/config"
         self.state_topic = f"{self.topic_prefix}/state"
         logging.info(f"topic_prefix: {self.topic_prefix}")
