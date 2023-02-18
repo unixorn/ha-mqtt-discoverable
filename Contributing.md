@@ -1,0 +1,13 @@
+# Contributing
+
+## Setup
+
+ha-mqtt-discovery uses [poetry](https://python-poetry.org/) to manage module dependencies and make packaging the module easier. Once you install `poetry`, run `poetry install` to have it create a venv for you to use during development.
+
+We use [Autohook](https://github.com/Autohook/Autohook) to run our pre-commit/postcheckout etc `git` hooks.  Please run `hooks/autohook.sh install` at the root of the repository to enable autohook to handle the `git` pre-commit and post-checkout scripts. This won't affect any of your other repositories, just this one. The `git` scripts take care of some cleanups of stray `.pyc` and `.pyo` files, and then run `black` on the `.py` files in your commit.
+
+## Contribution Guidelines
+
+- PRs should include readme updates for any added/changed/removed functionality.
+- The current state of tests in the repo is frankly terrible. [issues/20](https://github.com/unixorn/ha-mqtt-discovery/issues/20) to backfill tests is already going to be a lot of work, so please add pytest tests for any new functions you add to keep from piling on more.
+- Please use `pydantic` to validate input settings and provide default values.
