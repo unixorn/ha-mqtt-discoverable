@@ -20,8 +20,11 @@ PYTHON_PYLINT_PRE_COMMANDS:
     continue_if_failed: false
 
 PYTHON_PYLINT_ARGUMENTS:
-  # Disable import check because it needs all the Python dependencies installed in the linter
+  # Disable import checks because it needs all the Python dependencies installed in the linter
   # https://github.com/oxsecurity/megalinter/issues/2030
-  - "--disable=E0401"
+  - "--disable=E0401,E0611"
   # Help pylint understand pydantic models
-  - "--load-plugins pylint_pydantic"
+  - "--load-plugins=pylint_pydantic"
+
+# Exclude test files from linting since they make use of the `assert` statement that bandit does not like
+PYTHON_BANDIT_FILTER_REGEX_EXCLUDE: test_
