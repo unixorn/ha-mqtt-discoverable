@@ -1,4 +1,5 @@
-FROM unixorn/debian-py3:latest
+FROM python:3.10
+
 LABEL maintainer="Joe Block <jpb@unixorn.net>"
 LABEL description="Test image for ha-mqtt-discoverable module"
 
@@ -9,16 +10,17 @@ RUN apt-get update && \
     apt-get install -y apt-utils ca-certificates --no-install-recommends && \
 		update-ca-certificates && \
 		rm -fr /tmp/* /var/lib/apt/lists/* && \
-    /usr/bin/python3 -m pip install --upgrade pip --no-cache-dir && \
-    pip3 cache purge
+    pip cache purge
 
 # Keep from having to reinstall all the dependencies every time we
 # rebuild
 COPY requirements.txt /data
-RUN pip3 install --no-cache-dir -r /data/requirements.txt
+RUN pip install --no-cache-dir -r /data/requirements.txt
 
 COPY dist/*.whl /data
-RUN pip3 install --no-cache-dir /data/*.whl
+RUN pip install --no-cache-dir /data/*.whl
+
+USER nobody
 
 USER nobody
 
