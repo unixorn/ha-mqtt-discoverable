@@ -1,0 +1,32 @@
+# This workflow will install Python dependencies and run tests with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python tests
+
+on:
+  push:
+    # Run against all branches
+    # branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  # Inspired by https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md#caching-packages
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install poetry
+      run: pipx install poetry
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+        cache: 'poetry'
+    - name: Install dependencies
+      run: poetry install
+    - name: Run tests
+      run: poetry run pytest
