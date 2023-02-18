@@ -12,43 +12,43 @@ c: clean
 f: format
 t: test
 
-# If this pukes trying to import paho, try 'poetry install'
-MODULE_VERSION=$(shell poetry run python3 -c 'from ha_mqtt_discoverable import __version__;print(__version__)' )
-
 help:
 	@echo "Options:"
-	@echo "format: Reformat all python files with black"
-	@echo "tests: Run tests with nosetest"
-	@echo "verbose_tests: Run tests with nosetest -v"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-clean:
+# If this pukes trying to import paho, try running 'poetry install'
+MODULE_VERSION=$(shell poetry run python3 -c 'from ha_mqtt_discoverable import __version__;print(__version__)' )
+
+clean: ## Cleans out stale wheels, generated tar files, .pyc and .pyo files
 	rm -fv dist/*.tar dist/*.whl
+	find . -iname '*.py[co]' -delete
 
-format:
+format: ## Runs 'black' on all our python source files
 	poetry run black ha_mqtt_discoverable/*.py \
 		ha_mqtt_discoverable/*/*.py \
 		tests/*.py
-test:
+
+test: ## Run tests with 'nosetests'
 	nosestests -v
 
-local: wheel requirements.txt
+local: wheel requirements.txt ## Makes a docker image for only the architecture we're running on. Does not push to dockerhub.
 	docker buildx build --load -t unixorn/ha-mqtt-discoverable-test:$(MODULE_VERSION) -f Dockerfile.testing .
 	docker tag unixorn/ha-mqtt-discoverable-test:$(MODULE_VERSION) unixorn/ha-mqtt-discoverable-test:latest
 
 trial: wheel
 	docker buildx build --no-cache --build-arg application_version=${MODULE_VERSION} --load -t unixorn/ha-mqtt-discoverable:$(MODULE_VERSION) .
 
-fatimage: wheel
+fatimage: wheel ## Makes a multi-architecture docker image for linux/arm64, linux/amd64 and linux/arm/v7 and pushes it to dockerhub
 	docker buildx build --no-cache --build-arg application_version=${MODULE_VERSION} --platform linux/arm64,linux/amd64,linux/arm/v7 --push -t unixorn/ha-mqtt-discoverable:$(MODULE_VERSION) .
 	make local
 
-wheel: clean format
+wheel: clean format ## Builds a wheel for our modules. 'poetry' bakes the dependencies into the wheel metadata.
 	poetry build
 
-publish: fatimage
+publish: fatimage ## Builds a multi-architecture docker image and publishes the module to pypi
 	poetry publish
 
 # We only use this to enable the Dockerfile.testing have a layer for the python
 # dependencies so we don't have to reinstall every time we test a new change
-requirements.txt: poetry.lock pyproject.toml Makefile
+requirements.txt: poetry.lock pyproject.toml Makefile ## Builds a requirements.txt to Dockerfile.testing can cache installing the python dependencies. poetry includes the deps in our wheel metadata, requirements.txt is not needed other than for test images.
 	poetry export -o requirements.txt
