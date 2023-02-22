@@ -51,11 +51,11 @@ class BinarySensor(Discoverable[BinarySensorInfo]):
             state(bool): What state to set the sensor to
         """
         if state:
-            state_message = self._sensor.payload_on
+            state_message = self._entity.payload_on
         else:
-            state_message = self._sensor.payload_off
+            state_message = self._entity.payload_off
         logging.info(
-            f"Setting {self._sensor.name} to {state_message} using {self.state_topic}"
+            f"Setting {self._entity.name} to {state_message} using {self.state_topic}"
         )
         self._state_helper(state=state_message)
 
@@ -68,5 +68,5 @@ class Sensor(Discoverable[SensorInfo]):
         Args:
             state(str): What state to set the sensor to
         """
-        logging.info(f"Setting {self._sensor.name} to {state} using {self.state_topic}")
+        logging.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
         self._state_helper(str(state))

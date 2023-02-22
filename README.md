@@ -58,7 +58,7 @@ mqtt_settings = Settings.MQTT(host="localhost")
 # Information about the sensor
 sensor_info = BinarySensorInfo(name="MySensor", device_class="motion")
 
-settings = Settings(mqtt=mqtt_settings, sensor=sensor_info)
+settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
 # Instantiate the sensor
 mysensor = BinarySensor(settings)
 
@@ -92,7 +92,7 @@ device_info = DeviceInfo(name="My device", identifiers="device_id")
 # `unique_id` must also be set, otherwise Home Assistant will not display the device in the UI
 motion_sensor_info = BinarySensorInfo(name="My motion sensor", device_class="motion", unique_id="my_motion_sensor", device=device_info)
 
-motion_settings = Settings(mqtt=mqtt_settings, sensor=sensor_info)
+motion_settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
 # Instantiate the sensor
 motion_sensor = BinarySensor(motion_settings)
 
@@ -101,7 +101,7 @@ motion_sensor.on()
 
 # An additional sensor can be added to the same device, by re-using the DeviceInfo instance previously defined
 door_sensor_info = BinarySensorInfo(name="My door sensor", device_class="door", unique_id="my_door_sensor", device=device_info)
-door_settings = Settings(mqtt=mqtt_settings, sensor=door_sensor_info)
+door_settings = Settings(mqtt=mqtt_settings, entity=door_sensor_info)
 
 # Instantiate the sensor
 door_sensor = BinarySensor(settings)

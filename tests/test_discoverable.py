@@ -8,14 +8,14 @@ def discoverable() -> Discoverable[EntityInfo]:
         host="localhost", username="admin", password="password"
     )
     sensor_info = EntityInfo(name="test", component="binary_sensor")
-    settings = Settings(mqtt=mqtt_settings, sensor=sensor_info)
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     return Discoverable[EntityInfo](settings)
 
 
 def test_required_config():
     mqtt_settings = Settings.MQTT(host="localhost")
     sensor_info = EntityInfo(name="test", component="binary_sensor")
-    settings = Settings(mqtt=mqtt_settings, sensor=sensor_info)
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     d = Discoverable(settings)
     assert d is not None
 
@@ -24,7 +24,7 @@ def test_missing_config():
     sensor_info = EntityInfo(name="test", component="binary_sensor")
     # Missing MQTT settings
     with pytest.raises(ValueError):
-        Settings(sensor=sensor_info)  # type: ignore
+        Settings(entity=sensor_info)  # type: ignore
 
 
 def test_generate_config(discoverable: Discoverable):
@@ -62,8 +62,8 @@ def test_state_helper(discoverable: Discoverable):
 def test_device_info(discoverable: Discoverable[EntityInfo]):
     device_info = DeviceInfo(name="Test device", identifiers="test_device_id")
     # Assign the sensor to a device
-    discoverable._sensor.device = device_info
-    discoverable._sensor.unique_id = "test_sensor"
+    discoverable._entity.device = device_info
+    discoverable._entity.unique_id = "test_sensor"
     config = discoverable.generate_config()
 
     # Check that the device info is put in the output config
@@ -97,7 +97,7 @@ def test_name_with_space():
         host="localhost", username="admin", password="password"
     )
     sensor_info = EntityInfo(name="Name with space", component="binary_sensor")
-    settings = Settings(mqtt=mqtt_settings, sensor=sensor_info)
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     d = Discoverable[EntityInfo](settings)
     d.write_config()
 
@@ -109,7 +109,7 @@ def test_custom_object_id():
     sensor_info = EntityInfo(
         name="Test name", component="binary_sensor", object_id="custom object id"
     )
-    settings = Settings(mqtt=mqtt_settings, sensor=sensor_info)
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     d = Discoverable[EntityInfo](settings)
     d.write_config()
 

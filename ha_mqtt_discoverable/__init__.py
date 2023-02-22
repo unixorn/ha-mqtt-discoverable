@@ -517,10 +517,10 @@ class EntityInfo(BaseModel):
         return values
 
 
-SensorType = TypeVar("SensorType", bound=EntityInfo)
+EntityType = TypeVar("EntityType", bound=EntityInfo)
 
 
-class Settings(GenericModel, Generic[SensorType]):
+class Settings(GenericModel, Generic[EntityType]):
     class MQTT(BaseModel):
         """Connection settings for the MQTT broker"""
 
@@ -536,18 +536,18 @@ class Settings(GenericModel, Generic[SensorType]):
 
     mqtt: MQTT
     """Connection to MQTT broker"""
-    sensor: SensorType
+    entity: EntityType
     debug: bool = False
     """Print out the message that would be sent over MQTT"""
 
 
-class Discoverable(Generic[SensorType]):
+class Discoverable(Generic[EntityType]):
     """
     Base class for making MQTT discoverable objects
     """
 
     _settings: Settings
-    _sensor: SensorType
+    _entity: EntityType
 
     mqtt_client: mqtt.Client
     wrote_configuration: bool = False
@@ -560,7 +560,7 @@ class Discoverable(Generic[SensorType]):
     class Config:
         arbitrary_types_allowed = True
 
-    def __init__(self, settings: Settings[SensorType]) -> None:
+    def __init__(self, settings: Settings[EntityType]) -> None:
         """
         Setup the base discoverable object class
 
@@ -573,11 +573,11 @@ class Discoverable(Generic[SensorType]):
         from ha_mqtt_discoverable.utils import clean_string
 
         self._settings = settings
-        self._sensor = settings.sensor
+        self._entity = settings.entity
 
         self.topic_prefix = (
             f"{self._settings.mqtt.topic_prefix}/"
-            f"{self._sensor.component}/{clean_string(self._sensor.name)}"
+            f"{self._entity.component}/{clean_string(self._entity.name)}"
         )
         self.config_topic = f"{self.topic_prefix}/config"
         self.state_topic = f"{self.topic_prefix}/state"
@@ -676,7 +676,7 @@ wrote_configuration: {self.wrote_configuration}
         automagically ingest the new sensor.
         """
         # Automatically generate a dict using pydantic
-        config = self._sensor.dict(exclude_none=True)
+        config = self._entity.dict(exclude_none=True)
         # Add the MQTT topics to be discovered by HA
         topics = {
             "state_topic": self.state_topic,
