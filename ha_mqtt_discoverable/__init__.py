@@ -472,6 +472,14 @@ class DeviceInfo(BaseModel):
     configuration_url: Optional[str] = None
     """A link to the webpage that can manage the configuration of this device. Can be either an HTTP or HTTPS link."""
 
+    @root_validator
+    def must_have_identifiers_or_connection(cls, values):
+        """Check that either `identifiers` or `connections` is set"""
+        identifiers, connections = values.get("identifiers"), values.get("connections")
+        if identifiers is None and connections is None:
+            raise ValueError("Define identifiers or connections")
+        return values
+
 
 class EntityInfo(BaseModel):
     component: str

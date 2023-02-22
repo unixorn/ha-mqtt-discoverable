@@ -79,6 +79,12 @@ def test_device_missing_unique_id():
         EntityInfo(name="test", component="binary_sensor", device=device_info)
 
 
+def test_device_without_identifiers():
+    # Identifiers or connections is required
+    with pytest.raises(ValueError):
+        DeviceInfo(name="Test device")
+
+
 def test_device_with_unique_id():
     device_info = DeviceInfo(name="Test device", identifiers="test_device_id")
     EntityInfo(
