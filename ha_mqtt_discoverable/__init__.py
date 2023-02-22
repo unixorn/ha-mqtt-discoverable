@@ -13,7 +13,7 @@ from pydantic.generics import GenericModel
 from typing import Generic, TypeVar
 
 
-__version__ = "0.4.2"
+__version__ = "0.5.0"
 
 CONFIGURATION_KEY_NAMES = {
     "act_t": "action_topic",
