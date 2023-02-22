@@ -5,10 +5,15 @@
 import json
 import logging
 import ssl
+from typing import Any, Optional
 
 import paho.mqtt.client as mqtt
+from pydantic import BaseModel, root_validator
+from pydantic.generics import GenericModel
+from typing import Generic, TypeVar
 
-__version__ = "0.4.2"
+
+__version__ = "0.5.0"
 
 CONFIGURATION_KEY_NAMES = {
     "act_t": "action_topic",
@@ -449,150 +454,179 @@ CONFIGURATION_KEY_NAMES = {
 }
 
 
-class Discoverable:
+class DeviceInfo(BaseModel):
+    """Information about a device a sensor belongs to"""
+
+    name: str
+    model: Optional[str] = None
+    manufacturer: Optional[str] = None
+    sw_version: Optional[str] = None
+    """Firmware version of the device"""
+    hw_version: Optional[str] = None
+    """Hardware version of the device"""
+    identifiers: Optional[list[str] | str] = None
+    """A list of IDs that uniquely identify the device. For example a serial number."""
+    connections: Optional[list[tuple]] = None
+    """A list of connections of the device to the outside world as a list of tuples\
+        [connection_type, connection_identifier]"""
+    configuration_url: Optional[str] = None
+    """A link to the webpage that can manage the configuration of this device. Can be either an HTTP or HTTPS link."""
+
+    @root_validator
+    def must_have_identifiers_or_connection(cls, values):
+        """Check that either `identifiers` or `connections` is set"""
+        identifiers, connections = values.get("identifiers"), values.get("connections")
+        if identifiers is None and connections is None:
+            raise ValueError("Define identifiers or connections")
+        return values
+
+
+class EntityInfo(BaseModel):
+    component: str
+    """One of the supported MQTT components, for instance `binary_sensor`"""
+    """Information about the sensor"""
+    device: Optional[DeviceInfo] = None
+    """Information about the device this sensor belongs to"""
+    device_class: Optional[str] = None
+    """Sets the class of the device, changing the device state and icon that is displayed on the frontend."""
+    enabled_by_default: Optional[bool] = None
+    """Flag which defines if the entity should be enabled when first added."""
+    expire_after: Optional[int] = None
+    """If set, it defines the number of seconds after the sensor’s state expires, if it’s not updated.\
+    After expiry, the sensor’s state becomes unavailable. Default the sensors state never expires."""
+    force_update: Optional[bool] = None
+    """Sends update events even if the value hasn’t changed.\
+    Useful if you want to have meaningful value graphs in history."""
+    icon: Optional[str] = None
+    name: str
+    """Name of the sensor inside Home Assistant"""
+    object_id: Optional[str] = None
+    """Set this to generate the `entity_id` in HA instead of using `name`"""
+    qos: Optional[int] = None
+    """The maximum QoS level to be used when receiving messages."""
+    unique_id: Optional[str] = None
+    """Set this to enable editing sensor from the HA ui and to integrate with a device"""
+
+    @root_validator
+    def device_need_unique_id(cls, values):
+        """Check that `unique_id` is set if `device` is provided,\
+            otherwise Home Assistant will not link the sensor to the device"""
+        device, unique_id = values.get("device"), values.get("unique_id")
+        if device is not None and unique_id is None:
+            raise ValueError("A unique_id is required if a device is defined")
+        return values
+
+
+EntityType = TypeVar("EntityType", bound=EntityInfo)
+
+
+class Settings(GenericModel, Generic[EntityType]):
+    class MQTT(BaseModel):
+        """Connection settings for the MQTT broker"""
+
+        host: str
+        username: Optional[str] = None
+        password: Optional[str] = None
+        client_name: Optional[str] = None
+        tls_key: Optional[str] = None
+        tls_certfile: Optional[str] = None
+        tls_ca_cert: Optional[str] = None
+
+        topic_prefix: str = "homeassistant"
+
+    mqtt: MQTT
+    """Connection to MQTT broker"""
+    entity: EntityType
+    debug: bool = False
+    """Print out the message that would be sent over MQTT"""
+
+
+class Discoverable(Generic[EntityType]):
     """
     Base class for making MQTT discoverable objects
     """
 
-    def __init__(self, settings: dict = {}) -> None:
+    _settings: Settings
+    _entity: EntityType
+
+    mqtt_client: mqtt.Client
+    wrote_configuration: bool = False
+    # MQTT topics
+    topic_prefix: str
+    config_topic: str
+    state_topic: str
+    availability_topic: str
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    def __init__(self, settings: Settings[EntityType]) -> None:
         """
-        Validate the settings and setup the base discoverable object class
+        Setup the base discoverable object class
 
         Args:
-            settings(dict): Settings for the sensor we want to create in Home Assistant.
-
-            Mandatory Keys:
-                mqtt_server
-                mqtt_prefix - defaults to homeassistant
-                mqtt_user
-                mqtt_password
-                device_id
-                device_name
-                device_class
-
-            Optional Keys:
-                payload_off
-                payload_on
-                unique_id
+            settings: Settings for the sensor we want to create in Home Assistant. \
+                See the `Settings` class for the available options.
         """
-        settings_error_base = "You must specify a server and a client_name"
+        # Import here to avoid circular dependency on imports
+        # TODO how to better handle this?
+        from ha_mqtt_discoverable.utils import clean_string
 
-        if "client_name" not in settings:
-            raise RuntimeError(f"client_name is unset. {settings_error_base}")
-        self.client_name = settings["client_name"]
+        self._settings = settings
+        self._entity = settings.entity
 
-        if "debug" not in settings:
-            settings["debug"] = False
-        self.debug = settings["debug"]
-
-        if "mqtt_server" not in settings:
-            raise RuntimeError(f"mqtt_server is unset. {settings_error_base}")
-        self.mqtt_server = settings["mqtt_server"]
-
-        if "mqtt_prefix" not in settings:
-            raise RuntimeError("mqtt_prefix is unset.")
-        self.mqtt_prefix = settings["mqtt_prefix"]
-
-        if "mqtt_password" not in settings:
-            raise RuntimeError("mqtt_password is unset.")
-        self.mqtt_password = settings["mqtt_password"]
-
-        if "mqtt_user" not in settings:
-            raise RuntimeError(f"mqtt_user is unset. {settings_error_base}")
-        self.mqtt_user = settings["mqtt_user"]
-
-        if "device_id" not in settings:
-            raise RuntimeError("device_id is unset.")
-        self.device_id = settings["device_id"]
-
-        if "device_name" not in settings:
-            raise RuntimeError("device_name is unset.")
-        self.device_name = settings["device_name"]
-
-        if "device_class" not in settings:
-            raise RuntimeError("device_class is unset.")
-        self.device_class = settings["device_class"]
-
-        if "icon" in settings:
-            self.icon = settings["icon"]
-        if "manufacturer" in settings:
-            self.manufacturer = settings["manufacturer"]
-        else:
-            self.manufacturer = "Acme Products"
-
-        if "model" in settings:
-            self.model = settings["model"]
-        if "unique_id" in settings:
-            self.unique_id = settings["unique_id"]
-
-        # SSL setup
-
-        self.use_tls = False
-        if "use_tls" in settings:
-            if settings["use_tls"]:
-                self.tls_ca_cert = settings["tls_ca_cert"]
-                self.tls_certfile = settings["tls_certfile"]
-                self.tls_key = settings["tls_key"]
-                self.use_tls = settings["use_tls"]
-
-        self.topic_prefix = f"{self.mqtt_prefix}/{self.device_class}/{self.device_name}"
+        self.topic_prefix = (
+            f"{self._settings.mqtt.topic_prefix}/"
+            f"{self._entity.component}/{clean_string(self._entity.name)}"
+        )
         self.config_topic = f"{self.topic_prefix}/config"
         self.state_topic = f"{self.topic_prefix}/state"
         logging.info(f"topic_prefix: {self.topic_prefix}")
         logging.info(f"self.state_topic: {self.state_topic}")
-        self.wrote_configuration = False
 
     def __str__(self) -> str:
         """
         Generate a string representation of the Discoverable object
         """
         dump = f"""
+settings: {self._settings}
 topic_prefix: {self.topic_prefix}
-mqtt_prefix: {self.mqtt_prefix}
-mqtt_server: {self.mqtt_server}
-mqtt_user: {self.mqtt_user}
-device_class: {self.device_class}
-device_id: {self.device_id}
-device_name: {self.device_name}
-device_class: {self.device_class}
 config_topic: {self.config_topic}
 state_topic: {self.state_topic}
 wrote_configuration: {self.wrote_configuration}
         """
-        if self.icon:
-            dump = f"""{dump}
-            icon: {self.icon}"""
         return dump
 
     def _connect(self) -> None:
         if not hasattr(self, "mqtt_client"):
+            mqtt_settings = self._settings.mqtt
             logging.debug(
-                f"Creating mqtt client({self.client_name}) for {self.mqtt_server}"
+                f"Creating mqtt client({mqtt_settings.client_name}) for {mqtt_settings.host}"
             )
-            self.mqtt_client = mqtt.Client(self.client_name)
-            if self.use_tls:
-                logging.info(f"Connecting to {self.mqtt_server}...")
-                logging.info("Configuring SSL")
-                logging.debug(f"ca_certs=s{self.tls_ca_cert}")
-                logging.debug(f"certfile={self.tls_certfile}")
-                logging.debug(f"keyfile={self.tls_key}")
+            self.mqtt_client = mqtt.Client(mqtt_settings.client_name)
+            if mqtt_settings.tls_key:
+                logging.info(f"Connecting to {mqtt_settings.host} with SSL")
+                logging.debug(f"ca_certs={mqtt_settings.tls_ca_cert}")
+                logging.debug(f"certfile={mqtt_settings.tls_certfile}")
+                logging.debug(f"keyfile={mqtt_settings.tls_key}")
                 self.mqtt_client.tls_set(
-                    ca_certs=self.tls_ca_cert,
-                    certfile=self.tls_certfile,
-                    keyfile=self.tls_key,
+                    ca_certs=mqtt_settings.tls_ca_cert,
+                    certfile=mqtt_settings.tls_certfile,
+                    keyfile=mqtt_settings.tls_key,
                     cert_reqs=ssl.CERT_REQUIRED,
                     tls_version=ssl.PROTOCOL_TLS,
                 )
             else:
-                logging.warning(f"Connecting to {self.mqtt_server} without SSL")
-                self.mqtt_client.username_pw_set(
-                    self.mqtt_user, password=self.mqtt_password
-                )
-            self.mqtt_client.connect(self.mqtt_server)
+                logging.warning(f"Connecting to {mqtt_settings.host} without SSL")
+                if mqtt_settings.username:
+                    self.mqtt_client.username_pw_set(
+                        mqtt_settings.username, password=mqtt_settings.password
+                    )
+            self.mqtt_client.connect(mqtt_settings.host)
         else:
-            logging.debug("Reusing existing mqtt_client...")
+            logging.debug("Reusing existing MQTT client")
 
-    def _state_helper(self, state: str = None, topic: str = None) -> None:
+    def _state_helper(self, state: Optional[str], topic: Optional[str] = None) -> None:
         """
         Write a state to our MQTT state topic
         """
@@ -601,13 +635,15 @@ wrote_configuration: {self.wrote_configuration}
             logging.debug("Writing sensor configuration")
             self.write_config()
         if not topic:
-            logging.debug(f"topic unset, using default of '{self.state_topic}'")
+            logging.debug(f"State topic unset, using default '{self.state_topic}'")
             topic = self.state_topic
         logging.debug(f"Writing '{state}' to {topic}")
-        if self.debug:
+
+        if self._settings.debug:
             logging.warning(f"Debug is {self.debug}, skipping state write")
-        else:
-            logging.warning(self.mqtt_client.publish(topic, state, retain=True))
+            return
+
+        logging.warning(self.mqtt_client.publish(topic, state, retain=True))
 
     def debug_mode(self, mode: bool):
         self.debug = mode
@@ -628,28 +664,26 @@ wrote_configuration: {self.wrote_configuration}
         config_message = ""
         self._connect()
         logging.info(
-            f"Writing '{config_message}' to topic {self.config_topic} on {self.mqtt_server}"
+            f"Writing '{config_message}' to topic {self.config_topic} on {self._settings.mqtt.host}"
         )
         self.mqtt_client.publish(self.config_topic, config_message, retain=True)
 
-    def generate_config(self) -> dict:
+    def generate_config(self) -> dict[str, Any]:
         """
         Generate a dictionary that we'll grind into JSON and write to MQTT.
 
         Will be used with the MQTT discovery protocol to make Home Assistant
         automagically ingest the new sensor.
         """
-        config = {
-            "name": self.device_name,
-            "device_class": self.device_class,
+        # Automatically generate a dict using pydantic
+        config = self._entity.dict(exclude_none=True)
+        # Add the MQTT topics to be discovered by HA
+        topics = {
             "state_topic": self.state_topic,
-            "availability_topic": self.state_topic,
         }
-        if hasattr(self, "icon"):
-            config["icon"] = self.icon
-        return config
+        return config | topics
 
-    def write_config(self) -> None:
+    def write_config(self):
         """
         mosquitto_pub -r -h 127.0.0.1 -p 1883 \
             -t "homeassistant/binary_sensor/garden/config" \
@@ -661,17 +695,18 @@ wrote_configuration: {self.wrote_configuration}
         config_message = json.dumps(self.generate_config())
 
         logging.debug(
-            f"Writing '{config_message}' to topic {self.config_topic} on {self.mqtt_server}"
+            f"Writing '{config_message}' to topic {self.config_topic} on {self._settings.mqtt.host}"
         )
         self.wrote_configuration = True
         self.config_message = config_message
 
-        if self.debug:
-            logging.warning(f"Debug is set to {self.debug}, skipping config write.")
-        else:
-            self.mqtt_client.publish(self.config_topic, config_message, retain=True)
+        if self._settings.debug:
+            logging.warning("Debug mode is enabled, skipping config write.")
+            return None
 
-    def update_state(self, state) -> None:
+        return self.mqtt_client.publish(self.config_topic, config_message, retain=True)
+
+    def _update_state(self, state) -> None:
         """
         Update MQTT device state
 

@@ -21,7 +21,7 @@ You can use the [mega-linter-runner](https://megalinter.io/latest/mega-linter-ru
 To run all the linters as configured in the `.mega-linter.yml` file, use:
 
 ```bash
-npx mega-linter-runner
+npx mega-linter-runner --flavor python
 ```
 
 It will print out the results in the console, as well as generate a `megalinter-reports` directory with all its reports.
