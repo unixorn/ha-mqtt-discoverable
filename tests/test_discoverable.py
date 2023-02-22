@@ -125,17 +125,18 @@ def test_str(discoverable: Discoverable[EntityInfo]):
     assert "settings" in string
 
 
+# Define a callback function to be invoked when we receive a message on the topic
+def message_callback(client: Client, userdata, message: MQTTMessage, tmp=None):
+    logging.info("Received %s", message)
+    payload = message.payload.decode()
+    assert "test" in payload
+    userdata.set()
+    client.disconnect()
+
+
 def test_publish_multithread(discoverable: Discoverable):
     received_message = Event()
-    mqtt_client = Client(protocol=MQTTv5)
-
-    # Define a callback function to be invoked when we receive a message on the topic
-    def message_callback(client: Client, userdata, message: MQTTMessage, tmp=None):
-        logging.info("Received {}", message)
-        payload = message.payload.decode()
-        assert "test" in payload
-        received_message.set()
-        mqtt_client.disconnect()
+    mqtt_client = Client(protocol=MQTTv5, userdata=received_message)
 
     mqtt_client.connect(host="localhost")
     mqtt_client.on_message = message_callback
@@ -162,15 +163,7 @@ def test_publish_multithread(discoverable: Discoverable):
 
 def test_publish_async(discoverable: Discoverable):
     received_message = Event()
-    mqtt_client = Client(protocol=MQTTv5)
-
-    # Define a callback function to be invoked when we receive a message on the topic
-    def message_callback(client: Client, userdata, message: MQTTMessage, tmp=None):
-        logging.info("Received {}", message)
-        payload = message.payload.decode()
-        assert "test" in payload
-        received_message.set()
-        mqtt_client.disconnect()
+    mqtt_client = Client(protocol=MQTTv5, userdata=received_message)
 
     mqtt_client.connect(host="localhost", clean_start=True)
     mqtt_client.on_message = message_callback
