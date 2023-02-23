@@ -120,7 +120,7 @@ class Switch(Discoverable[SwitchInfo]):
         result, _ = self.mqtt_client.subscribe(self._command_topic, qos=1)
 
         if result is not MQTT_ERR_SUCCESS:
-            raise RuntimeError("Error subscribing to MQTT topic")
+            raise RuntimeError("Error subscribing to MQTT command topic")
 
     def _update_state(self, state: bool) -> None:
         """

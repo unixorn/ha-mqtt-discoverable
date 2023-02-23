@@ -32,7 +32,7 @@ def test_generate_config(sensor: Switch):
     assert config["command_topic"] == sensor._entity.command_topic
 
 
-def test_set_callback(sensor: Switch):
+def test_callback(sensor: Switch):
     message_received = Event()
     sensor.write_config()
 
