@@ -4,7 +4,7 @@
 
 ha-mqtt-discovery uses [poetry](https://python-poetry.org/) to manage module dependencies and make packaging the module easier. Once you install `poetry`, run `poetry install` to have it create a venv for you to use during development.
 
-We use [Autohook](https://github.com/Autohook/Autohook) to run our pre-commit/postcheckout etc `git` hooks.  Please run `hooks/autohook.sh install` at the root of the repository to enable autohook to handle the `git` pre-commit and post-checkout scripts. This won't affect any of your other repositories, just this one. The `git` scripts take care of some cleanups of stray `.pyc` and `.pyo` files, and then run `black` on the `.py` files in your commit.
+We use [pre-commit](https://pre-commit.com/) to run our pre-commit/postcheckout etc `git` hooks.  Please run `pre-commit install` at the root of the repository to enable automatic handling of the `git` pre-commit scripts. This won't affect any of your other repositories, just this one. The pre-commit scripts run `black` on the `.py` files that you are committing. Their configuration is managed in the file `.pre-commit-config.yaml`.
 
 ## Contribution Guidelines
 

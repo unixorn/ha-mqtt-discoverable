@@ -2,6 +2,7 @@
 #
 # License: Apache 2.0 (see root of the repo)
 
+from importlib import metadata
 import json
 import logging
 import ssl
@@ -11,8 +12,9 @@ import paho.mqtt.client as mqtt
 from pydantic import BaseModel, root_validator
 from pydantic.generics import GenericModel
 
+# Read version from the package metadata
+__version__ = metadata.version(__package__)
 
-__version__ = "0.5.0"
 
 CONFIGURATION_KEY_NAMES = {
     "act_t": "action_topic",

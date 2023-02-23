@@ -18,6 +18,7 @@ pydantic = "^1.10.5"
 [tool.poetry.group.dev.dependencies]
 flake8 = "^5.0.4"
 black = "^22.10.0"
+pre-commit = "^3.1.0"
 
 
 [tool.poetry.group.test.dependencies]

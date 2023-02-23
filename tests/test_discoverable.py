@@ -128,6 +128,10 @@ def test_str(discoverable: Discoverable[EntityInfo]):
 # Define a callback function to be invoked when we receive a message on the topic
 def message_callback(client: Client, userdata, message: MQTTMessage, tmp=None):
     logging.info("Received %s", message)
+    # If the broker is `dirty` and contains messages send by other test functions, skip these retained messages
+    if message.retain:
+        logging.warn("Skipping retained message")
+        return
     payload = message.payload.decode()
     assert "test" in payload
     userdata.set()
