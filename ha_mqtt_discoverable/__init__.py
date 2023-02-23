@@ -558,9 +558,6 @@ class Discoverable(Generic[EntityType]):
     state_topic: str
     availability_topic: str
 
-    class Config:
-        arbitrary_types_allowed = True
-
     def __init__(self, settings: Settings[EntityType]) -> None:
         """
         Setup the base discoverable object class
@@ -624,6 +621,8 @@ wrote_configuration: {self.wrote_configuration}
                         mqtt_settings.username, password=mqtt_settings.password
                     )
             self.mqtt_client.connect(mqtt_settings.host)
+            # Start the internal network loop of the MQTT library to handle incoming messages in a separate thread
+            self.mqtt_client.loop_start()
         else:
             logging.debug("Reusing existing MQTT client")
 
