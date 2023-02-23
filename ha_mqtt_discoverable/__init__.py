@@ -11,9 +11,12 @@ import paho.mqtt.client as mqtt
 from pydantic import BaseModel, root_validator
 from pydantic.generics import GenericModel
 from typing import Generic, TypeVar
+from importlib import metadata
 
 
-__version__ = "0.5.0"
+# Read version from the package metadata
+__version__ = metadata.version(__package__)
+
 
 CONFIGURATION_KEY_NAMES = {
     "act_t": "action_topic",
