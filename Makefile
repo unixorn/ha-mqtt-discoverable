@@ -1,8 +1,8 @@
 .PHONY: c clean \
 	f format \
 	h help \
-	fatimage \
 	local \
+	multiarch_image \
 	publish \
 	t test \
 	wheel
@@ -41,14 +41,14 @@ local: wheel requirements.txt ## Makes a docker image for only the architecture 
 trial: wheel
 	docker buildx build --no-cache --build-arg application_version=${MODULE_VERSION} --load -t unixorn/ha-mqtt-discoverable:$(MODULE_VERSION) .
 
-fatimage: wheel ## Makes a multi-architecture docker image for linux/arm64, linux/amd64 and linux/arm/v7 and pushes it to dockerhub
+multiarch_image: wheel ## Makes a multi-architecture docker image for linux/arm64, linux/amd64 and linux/arm/v7 and pushes it to dockerhub
 	docker buildx build --no-cache --build-arg application_version=${MODULE_VERSION} --platform linux/arm64,linux/amd64,linux/arm/v7 --push -t unixorn/ha-mqtt-discoverable:$(MODULE_VERSION) .
 	make local
 
 wheel: clean format ## Builds a wheel for our modules. 'poetry' bakes the dependencies into the wheel metadata.
 	poetry build
 
-publish: fatimage ## Builds a multi-architecture docker image and publishes the module to pypi
+publish: multiarch_image ## Builds a multi-architecture docker image and publishes the module to pypi
 	poetry publish
 
 # We use this to enable the Dockerfile.testing have a separate layer for the
