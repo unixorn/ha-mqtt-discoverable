@@ -6,12 +6,12 @@
   - [Installing](#installing)
     - [Python](#python)
     - [Docker](#docker)
-  - [Contributing](#contributing)
-  - [Supported Types](#supported-types)
-    - [Binary Sensors](#binary-sensors)
+  - [Supported entities](#supported-entities)
+    - [Binary sensor](#binary-sensor)
       - [Usage](#usage)
-    - [Devices](#devices)
+  - [Device](#device)
       - [Usage](#usage-1)
+  - [Contributing](#contributing)
   - [Scripts Provided](#scripts-provided)
     - [`hmd`](#hmd)
     - [`hmd create binary sensor`](#hmd-create-binary-sensor)
@@ -30,13 +30,16 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 
 ### Python
 
-`pip install ha-mqtt-discoverable` if you want to use it in your python scripts. This will also install the `hmd` utility scripts.
+ha-mqtt-discoverable runs on Python 3.10 or later.
+
+`pip install ha-mqtt-discoverable` if you want to use it in your own python scripts. This will also install the `hmd` utility scripts.
 
 ### Docker
 
 If all you want to do is use the command line tools, the simplest way is to use them with `docker` or `nerdctl`. It won't interfere with your system python and potentially cause you issues there. You can use the [unixorn/ha-mqtt-discoverable](https://hub.docker.com/repository/docker/unixorn/ha-mqtt-discoverable) image on dockerhub directly, but if you add `$reporoot/bin` to your `$PATH`, the `hmd` script in there will automatically run the command line tools inside a docker container with `docker` or `nerdctl`, depending on what it finds in your `$PATH`.
 
 ## Supported entities
+
 The following Home Assistant entities are currently implemented:
 
 - Sensor
@@ -55,10 +58,12 @@ from ha_mqtt_discoverable.sensors import BinarySensor, BinarySensorInfo
 
 # Configure the required parameters for the MQTT broker
 mqtt_settings = Settings.MQTT(host="localhost")
+
 # Information about the sensor
 sensor_info = BinarySensorInfo(name="MySensor", device_class="motion")
 
 settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+
 # Instantiate the sensor
 mysensor = BinarySensor(settings)
 
@@ -71,7 +76,7 @@ mysensor.off()
 ## Device
 From the [Home Assistant documentation](https://developers.home-assistant.io/docs/device_registry_index):
 > A device is a special entity in Home Assistant that is represented by one or more entities.
-A device is automatically created when an entity defines its `device` property. 
+A device is automatically created when an entity defines its `device` property.
 A device will be matched up with an existing device via supplied identifiers or connections, like serial numbers or MAC addresses.
 
 #### Usage
@@ -93,6 +98,7 @@ device_info = DeviceInfo(name="My device", identifiers="device_id")
 motion_sensor_info = BinarySensorInfo(name="My motion sensor", device_class="motion", unique_id="my_motion_sensor", device=device_info)
 
 motion_settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+
 # Instantiate the sensor
 motion_sensor = BinarySensor(motion_settings)
 

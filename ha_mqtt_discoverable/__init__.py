@@ -5,14 +5,12 @@
 import json
 import logging
 import ssl
-from typing import Any, Optional
+from importlib import metadata
+from typing import Any, Generic, Optional, TypeVar
 
 import paho.mqtt.client as mqtt
 from pydantic import BaseModel, root_validator
 from pydantic.generics import GenericModel
-from typing import Generic, TypeVar
-from importlib import metadata
-
 
 # Read version from the package metadata
 __version__ = metadata.version(__package__)
