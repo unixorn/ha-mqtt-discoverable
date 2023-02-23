@@ -51,7 +51,7 @@ wheel: clean format ## Builds a wheel for our modules. 'poetry' bakes the depend
 publish: fatimage ## Builds a multi-architecture docker image and publishes the module to pypi
 	poetry publish
 
-# We use this to enable the Dockerfile.testing have a seperate layer for the
+# We use this to enable the Dockerfile.testing have a separate layer for the
 # dependencies so we don't have to reinstall every time we test a new change.
 # Our wheel includes its dependencies in the metadata so you don't need a
 # requirements.txt file to use them

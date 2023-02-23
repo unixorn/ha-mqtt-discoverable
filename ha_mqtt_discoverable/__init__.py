@@ -2,10 +2,10 @@
 #
 # License: Apache 2.0 (see root of the repo)
 
-from importlib import metadata
 import json
 import logging
 import ssl
+from importlib import metadata
 from typing import Any, Generic, Optional, TypeVar
 
 import paho.mqtt.client as mqtt
