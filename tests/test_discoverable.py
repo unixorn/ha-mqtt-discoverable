@@ -1,3 +1,8 @@
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+import logging
+from threading import Event
+from paho.mqtt.client import Client, MQTTMessage, MQTTv5, SubscribeOptions
 import pytest
 from ha_mqtt_discoverable import DeviceInfo, Discoverable, Settings, EntityInfo
 
@@ -118,3 +123,63 @@ def test_str(discoverable: Discoverable[EntityInfo]):
     string = str(discoverable)
     print(string)
     assert "settings" in string
+
+
+# Define a callback function to be invoked when we receive a message on the topic
+def message_callback(client: Client, userdata, message: MQTTMessage, tmp=None):
+    logging.info("Received %s", message)
+    payload = message.payload.decode()
+    assert "test" in payload
+    userdata.set()
+    client.disconnect()
+
+
+def test_publish_multithread(discoverable: Discoverable):
+    received_message = Event()
+    mqtt_client = Client(protocol=MQTTv5, userdata=received_message)
+
+    mqtt_client.connect(host="localhost")
+    mqtt_client.on_message = message_callback
+    mqtt_client.subscribe(
+        (
+            "homeassistant/binary_sensor/test/state/#",
+            SubscribeOptions(retainHandling=SubscribeOptions.RETAIN_DO_NOT_SEND),
+        )
+    )
+    mqtt_client.loop_start()
+
+    # Write a state to MQTT from another thread
+    with ThreadPoolExecutor() as executor:
+        future = executor.submit(discoverable._state_helper, "test")
+        # Wait for executor to finish
+        future.result(1)
+        # Check that flag is set
+        assert discoverable.wrote_configuration is True
+        assert discoverable.config_message is not None
+
+    # Wait until we receive the published message
+    assert received_message.wait(1)
+
+
+def test_publish_async(discoverable: Discoverable):
+    received_message = Event()
+    mqtt_client = Client(protocol=MQTTv5, userdata=received_message)
+
+    mqtt_client.connect(host="localhost", clean_start=True)
+    mqtt_client.on_message = message_callback
+    mqtt_client.subscribe(
+        (
+            "homeassistant/binary_sensor/test/state/#",
+            SubscribeOptions(retainHandling=SubscribeOptions.RETAIN_DO_NOT_SEND),
+        )
+    )
+    mqtt_client.loop_start()
+
+    # Write a state to MQTT from an asyncio event loop
+    async def publish_state():
+        discoverable._state_helper("test")
+
+    asyncio.run(publish_state())
+
+    # Wait until we receive the published message
+    assert received_message.wait(1)
