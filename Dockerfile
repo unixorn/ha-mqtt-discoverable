@@ -13,9 +13,9 @@ RUN apt-get update && \
 # Copy wheel file built by Poetry
 COPY dist/*.whl /app/
 
-RUN /usr/bin/python3 -m pip install --upgrade pip --no-cache-dir && \
-    pip3 install --no-cache-dir /app/*.whl && \
-    pip3 cache purge && \
+RUN python -m pip install --upgrade pip --no-cache-dir && \
+    pip install --no-cache-dir /app/*.whl && \
+    pip cache purge && \
     rm -rf /app/*.whl
 
 USER nobody
