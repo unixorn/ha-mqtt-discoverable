@@ -40,7 +40,7 @@ jobs:
           if-no-files-found: error
       - name: Publish wheel
         run: |
-          poetry publish --username ${{ secrets.PYPI_USERNAME }} --password ${{ secrets.PYPI_PASSWORD }}
+          poetry publish --username __token__ --password ${{ secrets.PYPI_PASSWORD }}
 
   docker-image:
     needs: build-wheel
