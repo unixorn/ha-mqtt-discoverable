@@ -23,6 +23,7 @@ pre-commit = "^3.1.0"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.2.1"
+pytest-mock = "^3.10.0"
 
 [build-system]
 requires = ["poetry-core"]

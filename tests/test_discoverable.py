@@ -2,8 +2,9 @@ import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import logging
 from threading import Event
-from paho.mqtt.client import Client, MQTTMessage, MQTTv5, SubscribeOptions
+from paho.mqtt.client import Client, MQTTMessage, MQTTv5, SubscribeOptions, MQTT_ERR_SUCCESS
 import pytest
+from pytest_mock import MockerFixture
 from ha_mqtt_discoverable import DeviceInfo, Discoverable, Settings, EntityInfo
 
 
@@ -187,3 +188,21 @@ def test_publish_async(discoverable: Discoverable):
 
     # Wait until we receive the published message
     assert received_message.wait(1)
+
+
+def test_disconnect_client(mocker: MockerFixture):
+    """Test that the __del__ method disconnects from the broker"""
+    mocked_client = mocker.patch('paho.mqtt.client.Client')
+    mock_instance = mocked_client.return_value
+    mock_instance.connect.return_value = MQTT_ERR_SUCCESS
+    mqtt_settings = Settings.MQTT(
+        host="localhost", username="admin", password="password"
+    )
+    sensor_info = EntityInfo(name="test", component="binary_sensor")
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+
+    discoverable = Discoverable[EntityInfo](settings)
+    del discoverable
+
+    mock_instance.disconnect.assert_called_once()
+    mock_instance.loop_stop.assert_called_once()

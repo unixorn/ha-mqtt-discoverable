@@ -713,3 +713,9 @@ wrote_configuration: {self.wrote_configuration}
         Override in subclasses
         """
         self._state_helper(state=state)
+
+    def __del__(self):
+        """Cleanly shutdown the internal MQTT client"""
+        logging.debug("Shutting down MQTT client")
+        self.mqtt_client.disconnect()
+        self.mqtt_client.loop_stop()
