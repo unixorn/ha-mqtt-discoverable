@@ -6,7 +6,7 @@
 
 # License Acceptance
 
-- [ ] This repository is Apache version 2.0 licensed (some scripts may have alternate licensing inline in their code) and by making this PR, I am contributing my changes to the repository under the terms of the Apache 2 license.
+- [ ] This repository is Apache version 2.0 licensed and by making this PR, I am contributing my changes to the repository under the terms of the Apache 2 license.
 
 # Type of changes
 
@@ -18,7 +18,6 @@
 - [ ] New feature
 - [ ] Test updates
 - [ ] Text cleanups/updates
-
 
 # Checklist
 
