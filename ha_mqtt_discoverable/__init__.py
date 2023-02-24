@@ -582,6 +582,8 @@ class Discoverable(Generic[EntityType]):
         logging.info(f"topic_prefix: {self.topic_prefix}")
         logging.info(f"self.state_topic: {self.state_topic}")
 
+        self._connect()
+
     def __str__(self) -> str:
         """
         Generate a string representation of the Discoverable object
@@ -596,41 +598,42 @@ wrote_configuration: {self.wrote_configuration}
         return dump
 
     def _connect(self) -> None:
-        if not hasattr(self, "mqtt_client"):
-            mqtt_settings = self._settings.mqtt
-            logging.debug(
-                f"Creating mqtt client({mqtt_settings.client_name}) for {mqtt_settings.host}"
+        """Create an MQTT client and connect it to the broker"""
+        mqtt_settings = self._settings.mqtt
+        logging.debug(
+            f"Creating mqtt client({mqtt_settings.client_name}) for {mqtt_settings.host}"
+        )
+        self.mqtt_client = mqtt.Client(mqtt_settings.client_name)
+        if mqtt_settings.tls_key:
+            logging.info(f"Connecting to {mqtt_settings.host} with SSL")
+            logging.debug(f"ca_certs={mqtt_settings.tls_ca_cert}")
+            logging.debug(f"certfile={mqtt_settings.tls_certfile}")
+            logging.debug(f"keyfile={mqtt_settings.tls_key}")
+            self.mqtt_client.tls_set(
+                ca_certs=mqtt_settings.tls_ca_cert,
+                certfile=mqtt_settings.tls_certfile,
+                keyfile=mqtt_settings.tls_key,
+                cert_reqs=ssl.CERT_REQUIRED,
+                tls_version=ssl.PROTOCOL_TLS,
             )
-            self.mqtt_client = mqtt.Client(mqtt_settings.client_name)
-            if mqtt_settings.tls_key:
-                logging.info(f"Connecting to {mqtt_settings.host} with SSL")
-                logging.debug(f"ca_certs={mqtt_settings.tls_ca_cert}")
-                logging.debug(f"certfile={mqtt_settings.tls_certfile}")
-                logging.debug(f"keyfile={mqtt_settings.tls_key}")
-                self.mqtt_client.tls_set(
-                    ca_certs=mqtt_settings.tls_ca_cert,
-                    certfile=mqtt_settings.tls_certfile,
-                    keyfile=mqtt_settings.tls_key,
-                    cert_reqs=ssl.CERT_REQUIRED,
-                    tls_version=ssl.PROTOCOL_TLS,
-                )
-            else:
-                logging.warning(f"Connecting to {mqtt_settings.host} without SSL")
-                if mqtt_settings.username:
-                    self.mqtt_client.username_pw_set(
-                        mqtt_settings.username, password=mqtt_settings.password
-                    )
-            self.mqtt_client.connect(mqtt_settings.host)
-            # Start the internal network loop of the MQTT library to handle incoming messages in a separate thread
-            self.mqtt_client.loop_start()
         else:
-            logging.debug("Reusing existing MQTT client")
+            logging.warning(f"Connecting to {mqtt_settings.host} without SSL")
+            if mqtt_settings.username:
+                self.mqtt_client.username_pw_set(
+                    mqtt_settings.username, password=mqtt_settings.password
+                )
+        result = self.mqtt_client.connect(mqtt_settings.host)
+        # Check if we have established a connection
+        if result != mqtt.MQTT_ERR_SUCCESS:
+            raise RuntimeError("Error while connecting to MQTT broker")
+
+        # Start the internal network loop of the MQTT library to handle incoming messages in a separate thread
+        self.mqtt_client.loop_start()
 
     def _state_helper(self, state: Optional[str], topic: Optional[str] = None) -> None:
         """
         Write a state to our MQTT state topic
         """
-        self._connect()
         if not self.wrote_configuration:
             logging.debug("Writing sensor configuration")
             self.write_config()
@@ -662,7 +665,6 @@ wrote_configuration: {self.wrote_configuration}
         """
 
         config_message = ""
-        self._connect()
         logging.info(
             f"Writing '{config_message}' to topic {self.config_topic} on {self._settings.mqtt.host}"
         )
@@ -690,8 +692,6 @@ wrote_configuration: {self.wrote_configuration}
             -m '{"name": "garden", "device_class": "motion", \
                 "state_topic": "homeassistant/binary_sensor/garden/state"}'
         """
-
-        self._connect()
         config_message = json.dumps(self.generate_config())
 
         logging.debug(
