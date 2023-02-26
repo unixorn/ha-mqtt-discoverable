@@ -1,8 +1,8 @@
-#!/usr/bin/env python3
 #
 # Copyright 2022 Joe Block <jpb@unixorn.net>
 # License: Apache 2.0
-from __future__ import annotations  # Required to define a class itself as type https://stackoverflow.com/a/33533514
+# Required to define a class itself as type https://stackoverflow.com/a/33533514
+from __future__ import annotations
 import logging
 from typing import Any, Callable, Optional, TypeVar
 from paho.mqtt.client import Client, MQTTMessage, MQTT_ERR_SUCCESS
@@ -53,6 +53,7 @@ class SwitchInfo(EntityInfo):
 
 class ButtonInfo(EntityInfo):
     """Button specific information"""
+
     component: str = "button"
 
     payload_press: str = "PRESS"
@@ -123,7 +124,9 @@ class Switch(Discoverable[SwitchInfo]):
         """
         self._update_state(state=True)
 
-    def set_callback(self, callback: Callable[[Client, T, MQTTMessage], Any], user_data: T = None):
+    def set_callback(
+        self, callback: Callable[[Client, T, MQTTMessage], Any], user_data: T = None
+    ):
         """
         Define a callback function that is invoked when Home Assistant request to change the state of this switch.
         If defined, the `user_data` parameter is passed back to the callback function
@@ -172,6 +175,7 @@ class Button(Discoverable[ButtonInfo]):
     """
     https://www.home-assistant.io/integrations/button.mqtt
     """
+
     T = TypeVar("T")  # Used in the callback function
     _command_topic: str
 
@@ -179,7 +183,9 @@ class Button(Discoverable[ButtonInfo]):
         super().__init__(settings)
         self._command_topic = f"{self._discovery_topic_prefix}/command"
 
-    def set_callback(self, callback: Callable[[Client, T, MQTTMessage], Any], user_data: T = None):
+    def set_callback(
+        self, callback: Callable[[Client, T, MQTTMessage], Any], user_data: T = None
+    ):
         """
         Define a callback function that is invoked when Home Assistant request a press of this button.
         If defined, the `user_data` parameter is passed back to the callback function
@@ -206,4 +212,3 @@ class Button(Discoverable[ButtonInfo]):
             "command_topic": self._command_topic,
         }
         return config | topics
-

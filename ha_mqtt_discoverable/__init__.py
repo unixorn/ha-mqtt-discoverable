@@ -577,10 +577,14 @@ class Discoverable(Generic[EntityType]):
 
         # Build the discovery topic string: append the type of component
         # e.g. `homeassistant/binary_sensor`
-        self._discovery_topic_prefix = f"{self._settings.mqtt.topic_prefix}/{self._entity.component}"
+        self._discovery_topic_prefix = (
+            f"{self._settings.mqtt.topic_prefix}/{self._entity.component}"
+        )
         # If present, append the device name
         # e.g. `homeassistant/binary_sensor/mydevice`
-        self._discovery_topic_prefix += f"/{clean_string(self._entity.device.name)}" if self._entity.device else ""
+        self._discovery_topic_prefix += (
+            f"/{clean_string(self._entity.device.name)}" if self._entity.device else ""
+        )
         # Append the sensor name
         # e.g. `homeassistant/binary_sensor/mydevice/mysensor`
         self._discovery_topic_prefix += f"/{clean_string(self._entity.name)}"

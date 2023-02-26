@@ -2,7 +2,13 @@ import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import logging
 from threading import Event
-from paho.mqtt.client import Client, MQTTMessage, MQTTv5, SubscribeOptions, MQTT_ERR_SUCCESS
+from paho.mqtt.client import (
+    Client,
+    MQTTMessage,
+    MQTTv5,
+    SubscribeOptions,
+    MQTT_ERR_SUCCESS,
+)
 import pytest
 from pytest_mock import MockerFixture
 from ha_mqtt_discoverable import DeviceInfo, Discoverable, Settings, EntityInfo
@@ -45,7 +51,9 @@ def test_discovery_topics():
 def test_discovery_topics_with_device():
     mqtt_settings = Settings.MQTT(host="localhost")
     device = DeviceInfo(name="test_device", identifiers="id")
-    sensor_info = EntityInfo(name="test", component="binary_sensor", device=device, unique_id="unique_id")
+    sensor_info = EntityInfo(
+        name="test", component="binary_sensor", device=device, unique_id="unique_id"
+    )
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     d = Discoverable[EntityInfo](settings)
     assert d._discovery_topic_prefix == "homeassistant/binary_sensor/test_device/test"
@@ -211,7 +219,7 @@ def test_publish_async(discoverable: Discoverable):
 
 def test_disconnect_client(mocker: MockerFixture):
     """Test that the __del__ method disconnects from the broker"""
-    mocked_client = mocker.patch('paho.mqtt.client.Client')
+    mocked_client = mocker.patch("paho.mqtt.client.Client")
     mock_instance = mocked_client.return_value
     mock_instance.connect.return_value = MQTT_ERR_SUCCESS
     mqtt_settings = Settings.MQTT(
