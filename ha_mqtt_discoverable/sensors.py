@@ -2,9 +2,9 @@
 #
 # Copyright 2022 Joe Block <jpb@unixorn.net>
 # License: Apache 2.0
-
+from __future__ import annotations  # Required to define a class itself as type https://stackoverflow.com/a/33533514
 import logging
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, TypeVar
 from paho.mqtt.client import Client, MQTTMessage, MQTT_ERR_SUCCESS
 from ha_mqtt_discoverable import Discoverable, EntityInfo, Settings
 
@@ -34,16 +34,14 @@ class SwitchInfo(EntityInfo):
     """Switch specific information"""
 
     component: str = "switch"
-    command_topic: Optional[str] = None
-    """The MQTT topic to publish commands to change the switch state."""
     optimistic: Optional[bool] = None
     """Flag that defines if switch works in optimistic mode.
     Default: true if no state_topic defined, else false."""
-    payload_off: str = "ON"
+    payload_off: str = "OFF"
     """The payload that represents off state. If specified, will be used for both comparing
     to the value in the state_topic (see value_template and state_off for details)
     and sending as off command to the command_topic"""
-    payload_on: str = "OFF"
+    payload_on: str = "ON"
     """The payload that represents on state. If specified, will be used for both comparing
      to the value in the state_topic (see value_template and state_on for details)
      and sending as on command to the command_topic."""
@@ -51,6 +49,16 @@ class SwitchInfo(EntityInfo):
     """If the published message should have the retain flag on or not"""
     state_topic: Optional[str] = None
     """The MQTT topic subscribed to receive state updates."""
+
+
+class ButtonInfo(EntityInfo):
+    """Button specific information"""
+    component: str = "button"
+
+    payload_press: str = "PRESS"
+    """The payload to send to trigger the button."""
+    retain: Optional[bool] = None
+    """If the published message should have the retain flag on or not"""
 
 
 class BinarySensor(Discoverable[BinarySensorInfo]):
@@ -96,11 +104,12 @@ class Sensor(Discoverable[SensorInfo]):
 
 
 class Switch(Discoverable[SwitchInfo]):
+    T = TypeVar("T")  # Used in the callback function
     _command_topic: str
 
     def __init__(self, settings: Settings[SwitchInfo]) -> None:
         super().__init__(settings)
-        self._command_topic = f"{self.topic_prefix}/{self._entity.command_topic}"
+        self._command_topic = f"{self._discovery_topic_prefix}/command"
 
     def off(self):
         """
@@ -114,13 +123,24 @@ class Switch(Discoverable[SwitchInfo]):
         """
         self._update_state(state=True)
 
-    def set_callback(self, callback: Callable[[Client, Any, MQTTMessage], Any]):
-        """Define a callback function that is invoked when Home Assistant request to change the state of this switch"""
-        self.mqtt_client.on_message = callback
-        result, _ = self.mqtt_client.subscribe(self._command_topic, qos=1)
+    def set_callback(self, callback: Callable[[Client, T, MQTTMessage], Any], user_data: T = None):
+        """
+        Define a callback function that is invoked when Home Assistant request to change the state of this switch.
+        If defined, the `user_data` parameter is passed back to the callback function
+        """
+        # Callback invoked when the connection is established
+        def on_connect(client: Client, *args):
+            # Publish this button in Home Assistant
+            self.write_config()
+            # Subscribe to the command topic
+            result, _ = client.subscribe(self._command_topic, qos=1)
+            if result is not MQTT_ERR_SUCCESS:
+                raise RuntimeError("Error subscribing to MQTT command topic")
 
-        if result is not MQTT_ERR_SUCCESS:
-            raise RuntimeError("Error subscribing to MQTT command topic")
+        self.mqtt_client.on_message = callback
+        self.mqtt_client.user_data_set(user_data)
+        # When the connection is established start the subscription
+        self.mqtt_client.on_connect = on_connect
 
     def _update_state(self, state: bool) -> None:
         """
@@ -137,3 +157,53 @@ class Switch(Discoverable[SwitchInfo]):
             f"Setting {self._entity.name} to {state_message} using {self.state_topic}"
         )
         self._state_helper(state=state_message)
+
+    def generate_config(self) -> dict[str, Any]:
+        """Override base config to add the command topic of this switch"""
+        config = super().generate_config()
+        # Add the MQTT command topic to the existing config object
+        topics = {
+            "command_topic": self._command_topic,
+        }
+        return config | topics
+
+
+class Button(Discoverable[ButtonInfo]):
+    """
+    https://www.home-assistant.io/integrations/button.mqtt
+    """
+    T = TypeVar("T")  # Used in the callback function
+    _command_topic: str
+
+    def __init__(self, settings: Settings[ButtonInfo]) -> None:
+        super().__init__(settings)
+        self._command_topic = f"{self._discovery_topic_prefix}/command"
+
+    def set_callback(self, callback: Callable[[Client, T, MQTTMessage], Any], user_data: T = None):
+        """
+        Define a callback function that is invoked when Home Assistant request a press of this button.
+        If defined, the `user_data` parameter is passed back to the callback function
+        """
+        # Callback invoked when the connection is established
+        def on_connect(client: Client, *args):
+            # Publish this button in Home Assistant
+            self.write_config()
+            # Subscribe to the command topic
+            result, _ = client.subscribe(self._command_topic, qos=1)
+            if result is not MQTT_ERR_SUCCESS:
+                raise RuntimeError("Error subscribing to MQTT command topic")
+
+        self.mqtt_client.on_message = callback
+        self.mqtt_client.user_data_set(user_data)
+        # When the connection is established start the subscription
+        self.mqtt_client.on_connect = on_connect
+
+    def generate_config(self) -> dict[str, Any]:
+        """Override base config to add the command topic of this button"""
+        config = super().generate_config()
+        # Add the MQTT command topic to the existing config object
+        topics = {
+            "command_topic": self._command_topic,
+        }
+        return config | topics
+

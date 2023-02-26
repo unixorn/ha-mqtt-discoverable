@@ -553,7 +553,7 @@ class Discoverable(Generic[EntityType]):
     mqtt_client: mqtt.Client
     wrote_configuration: bool = False
     # MQTT topics
-    topic_prefix: str
+    _discovery_topic_prefix: str
     config_topic: str
     state_topic: str
     availability_topic: str
@@ -573,13 +573,21 @@ class Discoverable(Generic[EntityType]):
         self._settings = settings
         self._entity = settings.entity
 
-        self.topic_prefix = (
-            f"{self._settings.mqtt.topic_prefix}/"
-            f"{self._entity.component}/{clean_string(self._entity.name)}"
-        )
-        self.config_topic = f"{self.topic_prefix}/config"
-        self.state_topic = f"{self.topic_prefix}/state"
-        logging.info(f"topic_prefix: {self.topic_prefix}")
+        # TODO: use different state topic than homeassistant. Maybe start with `hmd/`?
+
+        # Build the discovery topic string: append the type of component
+        # e.g. `homeassistant/binary_sensor`
+        self._discovery_topic_prefix = f"{self._settings.mqtt.topic_prefix}/{self._entity.component}"
+        # If present, append the device name
+        # e.g. `homeassistant/binary_sensor/mydevice`
+        self._discovery_topic_prefix += f"/{clean_string(self._entity.device.name)}" if self._entity.device else ""
+        # Append the sensor name
+        # e.g. `homeassistant/binary_sensor/mydevice/mysensor`
+        self._discovery_topic_prefix += f"/{clean_string(self._entity.name)}"
+
+        self.config_topic = f"{self._discovery_topic_prefix}/config"
+        self.state_topic = f"{self._discovery_topic_prefix}/state"
+        logging.info(f"topic_prefix: {self._discovery_topic_prefix}")
         logging.info(f"self.state_topic: {self.state_topic}")
 
         self._connect()
@@ -590,7 +598,7 @@ class Discoverable(Generic[EntityType]):
         """
         dump = f"""
 settings: {self._settings}
-topic_prefix: {self.topic_prefix}
+topic_prefix: {self._discovery_topic_prefix}
 config_topic: {self.config_topic}
 state_topic: {self.state_topic}
 wrote_configuration: {self.wrote_configuration}

@@ -33,6 +33,25 @@ def test_missing_config():
         Settings(entity=sensor_info)  # type: ignore
 
 
+def test_discovery_topics():
+    mqtt_settings = Settings.MQTT(host="localhost")
+    sensor_info = EntityInfo(name="test", component="binary_sensor")
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+    d = Discoverable[EntityInfo](settings)
+    assert d._discovery_topic_prefix == "homeassistant/binary_sensor/test"
+    assert d.config_topic == "homeassistant/binary_sensor/test/config"
+
+
+def test_discovery_topics_with_device():
+    mqtt_settings = Settings.MQTT(host="localhost")
+    device = DeviceInfo(name="test_device", identifiers="id")
+    sensor_info = EntityInfo(name="test", component="binary_sensor", device=device, unique_id="unique_id")
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+    d = Discoverable[EntityInfo](settings)
+    assert d._discovery_topic_prefix == "homeassistant/binary_sensor/test_device/test"
+    assert d.config_topic == "homeassistant/binary_sensor/test_device/test/config"
+
+
 def test_generate_config(discoverable: Discoverable):
     device_config = discoverable.generate_config()
 
