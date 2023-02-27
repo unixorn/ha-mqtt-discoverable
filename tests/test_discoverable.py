@@ -2,6 +2,7 @@ import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import logging
 from threading import Event
+from unittest.mock import MagicMock
 from paho.mqtt.client import (
     Client,
     MQTTMessage,
@@ -39,6 +40,39 @@ def test_missing_config():
         Settings(entity=sensor_info)  # type: ignore
 
 
+def test_custom_on_connect():
+    """Test that the custom callback function is invoked when we connect to MQTT"""
+    mqtt_settings = Settings.MQTT(host="localhost")
+    sensor_info = EntityInfo(name="test", component="binary_sensor")
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+
+    is_connected = Event()
+
+    def custom_callback(*args):
+        is_connected.set()
+        pass
+
+    d = Discoverable(settings, custom_callback)
+    d._connect_client()
+    assert is_connected.wait(5)
+
+
+def test_custom_on_connect_must_be_called(mocker: MockerFixture):
+    """Test that _on_connect must be called if there is a custom_callback"""
+    mocked_client = mocker.patch("paho.mqtt.client.Client")
+    mock_instance: MagicMock = mocked_client.return_value
+
+    mqtt_settings = Settings.MQTT(host="localhost")
+    sensor_info = EntityInfo(name="test", component="binary_sensor")
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+
+    # Define an empty lambda callback
+    Discoverable(settings, lambda: None)
+    # Avoid calling d._connect_client()
+    # Verify that on_connect on the client was not called
+    mock_instance.assert_not_called()
+
+
 def test_discovery_topics():
     mqtt_settings = Settings.MQTT(host="localhost")
     sensor_info = EntityInfo(name="test", component="binary_sensor")
@@ -69,9 +103,17 @@ def test_generate_config(discoverable: Discoverable):
     assert device_config["state_topic"] == "homeassistant/binary_sensor/test/state"
 
 
-def test_connect(discoverable: Discoverable):
+def test_setup_client(discoverable: Discoverable):
+    # Try to setup client
+    discoverable._setup_client()
+    # Check that we save the client
+    assert discoverable.mqtt_client is not None
+
+
+def test_connect_client(discoverable: Discoverable):
     # Try to connect to MQTT
-    discoverable._connect()
+    discoverable._setup_client()
+    discoverable._connect_client()
     # Check that we save the client
     assert discoverable.mqtt_client is not None
 

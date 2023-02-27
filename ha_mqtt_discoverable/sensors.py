@@ -4,9 +4,7 @@
 # Required to define a class itself as type https://stackoverflow.com/a/33533514
 from __future__ import annotations
 import logging
-from typing import Any, Callable, Optional, TypeVar
-from paho.mqtt.client import Client, MQTTMessage, MQTT_ERR_SUCCESS
-from ha_mqtt_discoverable import Discoverable, EntityInfo, Settings
+from ha_mqtt_discoverable import Discoverable, EntityInfo, Subscriber
 
 
 class BinarySensorInfo(EntityInfo):
@@ -104,13 +102,10 @@ class Sensor(Discoverable[SensorInfo]):
         self._state_helper(str(state))
 
 
-class Switch(Discoverable[SwitchInfo]):
-    T = TypeVar("T")  # Used in the callback function
-    _command_topic: str
-
-    def __init__(self, settings: Settings[SwitchInfo]) -> None:
-        super().__init__(settings)
-        self._command_topic = f"{self._discovery_topic_prefix}/command"
+class Switch(Subscriber[SwitchInfo]):
+    """Implements an MQTT switch:
+    https://www.home-assistant.io/integrations/switch.mqtt
+    """
 
     def off(self):
         """
@@ -123,27 +118,6 @@ class Switch(Discoverable[SwitchInfo]):
         Set switch to on
         """
         self._update_state(state=True)
-
-    def set_callback(
-        self, callback: Callable[[Client, T, MQTTMessage], Any], user_data: T = None
-    ):
-        """
-        Define a callback function that is invoked when Home Assistant request to change the state of this switch.
-        If defined, the `user_data` parameter is passed back to the callback function
-        """
-        # Callback invoked when the connection is established
-        def on_connect(client: Client, *args):
-            # Publish this button in Home Assistant
-            self.write_config()
-            # Subscribe to the command topic
-            result, _ = client.subscribe(self._command_topic, qos=1)
-            if result is not MQTT_ERR_SUCCESS:
-                raise RuntimeError("Error subscribing to MQTT command topic")
-
-        self.mqtt_client.on_message = callback
-        self.mqtt_client.user_data_set(user_data)
-        # When the connection is established start the subscription
-        self.mqtt_client.on_connect = on_connect
 
     def _update_state(self, state: bool) -> None:
         """
@@ -161,54 +135,8 @@ class Switch(Discoverable[SwitchInfo]):
         )
         self._state_helper(state=state_message)
 
-    def generate_config(self) -> dict[str, Any]:
-        """Override base config to add the command topic of this switch"""
-        config = super().generate_config()
-        # Add the MQTT command topic to the existing config object
-        topics = {
-            "command_topic": self._command_topic,
-        }
-        return config | topics
 
-
-class Button(Discoverable[ButtonInfo]):
-    """
+class Button(Subscriber[ButtonInfo]):
+    """Implements an MQTT button:
     https://www.home-assistant.io/integrations/button.mqtt
     """
-
-    T = TypeVar("T")  # Used in the callback function
-    _command_topic: str
-
-    def __init__(self, settings: Settings[ButtonInfo]) -> None:
-        super().__init__(settings)
-        self._command_topic = f"{self._discovery_topic_prefix}/command"
-
-    def set_callback(
-        self, callback: Callable[[Client, T, MQTTMessage], Any], user_data: T = None
-    ):
-        """
-        Define a callback function that is invoked when Home Assistant request a press of this button.
-        If defined, the `user_data` parameter is passed back to the callback function
-        """
-        # Callback invoked when the connection is established
-        def on_connect(client: Client, *args):
-            # Publish this button in Home Assistant
-            self.write_config()
-            # Subscribe to the command topic
-            result, _ = client.subscribe(self._command_topic, qos=1)
-            if result is not MQTT_ERR_SUCCESS:
-                raise RuntimeError("Error subscribing to MQTT command topic")
-
-        self.mqtt_client.on_message = callback
-        self.mqtt_client.user_data_set(user_data)
-        # When the connection is established start the subscription
-        self.mqtt_client.on_connect = on_connect
-
-    def generate_config(self) -> dict[str, Any]:
-        """Override base config to add the command topic of this button"""
-        config = super().generate_config()
-        # Add the MQTT command topic to the existing config object
-        topics = {
-            "command_topic": self._command_topic,
-        }
-        return config | topics

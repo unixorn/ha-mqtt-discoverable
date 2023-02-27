@@ -1,21 +1,21 @@
 import pytest
 from ha_mqtt_discoverable import Settings
-from ha_mqtt_discoverable.sensors import Switch, SwitchInfo
+from ha_mqtt_discoverable.sensors import Button, ButtonInfo
 
 
-@pytest.fixture(name="sensor")
-def switch() -> Switch:
+@pytest.fixture(name="button")
+def button() -> Button:
     mqtt_settings = Settings.MQTT(host="localhost")
-    sensor_info = SwitchInfo(name="test")
+    sensor_info = ButtonInfo(name="test")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     # Define an empty `command_callback`
-    return Switch(settings, lambda *_: None)
+    return Button(settings, lambda *_: None)
 
 
 def test_required_config():
     mqtt_settings = Settings.MQTT(host="localhost")
-    sensor_info = SwitchInfo(name="test")
+    sensor_info = ButtonInfo(name="test")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     # Define empty callback
-    sensor = Switch(settings, lambda *_: None)
+    sensor = Button(settings, lambda *_: None)
     assert sensor is not None
