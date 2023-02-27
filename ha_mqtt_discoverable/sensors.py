@@ -103,7 +103,8 @@ class Sensor(Discoverable[SensorInfo]):
         self._state_helper(str(state))
 
 
-class Switch(Subscriber[SwitchInfo]):
+# Inherit the on and off methods from the BinarySensor class, changing only the documentation string
+class Switch(Subscriber[SwitchInfo], BinarySensor):
     """Implements an MQTT switch:
     https://www.home-assistant.io/integrations/switch.mqtt
     """
@@ -112,29 +113,13 @@ class Switch(Subscriber[SwitchInfo]):
         """
         Set switch to off
         """
-        self._update_state(state=False)
+        super().off()
 
     def on(self):
         """
         Set switch to on
         """
-        self._update_state(state=True)
-
-    def _update_state(self, state: bool) -> None:
-        """
-        Update MQTT sensor state
-
-        Args:
-            state(bool): What state to set the sensor to
-        """
-        if state:
-            state_message = self._entity.payload_on
-        else:
-            state_message = self._entity.payload_off
-        logging.info(
-            f"Setting {self._entity.name} to {state_message} using {self.state_topic}"
-        )
-        self._state_helper(state=state_message)
+        super().on()
 
 
 class Button(Subscriber[ButtonInfo]):
