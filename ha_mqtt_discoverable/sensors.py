@@ -4,6 +4,7 @@
 # Required to define a class itself as type https://stackoverflow.com/a/33533514
 from __future__ import annotations
 import logging
+from typing import Optional
 from ha_mqtt_discoverable import Discoverable, EntityInfo, Subscriber
 
 
