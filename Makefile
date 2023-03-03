@@ -24,9 +24,7 @@ clean: ## Cleans out stale wheels, generated tar files, .pyc and .pyo files
 	find . -iname '*.py[co]' -delete
 
 format: ## Runs 'black' on all our python source files
-	poetry run black ha_mqtt_discoverable/*.py \
-		ha_mqtt_discoverable/*/*.py \
-		tests/*.py
+	poetry run black ha_mqtt_discoverable tests
 
 test: ## Run tests with 'nosetests'
 	nosestests -v
