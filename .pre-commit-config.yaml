@@ -1,13 +1,31 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
+  - repo: local
+    hooks:
+      - id: format-python-files-with-black
+        name: Format python files with black
+        entry: ./hooks/scripts/format-python-files-with-black
+        language: script
+      - id: clean-up-pyc-and-pyo-files
+        name: Scrub all .pyc and .pyo files before committing
+        entry: ./hooks/scripts/clean-up-pyc-and-pyo-files
+        language: script
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
-      - id: check-shebang-scripts-are-executable
+      - id: check-added-large-files
+      - id: check-docstring-first
       - id: check-executables-have-shebangs
+      - id: check-merge-conflict
+      - id: check-shebang-scripts-are-executable
+      - id: check-symlinks
+      - id: debug-statements
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
 
   - repo: https://github.com/psf/black
-    rev: "22.10.0"
+    rev: "23.1.0"
     hooks:
       - id: black
