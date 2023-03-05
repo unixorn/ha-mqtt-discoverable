@@ -1,7 +1,7 @@
 # ha-mqtt-discoverable
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![License](https://img.shields.io/github/license/unixorn/ha-mqtt-discover.svg)](https://opensource.org/license/apache-2-0/)
+[![License](https://img.shields.io/github/license/unixorn/ha-mqtt-discovery.svg)](https://opensource.org/license/apache-2-0/)
 [![GitHub last commit (branch)](https://img.shields.io/github/last-commit/unixorn/ha-mqtt-discovery/main.svg)](https://github.com/unixorn/ha-mqtt-discovery)
 [![Downloads](https://static.pepy.tech/badge/ha-mqtt-discoverable)](https://pepy.tech/project/ha-mqtt-discoverable)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
