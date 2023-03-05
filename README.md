@@ -45,6 +45,7 @@ The following Home Assistant entities are currently implemented:
 - Sensor
 - Binary sensor
 - Switch
+- Button
 
 ### Binary sensor
 
@@ -95,24 +96,22 @@ switch_info = SwitchInfo(name="test", command_topic="command")
 
 settings = Settings(mqtt=mqtt_settings, entity=switch_info)
 
+# To receive state commands from HA, define a callback function:
+def my_callback(client: Client, user_data, message: MQTTMessage):
+    payload = message.payload.decode()
+    logging.info(f"Received {payload} from HA")
+    # Your custom code...
+
+# Define an optional object to be passed back to the callback
+user_data = "Some custom data"
+
 # Instantiate the switch
-my_switch = Switch(settings)
+my_switch = Switch(settings, my_callback, user_data)
 
 # Change the state of the sensor, publishing an MQTT message that gets picked up by HA
 my_switch.on()
 my_switch.off()
 
-########### 
-# OPTIONAL
-# Receive state commands from HA. First, define a callback function:
-def my_callback(client: Client, userdata, message: MQTTMessage):
-    payload = message.payload.decode()
-    logging.info(f"Received {payload} from HA")
-    # Your custom code...
-
-# Note: `command_topic` must be set
-# Register the callback function to be invoked when HA send a state change in the `command_topic`
-my_switch.set_callback(my_callback)
 ```
 
 ## Device
