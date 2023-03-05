@@ -10,6 +10,7 @@ from paho.mqtt.client import (
     SubscribeOptions,
     MQTT_ERR_SUCCESS,
 )
+import paho.mqtt.subscribe as subscribe
 import pytest
 from pytest_mock import MockerFixture
 from ha_mqtt_discoverable import DeviceInfo, Discoverable, Settings, EntityInfo
@@ -22,6 +23,19 @@ def discoverable() -> Discoverable[EntityInfo]:
     )
     sensor_info = EntityInfo(name="test", component="binary_sensor")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+    return Discoverable[EntityInfo](settings)
+
+
+@pytest.fixture
+def discoverable_availability() -> Discoverable[EntityInfo]:
+    """Return an instance of Discoverable configured with `manual_availability`"""
+    mqtt_settings = Settings.MQTT(
+        host="localhost", username="admin", password="password"
+    )
+    sensor_info = EntityInfo(name="test", component="binary_sensor")
+    settings = Settings(
+        mqtt=mqtt_settings, entity=sensor_info, manual_availability=True
+    )
     return Discoverable[EntityInfo](settings)
 
 
@@ -277,3 +291,36 @@ def test_disconnect_client(mocker: MockerFixture):
 
     mock_instance.disconnect.assert_called_once()
     mock_instance.loop_stop.assert_called_once()
+
+
+def test_set_availability_topic(discoverable_availability: Discoverable):
+    assert discoverable_availability.availability_topic is not None
+    assert (
+        discoverable_availability.availability_topic
+        == "hmd/binary_sensor/test/availability"
+    )
+
+
+def test_config_availability_topic(discoverable_availability: Discoverable):
+    config = discoverable_availability.generate_config()
+    assert config.get("availability_topic") is not None
+
+
+def test_set_availability(discoverable_availability: Discoverable):
+    # Send availability message
+    discoverable_availability.set_availability(True)
+
+    # Receive a single message, ignoring retained messages
+    availability_message = subscribe.simple(
+        discoverable_availability.availability_topic, msg_count=1, retained=False
+    )
+    assert isinstance(availability_message, MQTTMessage)
+    assert availability_message.payload.decode("utf-8") == "online"
+
+    discoverable_availability.set_availability(False)
+
+
+def test_set_availability_wrong_config(discoverable: Discoverable):
+    """A discoverable that has not set availability to manual cannot invoke the methods"""
+    with pytest.raises(RuntimeError):
+        discoverable.set_availability(True)

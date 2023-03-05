@@ -9,6 +9,7 @@ from importlib import metadata
 from typing import Any, Callable, Generic, Optional, TypeVar
 
 import paho.mqtt.client as mqtt
+from paho.mqtt.client import MQTTMessageInfo
 from pydantic import BaseModel, root_validator
 from pydantic.generics import GenericModel
 
@@ -544,6 +545,9 @@ class Settings(GenericModel, Generic[EntityType]):
     entity: EntityType
     debug: bool = False
     """Print out the message that would be sent over MQTT"""
+    manual_availability: bool = False
+    """If true, the entity `availability` inside HA must be manually managed
+    using the `set_availability()` method"""
 
 
 class Discoverable(Generic[EntityType]):
@@ -605,6 +609,12 @@ class Discoverable(Generic[EntityType]):
         )
         logging.info(f"config_topic: {self.config_topic}")
         logging.info(f"state_topic: {self.state_topic}")
+        if self._settings.manual_availability:
+            # Define the availability topic, using `hmd` topic prefix
+            self.availability_topic = (
+                f"{self._settings.mqtt.state_prefix}/{self._entity_topic}/availability"
+            )
+            logger.debug(f"availability_topic: {self.availability_topic}")
 
         # Create the MQTT client, registering the user `on_connect` callback
         self._setup_client(on_connect)
@@ -654,6 +664,9 @@ wrote_configuration: {self.wrote_configuration}
             logger.debug("Registering custom callback function")
             self.mqtt_client.on_connect = on_connect
 
+        if self._settings.manual_availability:
+            self.mqtt_client.will_set(self.availability_topic, "offline", retain=True)
+
     def _connect_client(self) -> None:
         """Connect the client to the MQTT broker, start its onw internal loop in a separate thread"""
         result = self.mqtt_client.connect(self._settings.mqtt.host)
@@ -664,23 +677,27 @@ wrote_configuration: {self.wrote_configuration}
         # Start the internal network loop of the MQTT library to handle incoming messages in a separate thread
         self.mqtt_client.loop_start()
 
-    def _state_helper(self, state: Optional[str], topic: Optional[str] = None) -> None:
+    def _state_helper(
+        self, state: Optional[str], topic: Optional[str] = None
+    ) -> MQTTMessageInfo:
         """
-        Write a state to our MQTT state topic
+        Write a state to the given MQTT topic, return the result of client.publish()
         """
         if not self.wrote_configuration:
-            logging.debug("Writing sensor configuration")
+            logger.debug("Writing sensor configuration")
             self.write_config()
         if not topic:
-            logging.debug(f"State topic unset, using default '{self.state_topic}'")
+            logger.debug(f"State topic unset, using default: {self.state_topic}")
             topic = self.state_topic
-        logging.debug(f"Writing '{state}' to {topic}")
+        logger.debug(f"Writing '{state}' to {topic}")
 
         if self._settings.debug:
             logging.warning(f"Debug is {self.debug}, skipping state write")
             return
 
-        logging.warning(self.mqtt_client.publish(topic, state, retain=True))
+        message_info = self.mqtt_client.publish(topic, state, retain=True)
+        logger.debug(f"Publish result: {message_info}")
+        return message_info
 
     def debug_mode(self, mode: bool):
         self.debug = mode
@@ -717,6 +734,9 @@ wrote_configuration: {self.wrote_configuration}
         topics = {
             "state_topic": self.state_topic,
         }
+        # Add availability topic if defined
+        if hasattr(self, "availability_topic"):
+            topics["availability_topic"] = self.availability_topic
         return config | topics
 
     def write_config(self):
@@ -739,6 +759,12 @@ wrote_configuration: {self.wrote_configuration}
             return None
 
         return self.mqtt_client.publish(self.config_topic, config_message, retain=True)
+
+    def set_availability(self, availability: bool):
+        if not hasattr(self, "availability_topic"):
+            raise RuntimeError("Manual availability is not configured for this entity!")
+        message = "online" if availability else "offline"
+        self._state_helper(message, topic=self.availability_topic)
 
     def _update_state(self, state) -> None:
         """
