@@ -73,16 +73,17 @@ def test_custom_on_connect_must_be_called(mocker: MockerFixture):
     mock_instance.assert_not_called()
 
 
-def test_discovery_topics():
+def test_mqtt_topics():
     mqtt_settings = Settings.MQTT(host="localhost")
     sensor_info = EntityInfo(name="test", component="binary_sensor")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     d = Discoverable[EntityInfo](settings)
-    assert d._discovery_topic_prefix == "homeassistant/binary_sensor/test"
+    assert d._entity_topic == "binary_sensor/test"
     assert d.config_topic == "homeassistant/binary_sensor/test/config"
+    assert d.state_topic == "hmd/binary_sensor/test/state"
 
 
-def test_discovery_topics_with_device():
+def test_mqtt_topics_with_device():
     mqtt_settings = Settings.MQTT(host="localhost")
     device = DeviceInfo(name="test_device", identifiers="id")
     sensor_info = EntityInfo(
@@ -90,8 +91,9 @@ def test_discovery_topics_with_device():
     )
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     d = Discoverable[EntityInfo](settings)
-    assert d._discovery_topic_prefix == "homeassistant/binary_sensor/test_device/test"
+    assert d._entity_topic == "binary_sensor/test_device/test"
     assert d.config_topic == "homeassistant/binary_sensor/test_device/test/config"
+    assert d.state_topic == "hmd/binary_sensor/test_device/test/state"
 
 
 def test_generate_config(discoverable: Discoverable):
@@ -100,7 +102,7 @@ def test_generate_config(discoverable: Discoverable):
     assert device_config is not None
     assert device_config["name"] == "test"
     assert device_config["component"] == "binary_sensor"
-    assert device_config["state_topic"] == "homeassistant/binary_sensor/test/state"
+    assert device_config["state_topic"] == "hmd/binary_sensor/test/state"
 
 
 def test_setup_client(discoverable: Discoverable):
@@ -216,7 +218,7 @@ def test_publish_multithread(discoverable: Discoverable):
     mqtt_client.on_message = message_callback
     mqtt_client.subscribe(
         (
-            "homeassistant/binary_sensor/test/state/#",
+            "hmd/binary_sensor/test/state/#",
             SubscribeOptions(retainHandling=SubscribeOptions.RETAIN_DO_NOT_SEND),
         )
     )
@@ -243,7 +245,7 @@ def test_publish_async(discoverable: Discoverable):
     mqtt_client.on_message = message_callback
     mqtt_client.subscribe(
         (
-            "homeassistant/binary_sensor/test/state/#",
+            "hmd/binary_sensor/test/state/#",
             SubscribeOptions(retainHandling=SubscribeOptions.RETAIN_DO_NOT_SEND),
         )
     )

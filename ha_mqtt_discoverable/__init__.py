@@ -534,7 +534,10 @@ class Settings(GenericModel, Generic[EntityType]):
         tls_certfile: Optional[str] = None
         tls_ca_cert: Optional[str] = None
 
-        topic_prefix: str = "homeassistant"
+        discovery_prefix: str = "homeassistant"
+        """The root of the topic tree where HA is listening for messages"""
+        state_prefix: str = "hmd"
+        """The root of the topic tree ha-mqtt-discovery published its state messages"""
 
     mqtt: MQTT
     """Connection to MQTT broker"""
@@ -554,7 +557,7 @@ class Discoverable(Generic[EntityType]):
     mqtt_client: mqtt.Client
     wrote_configuration: bool = False
     # MQTT topics
-    _discovery_topic_prefix: str
+    _entity_topic: str
     config_topic: str
     state_topic: str
     availability_topic: str
@@ -578,26 +581,30 @@ class Discoverable(Generic[EntityType]):
         self._settings = settings
         self._entity = settings.entity
 
-        # TODO: use different state topic than homeassistant. Maybe start with `hmd/`?
-
-        # Build the discovery topic string: append the type of component
-        # e.g. `homeassistant/binary_sensor`
-        self._discovery_topic_prefix = (
-            f"{self._settings.mqtt.topic_prefix}/{self._entity.component}"
-        )
-        # If present, append the device name
-        # e.g. `homeassistant/binary_sensor/mydevice`
-        self._discovery_topic_prefix += (
+        # Build the topic string: start from the type of component
+        # e.g. `binary_sensor`
+        self._entity_topic = f"{self._entity.component}"
+        # If present, append the device name, e.g. `binary_sensor/mydevice`
+        self._entity_topic += (
             f"/{clean_string(self._entity.device.name)}" if self._entity.device else ""
         )
-        # Append the sensor name
-        # e.g. `homeassistant/binary_sensor/mydevice/mysensor`
-        self._discovery_topic_prefix += f"/{clean_string(self._entity.name)}"
+        # Append the sensor name, e.g. `binary_sensor/mydevice/mysensor`
+        self._entity_topic += f"/{clean_string(self._entity.name)}"
 
-        self.config_topic = f"{self._discovery_topic_prefix}/config"
-        self.state_topic = f"{self._discovery_topic_prefix}/state"
-        logging.info(f"topic_prefix: {self._discovery_topic_prefix}")
-        logging.info(f"self.state_topic: {self.state_topic}")
+        # Full topic where we publish the configuration message to be picked up by HA
+        # Prepend the `discovery_prefix`, default: `homeassistant`
+        # e.g. homeassistant/binary_sensor/mydevice/mysensor
+        self.config_topic = (
+            f"{self._settings.mqtt.discovery_prefix}/{self._entity_topic}/config"
+        )
+        # Full topic where we publish our own state messages
+        # Prepend the `state_prefix`, default: `hmd`
+        # e.g. hmd/binary_sensor/mydevice/mysensor
+        self.state_topic = (
+            f"{self._settings.mqtt.state_prefix}/{self._entity_topic}/state"
+        )
+        logging.info(f"config_topic: {self.config_topic}")
+        logging.info(f"state_topic: {self.state_topic}")
 
         # Create the MQTT client, registering the user `on_connect` callback
         self._setup_client(on_connect)
@@ -611,7 +618,7 @@ class Discoverable(Generic[EntityType]):
         """
         dump = f"""
 settings: {self._settings}
-topic_prefix: {self._discovery_topic_prefix}
+topic_prefix: {self._entity_topic}
 config_topic: {self.config_topic}
 state_topic: {self.state_topic}
 wrote_configuration: {self.wrote_configuration}
@@ -781,7 +788,7 @@ class Subscriber(Discoverable[EntityType]):
         # Invoke the parent init
         super().__init__(settings, on_client_connected)
         # Define the command topic to receive commands from HA
-        self._command_topic = f"{self._discovery_topic_prefix}/command"
+        self._command_topic = f"{self._entity_topic}/command"
 
         # Register the user-supplied callback function with its user_data
         self.mqtt_client.user_data_set(user_data)
