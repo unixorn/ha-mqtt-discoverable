@@ -2,8 +2,16 @@ import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import logging
 from threading import Event
-from paho.mqtt.client import Client, MQTTMessage, MQTTv5, SubscribeOptions
+from unittest.mock import MagicMock
+from paho.mqtt.client import (
+    Client,
+    MQTTMessage,
+    MQTTv5,
+    SubscribeOptions,
+    MQTT_ERR_SUCCESS,
+)
 import pytest
+from pytest_mock import MockerFixture
 from ha_mqtt_discoverable import DeviceInfo, Discoverable, Settings, EntityInfo
 
 
@@ -32,18 +40,82 @@ def test_missing_config():
         Settings(entity=sensor_info)  # type: ignore
 
 
+def test_custom_on_connect():
+    """Test that the custom callback function is invoked when we connect to MQTT"""
+    mqtt_settings = Settings.MQTT(host="localhost")
+    sensor_info = EntityInfo(name="test", component="binary_sensor")
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+
+    is_connected = Event()
+
+    def custom_callback(*args):
+        is_connected.set()
+        pass
+
+    d = Discoverable(settings, custom_callback)
+    d._connect_client()
+    assert is_connected.wait(5)
+
+
+def test_custom_on_connect_must_be_called(mocker: MockerFixture):
+    """Test that _on_connect must be called if there is a custom_callback"""
+    mocked_client = mocker.patch("paho.mqtt.client.Client")
+    mock_instance: MagicMock = mocked_client.return_value
+
+    mqtt_settings = Settings.MQTT(host="localhost")
+    sensor_info = EntityInfo(name="test", component="binary_sensor")
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+
+    # Define an empty lambda callback
+    Discoverable(settings, lambda: None)
+    # Avoid calling d._connect_client()
+    # Verify that on_connect on the client was not called
+    mock_instance.assert_not_called()
+
+
+def test_mqtt_topics():
+    mqtt_settings = Settings.MQTT(host="localhost")
+    sensor_info = EntityInfo(name="test", component="binary_sensor")
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+    d = Discoverable[EntityInfo](settings)
+    assert d._entity_topic == "binary_sensor/test"
+    assert d.config_topic == "homeassistant/binary_sensor/test/config"
+    assert d.state_topic == "hmd/binary_sensor/test/state"
+
+
+def test_mqtt_topics_with_device():
+    mqtt_settings = Settings.MQTT(host="localhost")
+    device = DeviceInfo(name="test_device", identifiers="id")
+    sensor_info = EntityInfo(
+        name="test", component="binary_sensor", device=device, unique_id="unique_id"
+    )
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+    d = Discoverable[EntityInfo](settings)
+    assert d._entity_topic == "binary_sensor/test_device/test"
+    assert d.config_topic == "homeassistant/binary_sensor/test_device/test/config"
+    assert d.state_topic == "hmd/binary_sensor/test_device/test/state"
+
+
 def test_generate_config(discoverable: Discoverable):
     device_config = discoverable.generate_config()
 
     assert device_config is not None
     assert device_config["name"] == "test"
     assert device_config["component"] == "binary_sensor"
-    assert device_config["state_topic"] == "homeassistant/binary_sensor/test/state"
+    assert device_config["state_topic"] == "hmd/binary_sensor/test/state"
 
 
-def test_connect(discoverable: Discoverable):
+def test_setup_client(discoverable: Discoverable):
+    # Try to setup client
+    discoverable._setup_client()
+    # Check that we save the client
+    assert discoverable.mqtt_client is not None
+
+
+def test_connect_client(discoverable: Discoverable):
     # Try to connect to MQTT
-    discoverable._connect()
+    discoverable._setup_client()
+    discoverable._connect_client()
     # Check that we save the client
     assert discoverable.mqtt_client is not None
 
@@ -146,7 +218,7 @@ def test_publish_multithread(discoverable: Discoverable):
     mqtt_client.on_message = message_callback
     mqtt_client.subscribe(
         (
-            "homeassistant/binary_sensor/test/state/#",
+            "hmd/binary_sensor/test/state/#",
             SubscribeOptions(retainHandling=SubscribeOptions.RETAIN_DO_NOT_SEND),
         )
     )
@@ -173,7 +245,7 @@ def test_publish_async(discoverable: Discoverable):
     mqtt_client.on_message = message_callback
     mqtt_client.subscribe(
         (
-            "homeassistant/binary_sensor/test/state/#",
+            "hmd/binary_sensor/test/state/#",
             SubscribeOptions(retainHandling=SubscribeOptions.RETAIN_DO_NOT_SEND),
         )
     )
@@ -187,3 +259,21 @@ def test_publish_async(discoverable: Discoverable):
 
     # Wait until we receive the published message
     assert received_message.wait(1)
+
+
+def test_disconnect_client(mocker: MockerFixture):
+    """Test that the __del__ method disconnects from the broker"""
+    mocked_client = mocker.patch("paho.mqtt.client.Client")
+    mock_instance = mocked_client.return_value
+    mock_instance.connect.return_value = MQTT_ERR_SUCCESS
+    mqtt_settings = Settings.MQTT(
+        host="localhost", username="admin", password="password"
+    )
+    sensor_info = EntityInfo(name="test", component="binary_sensor")
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+
+    discoverable = Discoverable[EntityInfo](settings)
+    del discoverable
+
+    mock_instance.disconnect.assert_called_once()
+    mock_instance.loop_stop.assert_called_once()
