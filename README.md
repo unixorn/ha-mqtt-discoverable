@@ -14,21 +14,22 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ## Table of Contents
 
-- [ha-mqtt-discoverable](#ha-mqtt-discoverable)
-  - [Installing](#installing)
-    - [Python](#python)
-    - [Docker](#docker)
-  - [Supported entities](#supported-entities)
-    - [Binary sensor](#binary-sensor)
-      - [Usage](#usage)
-  - [Device](#device)
-      - [Usage](#usage-1)
-  - [Contributing](#contributing)
-  - [Scripts Provided](#scripts-provided)
-    - [`hmd`](#hmd)
-    - [`hmd create binary sensor`](#hmd-create-binary-sensor)
-    - [`hmd create device`](#hmd-create-device)
-  - [Contributors](#contributors)
+- [Installing](#installing)
+  - [Python](#python)
+  - [Docker](#docker)
+- [Supported entities](#supported-entities)
+  - [Binary sensor](#binary-sensor)
+    - [Usage](#usage)
+  - [Switch](#switch)
+    - [Usage](#usage-1)
+- [Device](#device)
+    - [Usage](#usage-2)
+- [Contributing](#contributing)
+- [Scripts Provided](#scripts-provided)
+  - [`hmd`](#hmd)
+  - [`hmd create binary sensor`](#hmd-create-binary-sensor)
+  - [`hmd create device`](#hmd-create-device)
+- [Contributors](#contributors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
