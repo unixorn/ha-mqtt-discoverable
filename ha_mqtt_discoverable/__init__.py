@@ -547,7 +547,7 @@ class Settings(GenericModel, Generic[EntityType]):
     """Print out the message that would be sent over MQTT"""
     manual_availability: bool = False
     """If true, the entity `availability` inside HA must be manually managed
-    using the `available()` and `unavailable()` methods"""
+    using the `set_availability()` method"""
 
 
 class Discoverable(Generic[EntityType]):
