@@ -24,7 +24,7 @@
 <!--- Go over all the following points, and put an `x` in all the boxes that apply. [x] -->
 <!--- If you're unsure about any of these, don't hesitate to ask. I'm happy to help! -->
 
-- [ ] I have read the **CONTRIBUTING** document.
+- [ ] I have read the [CONTRIBUTING](https://github.com/unixorn/ha-mqtt-discovery/blob/main/Contributing.md) document.
 - [ ] All new and existing tests pass.
 - [ ] Any scripts added use `#!/usr/bin/env interpreter` instead of potentially platform-specific direct paths (`#!/bin/sh` is an allowed exception)
 - [ ] Scripts added/updated in this PR are all marked executable.

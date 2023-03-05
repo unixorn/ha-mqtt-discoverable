@@ -2,15 +2,16 @@
 
 ## Setup
 
-ha-mqtt-discovery uses [poetry](https://python-poetry.org/) to manage module dependencies and make packaging the module easier. Once you install `poetry`, run `poetry install` to have it create a venv for you to use during development.
+`ha-mqtt-discovery` uses [poetry](https://python-poetry.org/) to manage module dependencies and make packaging the module easier. Once you install `poetry`, run `poetry install` to have it create a venv for you to use during development.
 
-We use [pre-commit](https://pre-commit.com/) to run our pre-commit/postcheckout etc `git` hooks.  Please run `pre-commit install` at the root of the repository to enable automatic handling of the `git` pre-commit scripts. This won't affect any of your other repositories, just this one. The pre-commit scripts run `black` on the `.py` files that you are committing. Their configuration is managed in the file `.pre-commit-config.yaml`.
+We use [pre-commit](https://pre-commit.com/) to run our pre-commit/postcheckout etc `git` hooks.  Please run `pre-commit install` at the root of the repository to enable automatic handling of the `git` pre-commit scripts. This won't affect any of your other repositories, just this one. The pre-commit scripts run `black` on the `.py` files that you are committing along with some other checks (preventing accidental large file additions, merge conflict checks, whitespace trimming, etc). Their configuration is managed in [.pre-commit-config.yaml](https://github.com/unixorn/ha-mqtt-discovery/blob/main/.pre-commit-config.yaml.
 
 ## Contribution Guidelines
 
-- PRs should include readme updates for any added/changed/removed functionality.
+- PRs should include readme updates with code examples for any added/changed/removed functionality.
 - The current state of tests in the repo is frankly terrible. [issues/20](https://github.com/unixorn/ha-mqtt-discovery/issues/20) to backfill tests is already going to be a lot of work, so please add pytest tests for any new functions you add to keep from piling on more.
 - Please use `pydantic` to validate input settings and provide default values.
+- Please use Google-style docstrings - see their [style guide](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings) for details.
 
 ## Linting the project files
 

@@ -1,10 +1,10 @@
+# ha-mqtt-discoverable
+
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License](https://img.shields.io/github/license/unixorn/ha-mqtt-discover.svg)](https://opensource.org/license/apache-2-0/)
 [![GitHub last commit (branch)](https://img.shields.io/github/last-commit/unixorn/ha-mqtt-discovery/main.svg)](https://github.com/unixorn/ha-mqtt-discovery)
 [![Downloads](https://static.pepy.tech/badge/ha-mqtt-discoverable)](https://pepy.tech/project/ha-mqtt-discoverable)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-
-# ha-mqtt-discoverable
 
 A python 3 module that takes advantage of Home Assistant's MQTT discovery protocol to create sensors without having to define anything on the HA side.
 
@@ -14,21 +14,22 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ## Table of Contents
 
-- [ha-mqtt-discoverable](#ha-mqtt-discoverable)
-  - [Installing](#installing)
-    - [Python](#python)
-    - [Docker](#docker)
-  - [Supported entities](#supported-entities)
-    - [Binary sensor](#binary-sensor)
-      - [Usage](#usage)
-  - [Device](#device)
-      - [Usage](#usage-1)
-  - [Contributing](#contributing)
-  - [Scripts Provided](#scripts-provided)
-    - [`hmd`](#hmd)
-    - [`hmd create binary sensor`](#hmd-create-binary-sensor)
-    - [`hmd create device`](#hmd-create-device)
-  - [Contributors](#contributors)
+- [Installing](#installing)
+  - [Python](#python)
+  - [Docker](#docker)
+- [Supported entities](#supported-entities)
+  - [Binary sensor](#binary-sensor)
+    - [Usage](#usage)
+  - [Switch](#switch)
+    - [Usage](#usage-1)
+- [Device](#device)
+    - [Usage](#usage-2)
+- [Contributing](#contributing)
+- [Scripts Provided](#scripts-provided)
+  - [`hmd`](#hmd)
+  - [`hmd create binary sensor`](#hmd-create-binary-sensor)
+  - [`hmd create device`](#hmd-create-device)
+- [Contributors](#contributors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -42,7 +43,9 @@ ha-mqtt-discoverable runs on Python 3.10 or later.
 
 ### Docker
 
-If you only need to use the command line tools, the simplest way is to use them with `docker` or `nerdctl`. It won't interfere with your system python and potentially cause you issues there. You can use the [unixorn/ha-mqtt-discoverable](https://hub.docker.com/repository/docker/unixorn/ha-mqtt-discoverable) image on dockerhub directly, but if you add `$reporoot/bin` to your `$PATH`, the `hmd` script in there will automatically run the command line tools inside a docker container with `docker` or `nerdctl`, depending on what it finds in your `$PATH`.
+If you only need to use the command line tools, the simplest way is to use them with `docker` or `nerdctl`. It won't interfere with your system python and potentially cause you issues there.
+
+You can use the [unixorn/ha-mqtt-discoverable](https://hub.docker.com/repository/docker/unixorn/ha-mqtt-discoverable) image on dockerhub directly, but if you add `$reporoot/bin` to your `$PATH`, the `hmd` script there will automatically run the command line tools inside a docker container with `docker` or `nerdctl`, depending on what it finds in your `$PATH`.
 
 ## Supported entities
 
