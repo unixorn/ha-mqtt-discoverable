@@ -607,8 +607,8 @@ class Discoverable(Generic[EntityType]):
         self.state_topic = (
             f"{self._settings.mqtt.state_prefix}/{self._entity_topic}/state"
         )
-        logging.info(f"config_topic: {self.config_topic}")
-        logging.info(f"state_topic: {self.state_topic}")
+        logger.info(f"config_topic: {self.config_topic}")
+        logger.info(f"state_topic: {self.state_topic}")
         if self._settings.manual_availability:
             # Define the availability topic, using `hmd` topic prefix
             self.availability_topic = (
@@ -638,15 +638,15 @@ wrote_configuration: {self.wrote_configuration}
     def _setup_client(self, on_connect: Optional[Callable] = None) -> None:
         """Create an MQTT client and setup some basic properties on it"""
         mqtt_settings = self._settings.mqtt
-        logging.debug(
+        logger.debug(
             f"Creating mqtt client({mqtt_settings.client_name}) for {mqtt_settings.host}"
         )
         self.mqtt_client = mqtt.Client(mqtt_settings.client_name)
         if mqtt_settings.tls_key:
-            logging.info(f"Connecting to {mqtt_settings.host} with SSL")
-            logging.debug(f"ca_certs={mqtt_settings.tls_ca_cert}")
-            logging.debug(f"certfile={mqtt_settings.tls_certfile}")
-            logging.debug(f"keyfile={mqtt_settings.tls_key}")
+            logger.info(f"Connecting to {mqtt_settings.host} with SSL")
+            logger.debug(f"ca_certs={mqtt_settings.tls_ca_cert}")
+            logger.debug(f"certfile={mqtt_settings.tls_certfile}")
+            logger.debug(f"keyfile={mqtt_settings.tls_key}")
             self.mqtt_client.tls_set(
                 ca_certs=mqtt_settings.tls_ca_cert,
                 certfile=mqtt_settings.tls_certfile,
@@ -655,7 +655,7 @@ wrote_configuration: {self.wrote_configuration}
                 tls_version=ssl.PROTOCOL_TLS,
             )
         else:
-            logging.warning(f"Connecting to {mqtt_settings.host} without SSL")
+            logger.debug(f"Connecting to {mqtt_settings.host} without SSL")
             if mqtt_settings.username:
                 self.mqtt_client.username_pw_set(
                     mqtt_settings.username, password=mqtt_settings.password
@@ -692,7 +692,7 @@ wrote_configuration: {self.wrote_configuration}
         logger.debug(f"Writing '{state}' to {topic}")
 
         if self._settings.debug:
-            logging.warning(f"Debug is {self.debug}, skipping state write")
+            logger.debug(f"Debug is {self.debug}, skipping state write")
             return
 
         message_info = self.mqtt_client.publish(topic, state, retain=True)
@@ -701,7 +701,7 @@ wrote_configuration: {self.wrote_configuration}
 
     def debug_mode(self, mode: bool):
         self.debug = mode
-        logging.warning(f"Set debug mode to {self.debug}")
+        logger.debug(f"Set debug mode to {self.debug}")
 
     def delete(self) -> None:
         """
@@ -716,7 +716,7 @@ wrote_configuration: {self.wrote_configuration}
         """
 
         config_message = ""
-        logging.info(
+        logger.info(
             f"Writing '{config_message}' to topic {self.config_topic} on {self._settings.mqtt.host}"
         )
         self.mqtt_client.publish(self.config_topic, config_message, retain=True)
@@ -748,14 +748,14 @@ wrote_configuration: {self.wrote_configuration}
         """
         config_message = json.dumps(self.generate_config())
 
-        logging.debug(
+        logger.debug(
             f"Writing '{config_message}' to topic {self.config_topic} on {self._settings.mqtt.host}"
         )
         self.wrote_configuration = True
         self.config_message = config_message
 
         if self._settings.debug:
-            logging.warning("Debug mode is enabled, skipping config write.")
+            logger.debug("Debug mode is enabled, skipping config write.")
             return None
 
         return self.mqtt_client.publish(self.config_topic, config_message, retain=True)
@@ -776,7 +776,7 @@ wrote_configuration: {self.wrote_configuration}
 
     def __del__(self):
         """Cleanly shutdown the internal MQTT client"""
-        logging.debug("Shutting down MQTT client")
+        logger.debug("Shutting down MQTT client")
         self.mqtt_client.disconnect()
         self.mqtt_client.loop_stop()
 
@@ -803,6 +803,7 @@ class Subscriber(Discoverable[EntityType]):
             command_callback: Callback function invoked when there is a command
             coming from the MQTT command topic
         """
+
         # Callback invoked when the MQTT connection is established
         def on_client_connected(client: mqtt.Client, *args):
             # Publish this button in Home Assistant
