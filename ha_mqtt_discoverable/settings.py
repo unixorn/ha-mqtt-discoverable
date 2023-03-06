@@ -1,8 +1,9 @@
-#!/usr/bin/env python3
-
 import logging
 
 from ha_mqtt_discoverable.utils import read_yaml_file
+
+
+logger = logging.getLogger(__name__)
 
 
 def load_mqtt_settings(path: str = None, cli=None) -> dict:
@@ -114,7 +115,7 @@ def binary_sensor_settings(path: str = None, cli=None) -> dict:
     settings = load_mqtt_settings(path=path, cli=cli)
     settings["state"] = cli.state
     settings["metric_name"] = cli.metric_name
-    logging.debug(f"settings: {settings}")
+    logger.debug(f"settings: {settings}")
     return settings
 
 
@@ -123,7 +124,7 @@ def device_settings(path: str = None, cli=None) -> dict:
     Load settings for a device
     """
     settings = load_mqtt_settings(path=path, cli=cli)
-    logging.debug(f"settings: {settings}")
+    logger.debug(f"settings: {settings}")
     if "unique_id" not in settings:
         raise RuntimeError("No unique_id was specified")
     return settings

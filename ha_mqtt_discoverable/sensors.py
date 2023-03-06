@@ -7,6 +7,8 @@ import logging
 from typing import Optional
 from ha_mqtt_discoverable import Discoverable, EntityInfo, Subscriber
 
+logger = logging.getLogger(__name__)
+
 
 class BinarySensorInfo(EntityInfo):
     """Binary sensor specific information"""
@@ -85,7 +87,7 @@ class BinarySensor(Discoverable[BinarySensorInfo]):
             state_message = self._entity.payload_on
         else:
             state_message = self._entity.payload_off
-        logging.info(
+        logger.info(
             f"Setting {self._entity.name} to {state_message} using {self.state_topic}"
         )
         self._state_helper(state=state_message)
@@ -99,7 +101,7 @@ class Sensor(Discoverable[SensorInfo]):
         Args:
             state(str): What state to set the sensor to
         """
-        logging.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
+        logger.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
         self._state_helper(str(state))
 
 
