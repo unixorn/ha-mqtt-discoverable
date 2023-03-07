@@ -3,10 +3,6 @@
 repos:
   - repo: local
     hooks:
-      # - id: format-python-files-with-black
-      #   name: Format python files with black
-      #   entry: ./hooks/scripts/format-python-files-with-black
-      #   language: script
       - id: clean-up-pyc-and-pyo-files
         name: Scrub all .pyc and .pyo files before committing
         entry: ./hooks/scripts/clean-up-pyc-and-pyo-files
