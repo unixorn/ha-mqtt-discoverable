@@ -82,6 +82,9 @@ mysensor = BinarySensor(settings)
 mysensor.on()
 mysensor.off()
 
+# You can also set custom attributes on the sensor via a Python dict
+mysensor.set_attributes({"my attribute": "awesome"})
+
 ```
 
 ### Switch

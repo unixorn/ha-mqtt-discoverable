@@ -538,7 +538,7 @@ class Settings(GenericModel, Generic[EntityType]):
         discovery_prefix: str = "homeassistant"
         """The root of the topic tree where HA is listening for messages"""
         state_prefix: str = "hmd"
-        """The root of the topic tree ha-mqtt-discovery published its state messages"""
+        """The root of the topic tree ha-mqtt-discovery publishes its state messages"""
 
     mqtt: MQTT
     """Connection to MQTT broker"""
@@ -565,6 +565,7 @@ class Discoverable(Generic[EntityType]):
     config_topic: str
     state_topic: str
     availability_topic: str
+    attributes_topic: str
 
     def __init__(
         self, settings: Settings[EntityType], on_connect: Optional[Callable] = None
@@ -607,6 +608,14 @@ class Discoverable(Generic[EntityType]):
         self.state_topic = (
             f"{self._settings.mqtt.state_prefix}/{self._entity_topic}/state"
         )
+
+        # Full topic where we publish our own attributes as JSON messages
+        # Prepend the `state_prefix`, default: `hmd`
+        # e.g. hmd/binary_sensor/mydevice/mysensor
+        self.attributes_topic = (
+            f"{self._settings.mqtt.state_prefix}/{self._entity_topic}/attributes"
+        )
+
         logger.info(f"config_topic: {self.config_topic}")
         logger.info(f"state_topic: {self.state_topic}")
         if self._settings.manual_availability:
@@ -733,6 +742,7 @@ wrote_configuration: {self.wrote_configuration}
         # Add the MQTT topics to be discovered by HA
         topics = {
             "state_topic": self.state_topic,
+            "json_attributes_topic": self.attributes_topic,
         }
         # Add availability topic if defined
         if hasattr(self, "availability_topic"):
@@ -759,6 +769,13 @@ wrote_configuration: {self.wrote_configuration}
             return None
 
         return self.mqtt_client.publish(self.config_topic, config_message, retain=True)
+
+    def set_attributes(self, attributes: dict[str, Any]):
+        """Update the entity attributes"""
+        # HA expects a JSON object in the attribute topic
+        json_attributes = json.dumps(attributes)
+        logger.debug("Updating attributes: %s", json_attributes)
+        self._state_helper(json_attributes, topic=self.attributes_topic)
 
     def set_availability(self, availability: bool):
         if not hasattr(self, "availability_topic"):
