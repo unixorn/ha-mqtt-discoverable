@@ -4,14 +4,12 @@
 # Required to define a class itself as type https://stackoverflow.com/a/33533514
 from __future__ import annotations
 import logging
-from typing import Any, Callable, Optional
+from typing import Any, Optional
 
-from pydantic import Field
 from ha_mqtt_discoverable import (
     DeviceInfo,
     Discoverable,
     EntityInfo,
-    Settings,
     Subscriber,
 )
 
