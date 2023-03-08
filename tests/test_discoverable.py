@@ -95,6 +95,7 @@ def test_mqtt_topics():
     assert d._entity_topic == "binary_sensor/test"
     assert d.config_topic == "homeassistant/binary_sensor/test/config"
     assert d.state_topic == "hmd/binary_sensor/test/state"
+    assert d.attributes_topic == "hmd/binary_sensor/test/attributes"
 
 
 def test_mqtt_topics_with_device():
@@ -108,6 +109,7 @@ def test_mqtt_topics_with_device():
     assert d._entity_topic == "binary_sensor/test_device/test"
     assert d.config_topic == "homeassistant/binary_sensor/test_device/test/config"
     assert d.state_topic == "hmd/binary_sensor/test_device/test/state"
+    assert d.attributes_topic == "hmd/binary_sensor/test_device/test/attributes"
 
 
 def test_generate_config(discoverable: Discoverable):
@@ -117,6 +119,7 @@ def test_generate_config(discoverable: Discoverable):
     assert device_config["name"] == "test"
     assert device_config["component"] == "binary_sensor"
     assert device_config["state_topic"] == "hmd/binary_sensor/test/state"
+    assert device_config["json_attributes_topic"] == "hmd/binary_sensor/test/attributes"
 
 
 def test_setup_client(discoverable: Discoverable):
@@ -324,3 +327,8 @@ def test_set_availability_wrong_config(discoverable: Discoverable):
     """A discoverable that has not set availability to manual cannot invoke the methods"""
     with pytest.raises(RuntimeError):
         discoverable.set_availability(True)
+
+
+def test_set_attributes(discoverable: Discoverable):
+    attributes = {"test attribute": "test"}
+    discoverable.set_attributes(attributes)
