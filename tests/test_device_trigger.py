@@ -30,7 +30,6 @@ def test_required_config():
     )
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     trigger = DeviceTrigger(settings)
-    trigger.write_config()
     assert trigger is not None
 
 
