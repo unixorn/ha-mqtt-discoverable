@@ -771,7 +771,11 @@ wrote_configuration: {self.wrote_configuration}
         return self.mqtt_client.publish(self.config_topic, config_message, retain=True)
 
     def set_attributes(self, attributes: dict[str, Any]):
-        """Update the entity attributes"""
+        """Update the attributes of the entity
+
+        Args:
+            attributes: dictionary containing all the attributes that will be set for this entity
+        """
         # HA expects a JSON object in the attribute topic
         json_attributes = json.dumps(attributes)
         logger.debug("Updating attributes: %s", json_attributes)
