@@ -77,4 +77,4 @@ jobs:
             application_version: ${{ github.ref_name }}
           push: true
           platforms: linux/arm64,linux/amd64,linux/arm/v7
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:latest,${{ github.repository }}:${{ github.ref_name }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ha-mqtt-discoverable:latest,${{ secrets.DOCKERHUB_USERNAME }}/ha-mqtt-discoverable:${{ github.ref_name }}
