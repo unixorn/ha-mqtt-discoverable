@@ -54,6 +54,7 @@ The following Home Assistant entities are currently implemented:
 - Binary sensor
 - Switch
 - Button
+- Device trigger
 
 ### Binary sensor
 
@@ -128,7 +129,7 @@ From the [Home Assistant documentation](https://developers.home-assistant.io/doc
 A device is automatically created when an entity defines its `device` property.
 A device will be matched up with an existing device via supplied identifiers or connections, like serial numbers or MAC addresses.
 
-#### Usage
+### Usage
 
 The following example create a device, by associating multiple sensors to the same `DeviceInfo` instance.
 
@@ -165,6 +166,34 @@ door_sensor = BinarySensor(settings)
 door_sensor.on()
 
 # The two sensors should be visible inside Home Assistant under the device `My device`
+```
+
+### Device trigger
+
+The following example creates a device trigger and generates a trigger event:
+
+#### Usage
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import DeviceInfo, DeviceTriggerInfo, DeviceTrigger
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Define the device. At least one of `identifiers` or `connections` must be supplied
+device_info = DeviceInfo(name="My device", identifiers="device_id")
+
+# Associate the sensor with the device via the `device` parameter
+trigger_into = DeviceTriggerInfo(name="MyTrigger", type="button_press", subtype="button_1", unique_id="my_device_trigger", device=device_info)
+
+settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+
+# Instantiate the device trigger
+mytrigger = DeviceTrigger(settings)
+
+# Generate a device trigger event, publishing an MQTT message that gets picked up by HA
+# Optionally include a payload as part of the event
+mytrigger.trigger("My custom payload")
 ```
 
 ## Contributing

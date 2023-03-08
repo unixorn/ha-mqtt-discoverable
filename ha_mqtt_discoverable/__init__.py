@@ -678,10 +678,10 @@ wrote_configuration: {self.wrote_configuration}
         self.mqtt_client.loop_start()
 
     def _state_helper(
-        self, state: Optional[str], topic: Optional[str] = None
+        self, state: Optional[str], topic: Optional[str] = None, retain=True
     ) -> MQTTMessageInfo:
         """
-        Write a state to the given MQTT topic, return the result of client.publish()
+        Write a state to the given MQTT topic, returning the result of client.publish()
         """
         if not self.wrote_configuration:
             logger.debug("Writing sensor configuration")
@@ -695,7 +695,7 @@ wrote_configuration: {self.wrote_configuration}
             logger.debug(f"Debug is {self.debug}, skipping state write")
             return
 
-        message_info = self.mqtt_client.publish(topic, state, retain=True)
+        message_info = self.mqtt_client.publish(topic, state, retain=retain)
         logger.debug(f"Publish result: {message_info}")
         return message_info
 
