@@ -1,0 +1,10 @@
+{
+  "threshold": 0,
+  "reporters": ["html", "markdown"],
+  "ignore": [
+    "**/node_modules/**",
+    "**/.git/**",
+    "**/*.md",
+    "**/test_*.py"
+  ]
+}
