@@ -4,8 +4,16 @@
 # Required to define a class itself as type https://stackoverflow.com/a/33533514
 from __future__ import annotations
 import logging
-from typing import Optional
-from ha_mqtt_discoverable import Discoverable, EntityInfo, Subscriber
+from typing import Any, Callable, Optional
+
+from pydantic import Field
+from ha_mqtt_discoverable import (
+    DeviceInfo,
+    Discoverable,
+    EntityInfo,
+    Settings,
+    Subscriber,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -61,6 +69,23 @@ class ButtonInfo(EntityInfo):
     """The payload to send to trigger the button."""
     retain: Optional[bool] = None
     """If the published message should have the retain flag on or not"""
+
+
+class DeviceTriggerInfo(EntityInfo):
+    """Information about the device trigger"""
+
+    component: str = "device_automation"
+    automation_type: str = "trigger"
+    """The type of automation, must be ‘trigger’."""
+
+    payload: Optional[str] = None
+    """Optional payload to match the payload being sent over the topic."""
+    type: str
+    """The type of the trigger"""
+    subtype: str
+    """The subtype of the trigger"""
+    device: DeviceInfo
+    """Information about the device this sensor belongs to (required)"""
 
 
 class BinarySensor(Discoverable[BinarySensorInfo]):
@@ -128,3 +153,30 @@ class Button(Subscriber[ButtonInfo]):
     """Implements an MQTT button:
     https://www.home-assistant.io/integrations/button.mqtt
     """
+
+
+class DeviceTrigger(Discoverable[DeviceTriggerInfo]):
+    """Implements an MWTT Device Trigger
+    https://www.home-assistant.io/integrations/device_trigger.mqtt/
+    """
+
+    def generate_config(self) -> dict[str, Any]:
+        """Publish a custom configuration:
+        since this entity does not provide a `state_topic`, HA expects a `topic` key in the config
+        """
+        config = super().generate_config()
+        # Publish our `state_topic` as `topic`
+        topics = {
+            "topic": self.state_topic,
+        }
+        return config | topics
+
+    def trigger(self, payload: Optional[str] = None):
+        """
+        Generate a device trigger event
+
+        Args:
+            payload: custom payload to send in the trigger topic
+
+        """
+        return self._state_helper(payload, self.state_topic, retain=False)
