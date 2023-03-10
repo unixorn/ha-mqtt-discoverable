@@ -69,6 +69,24 @@ class ButtonInfo(EntityInfo):
     """If the published message should have the retain flag on or not"""
 
 
+class TextInfo(EntityInfo):
+    """Information about the `text` entity"""
+
+    component: str = "text"
+
+    max: int = 255
+    """The maximum size of a text being set or received (maximum is 255)."""
+    min: int = 0
+    """The minimum size of a text being set or received."""
+    mode: Optional[str] = "text"
+    """The mode off the text entity. Must be either text or password."""
+    pattern: Optional[str] = None
+    """A valid regular expression the text being set or received must match with."""
+
+    retain: Optional[bool] = None
+    """If the published message should have the retain flag on or not"""
+
+
 class DeviceTriggerInfo(EntityInfo):
     """Information about the device trigger"""
 
@@ -178,3 +196,24 @@ class DeviceTrigger(Discoverable[DeviceTriggerInfo]):
 
         """
         return self._state_helper(payload, self.state_topic, retain=False)
+
+
+class Text(Subscriber[TextInfo]):
+    """Implements an MQTT text:
+    https://www.home-assistant.io/integrations/text.mqtt/
+    """
+
+    def set_text(self, text: str) -> None:
+        """
+        Update the text displayed by this sensor. Check that it is of acceptable length.
+
+        Args:
+            text(str): Value of the text configured for this entity
+        """
+        if not self._entity.min <= len(text) <= self._entity.max:
+            raise RuntimeError(
+                f"Text is not within configured length boundaries [{self._entity.min}, {self._entity.max}]"
+            )
+
+        logger.info(f"Setting {self._entity.name} to {text} using {self.state_topic}")
+        self._state_helper(str(text))
