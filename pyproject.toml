@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ha-mqtt-discoverable"
-version = "0.7.0"
+version = "0.8.0"
 description = ""
 authors = ["Joe Block <jpb@unixorn.net>"]
 readme = "README.md"
@@ -28,9 +28,3 @@ pytest-mock = "^3.10.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.scripts]
-hmd = 'ha_mqtt_discoverable.cli.main_driver:hmd_driver'
-hmd-create-binary-sensor = 'ha_mqtt_discoverable.cli.sensor_driver:create_binary_sensor'
-hmd-create-device = 'ha_mqtt_discoverable.cli.device_driver:create_device'
-hmd-version = 'ha_mqtt_discoverable.cli:module_version'
