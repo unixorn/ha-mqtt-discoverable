@@ -15,19 +15,16 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 
 - [Installing](#installing)
   - [Python](#python)
-  - [Docker](#docker)
 - [Supported entities](#supported-entities)
   - [Binary sensor](#binary-sensor)
     - [Usage](#usage)
   - [Switch](#switch)
     - [Usage](#usage-1)
 - [Device](#device)
-    - [Usage](#usage-2)
+  - [Usage](#usage-2)
+  - [Device trigger](#device-trigger)
+    - [Usage](#usage-3)
 - [Contributing](#contributing)
-- [Scripts Provided](#scripts-provided)
-  - [`hmd`](#hmd)
-  - [`hmd create binary sensor`](#hmd-create-binary-sensor)
-  - [`hmd create device`](#hmd-create-device)
 - [Contributors](#contributors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -39,12 +36,6 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 ha-mqtt-discoverable runs on Python 3.10 or later.
 
 `pip install ha-mqtt-discoverable` if you want to use it in your own python scripts. This will also install the `hmd` utility scripts.
-
-### Docker
-
-If you only need to use the command line tools, the simplest way is to use them with `docker` or `nerdctl`. It won't interfere with your system python and potentially cause you issues there.
-
-You can use the [unixorn/ha-mqtt-discoverable](https://hub.docker.com/repository/docker/unixorn/ha-mqtt-discoverable) image on dockerhub directly, but if you add `$reporoot/bin` to your `$PATH`, the `hmd` script there will automatically run the command line tools inside a docker container with `docker` or `nerdctl`, depending on what it finds in your `$PATH`.
 
 ## Supported entities
 
@@ -202,26 +193,6 @@ mytrigger.trigger("My custom payload")
 ## Contributing
 
 Please run `black` on your code before submitting. There are `git` hooks already configured to run `black` and other checks before every commit, please run `pre-commit install` to enable them.
-
-## Scripts Provided
-
-The `ha_mqtt_discoverable` module also installs the following helper scripts you can use in your own shell scripts.
-
-### `hmd`
-
-Uses the [gitlike-commands](https://github.com/unixorn/gitlike-commands/) module to find and execute `hmd` subcommands. Allows you to run `hmd create binary sensor` and `hmd` will find and run `hmd-create-binary-sensor` and pass it all the command line options.
-
-### `hmd create binary sensor`
-
-Create/Update a binary sensor and set its state.
-
-Usage: `hmd create binary sensor --device-name mfsmaster --device-id 8675309 --mqtt-user HASS_MQTT_USER --mqtt-password HASS_MQTT_PASSWORD --client-name inquisition --mqtt-server mqtt.unixorn.net --metric-name tamper --device-class motion --state off`
-
-### `hmd create device`
-
-Create/Update a device and set the state of multiple metrics on it.
-
-Usage: `hmd create device --device-name coyote --device-id 8675309 --mqtt-user HASS_MQTT_USER --mqtt-password HASS_MQTT_PASSWORD --mqtt-server mqtt.example.com --model 'Rocket Skates' --manufacturer 'Acme Products' --metric-data '{"name":"Left Rocket Skate","value":93}' --metric-data '{"name":"Right Rocket Skate","value":155}' --unique-id 'hmd-26536'`
 
 ## Contributors
 
