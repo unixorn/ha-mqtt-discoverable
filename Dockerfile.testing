@@ -22,6 +22,4 @@ RUN pip install --no-cache-dir /data/*.whl
 
 USER nobody
 
-USER nobody
-
 CMD ["bash", "-l"]
