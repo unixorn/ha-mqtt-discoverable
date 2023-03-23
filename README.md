@@ -25,6 +25,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
   - [Device trigger](#device-trigger)
     - [Usage](#usage-3)
 - [Contributing](#contributing)
+- [Users of ha-mqtt-discoverable](#users-of-ha-mqtt-discoverable)
 - [Contributors](#contributors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -193,6 +194,12 @@ mytrigger.trigger("My custom payload")
 ## Contributing
 
 Please run `black` on your code before submitting. There are `git` hooks already configured to run `black` and other checks before every commit, please run `pre-commit install` to enable them.
+
+## Users of ha-mqtt-discoverable
+
+If you use this module for your own project, please add a link here.
+
+- [ha-mqtt-discoverable-cli](https://github.com/unixorn/ha-mqtt-discoverable-cli) - Command line tools that allow using this module from shell scripts
 
 ## Contributors
 
