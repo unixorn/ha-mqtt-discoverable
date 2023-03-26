@@ -6,7 +6,7 @@ repos:
     hooks:
       - id: clean-up-pyc-and-pyo-files
         name: Scrub all .pyc and .pyo files before committing
-        entry: ./hooks/scripts/clean-up-pyc-and-pyo-files
+        entry: ./.hook-scripts/clean-up-pyc-and-pyo-files
         language: script
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
