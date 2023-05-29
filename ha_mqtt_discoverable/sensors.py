@@ -1,6 +1,18 @@
 #
-# Copyright 2022 Joe Block <jpb@unixorn.net>
-# License: Apache 2.0
+#    Copyright 2022-2023 Joe Block <jpb@unixorn.net>
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+#
 # Required to define a class itself as type https://stackoverflow.com/a/33533514
 from __future__ import annotations
 import logging
@@ -23,9 +35,9 @@ class BinarySensorInfo(EntityInfo):
     off_delay: Optional[int] = None
     """For sensors that only send on state updates (like PIRs),
     this variable sets a delay in seconds after which the sensor’s state will be updated back to off."""
-    payload_off: str = "on"
+    payload_off: str = "off"
     """Payload to send for the ON state"""
-    payload_on: str = "off"
+    payload_on: str = "on"
     """Payload to send for the OFF state"""
 
 
