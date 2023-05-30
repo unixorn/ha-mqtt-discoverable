@@ -504,6 +504,8 @@ class EntityInfo(BaseModel):
     """Sets the class of the device, changing the device state and icon that is displayed on the frontend."""
     enabled_by_default: Optional[bool] = None
     """Flag which defines if the entity should be enabled when first added."""
+    entity_category: Optional[str] = None
+    """Classification of a non-primary entity."""
     expire_after: Optional[int] = None
     """If set, it defines the number of seconds after the sensor’s state expires, if it’s not updated.\
     After expiry, the sensor’s state becomes unavailable. Default the sensors state never expires."""

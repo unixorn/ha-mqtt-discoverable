@@ -20,10 +20,12 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
     - [Usage](#usage)
   - [Switch](#switch)
     - [Usage](#usage-1)
+  - [Text](#text)
+    - [Usage](#usage-2)
 - [Device](#device)
-  - [Usage](#usage-2)
+  - [Usage](#usage-3)
   - [Device trigger](#device-trigger)
-    - [Usage](#usage-3)
+    - [Usage](#usage-4)
 - [Contributing](#contributing)
 - [Users of ha-mqtt-discoverable](#users-of-ha-mqtt-discoverable)
 - [Contributors](#contributors)
@@ -47,6 +49,8 @@ The following Home Assistant entities are currently implemented:
 - Switch
 - Button
 - Device trigger
+
+Each entity can associated to a device. See below for details.
 
 ### Binary sensor
 
@@ -95,8 +99,7 @@ from paho.mqtt.client import Client, MQTTMessage
 mqtt_settings = Settings.MQTT(host="localhost")
 
 # Information about the switch
-# If `command_topic` is defined, it will receive state updates from HA
-switch_info = SwitchInfo(name="test", command_topic="command")
+switch_info = SwitchInfo(name="test")
 
 settings = Settings(mqtt=mqtt_settings, entity=switch_info)
 
@@ -115,6 +118,43 @@ my_switch = Switch(settings, my_callback, user_data)
 # Change the state of the sensor, publishing an MQTT message that gets picked up by HA
 my_switch.on()
 my_switch.off()
+
+```
+
+### Text
+
+The text is an `helper entity`, showing an input field in the HA UI that the user can interact with.
+It is possible to act upon reception of the inputted text by defining a `callback` function, as the following example shows:
+
+#### Usage
+
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Text, TextInfo
+from paho.mqtt.client import Client, MQTTMessage
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the `text` entity
+text_info = TextInfo(name="test")
+
+settings = Settings(mqtt=mqtt_settings, entity=switch_info)
+
+# To receive text updates from HA, define a callback function:
+def my_callback(client: Client, user_data, message: MQTTMessage):
+    text = message.payload.decode()
+    logging.info(f"Received {text} from HA")
+    # Your custom code...
+
+# Define an optional object to be passed back to the callback
+user_data = "Some custom data"
+
+# Instantiate the text
+my_text = Text(settings, my_callback, user_data)
+
+# Change the text displayed in HA UI, publishing an MQTT message that gets picked up by HA
+my_text.set_text("Some awesome text")
 
 ```
 
