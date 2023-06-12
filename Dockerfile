@@ -6,7 +6,7 @@ LABEL description="ha-mqtt-discoverable utility image"
 LABEL version=${application_version}
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends apt-utils=2.2.4 ca-certificates=20210119 && \
+    apt-get install --no-install-recommends -y apt-utils=2.2.4 ca-certificates=20210119 && \
 		update-ca-certificates && \
 		rm -fr /tmp/* /var/lib/apt/lists/*
 
