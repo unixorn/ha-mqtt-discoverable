@@ -179,7 +179,7 @@ mqtt_settings = Settings.MQTT(host="localhost")
 # Information about the `text` entity
 text_info = TextInfo(name="test")
 
-settings = Settings(mqtt=mqtt_settings, entity=switch_info)
+settings = Settings(mqtt=mqtt_settings, entity=text_info)
 
 # To receive text updates from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
@@ -218,7 +218,7 @@ mqtt_settings = Settings.MQTT(host="localhost")
 # Information about the `number` entity.
 number_info = NumberInfo(name="test", min=0, max=50, mode="slider", step=5)
 
-settings = Settings(mqtt=mqtt_settings, entity=switch_info)
+settings = Settings(mqtt=mqtt_settings, entity=number_info)
 
 # To receive number updates from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
@@ -263,7 +263,7 @@ device_info = DeviceInfo(name="My device", identifiers="device_id")
 # `unique_id` must also be set, otherwise Home Assistant will not display the device in the UI
 motion_sensor_info = BinarySensorInfo(name="My motion sensor", device_class="motion", unique_id="my_motion_sensor", device=device_info)
 
-motion_settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+motion_settings = Settings(mqtt=mqtt_settings, entity=motion_sensor_info)
 
 # Instantiate the sensor
 motion_sensor = BinarySensor(motion_settings)
@@ -302,7 +302,7 @@ device_info = DeviceInfo(name="My device", identifiers="device_id")
 # Associate the sensor with the device via the `device` parameter
 trigger_into = DeviceTriggerInfo(name="MyTrigger", type="button_press", subtype="button_1", unique_id="my_device_trigger", device=device_info)
 
-settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+settings = Settings(mqtt=mqtt_settings, entity=trigger_info)
 
 # Instantiate the device trigger
 mytrigger = DeviceTrigger(settings)
