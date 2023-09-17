@@ -106,8 +106,14 @@ settings = Settings(mqtt=mqtt_settings, entity=switch_info)
 # To receive state commands from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
     payload = message.payload.decode()
-    logging.info(f"Received {payload} from HA")
-    # Your custom code...
+    if payload == "ON":
+        turn_my_custom_thing_on()
+        # Let HA know that the switch was successfully activated
+	my_switch.on()
+    elif payload == "OFF":
+        turn_my_custom_thing_off()
+        # Let HA know that the switch was successfully deactivated
+	my_switch.off()
 
 # Define an optional object to be passed back to the callback
 user_data = "Some custom data"
@@ -115,9 +121,43 @@ user_data = "Some custom data"
 # Instantiate the switch
 my_switch = Switch(settings, my_callback, user_data)
 
-# Change the state of the sensor, publishing an MQTT message that gets picked up by HA
-my_switch.on()
+# Set the initial state of the switch, which also makes it discoverable
 my_switch.off()
+
+```
+
+
+### Button
+
+The button publishes no state, it simply receives a command from HA.
+
+You must call `write_config` on a Button after creating it to make it discoverable.
+
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Button, ButtonInfo
+from paho.mqtt.client import Client, MQTTMessage
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the button
+button_info = ButtonInfo(name="test")
+
+settings = Settings(mqtt=mqtt_settings, entity=button_info)
+
+# To receive button commands from HA, define a callback function:
+def my_callback(client: Client, user_data, message: MQTTMessage):
+    perform_my_custom_action()
+
+# Define an optional object to be passed back to the callback
+user_data = "Some custom data"
+
+# Instantiate the button
+my_button = Button(settings, my_callback, user_data)
+
+# Publish the button's discoverability message to let HA automatically notice it
+my_button.write_config()
 
 ```
 
@@ -139,13 +179,15 @@ mqtt_settings = Settings.MQTT(host="localhost")
 # Information about the `text` entity
 text_info = TextInfo(name="test")
 
-settings = Settings(mqtt=mqtt_settings, entity=switch_info)
+settings = Settings(mqtt=mqtt_settings, entity=text_info)
 
 # To receive text updates from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
     text = message.payload.decode()
     logging.info(f"Received {text} from HA")
-    # Your custom code...
+    do_some_custom_thing(text)
+    # Send an MQTT message to confirm to HA that the text was changed
+    my_text.set_text(text)
 
 # Define an optional object to be passed back to the callback
 user_data = "Some custom data"
@@ -153,8 +195,47 @@ user_data = "Some custom data"
 # Instantiate the text
 my_text = Text(settings, my_callback, user_data)
 
-# Change the text displayed in HA UI, publishing an MQTT message that gets picked up by HA
+# Set the initial text displayed in HA UI, publishing an MQTT message that gets picked up by HA
 my_text.set_text("Some awesome text")
+
+```
+
+### Number
+
+The number entity is similar to the text entity, but for a numeric value instead of a string. 
+It is possible to act upon receiving changes in HA by defining a `callback` function, as the following example shows:
+
+#### Usage
+
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Number, NumberInfo
+from paho.mqtt.client import Client, MQTTMessage
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the `number` entity.
+number_info = NumberInfo(name="test", min=0, max=50, mode="slider", step=5)
+
+settings = Settings(mqtt=mqtt_settings, entity=number_info)
+
+# To receive number updates from HA, define a callback function:
+def my_callback(client: Client, user_data, message: MQTTMessage):
+    number = int(message.payload.decode())
+    logging.info(f"Received {number} from HA")
+    do_some_custom_thing(number)
+    # Send an MQTT message to confirm to HA that the number was changed
+    my_text.set_value(number)
+
+# Define an optional object to be passed back to the callback
+user_data = "Some custom data"
+
+# Instantiate the number
+my_number = Number(settings, my_callback, user_data)
+
+# Set the initial number displayed in HA UI, publishing an MQTT message that gets picked up by HA
+my_number.set_value(42.0)
 
 ```
 
@@ -182,7 +263,7 @@ device_info = DeviceInfo(name="My device", identifiers="device_id")
 # `unique_id` must also be set, otherwise Home Assistant will not display the device in the UI
 motion_sensor_info = BinarySensorInfo(name="My motion sensor", device_class="motion", unique_id="my_motion_sensor", device=device_info)
 
-motion_settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+motion_settings = Settings(mqtt=mqtt_settings, entity=motion_sensor_info)
 
 # Instantiate the sensor
 motion_sensor = BinarySensor(motion_settings)
@@ -221,7 +302,7 @@ device_info = DeviceInfo(name="My device", identifiers="device_id")
 # Associate the sensor with the device via the `device` parameter
 trigger_into = DeviceTriggerInfo(name="MyTrigger", type="button_press", subtype="button_1", unique_id="my_device_trigger", device=device_info)
 
-settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+settings = Settings(mqtt=mqtt_settings, entity=trigger_info)
 
 # Instantiate the device trigger
 mytrigger = DeviceTrigger(settings)
