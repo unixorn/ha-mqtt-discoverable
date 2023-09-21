@@ -544,6 +544,7 @@ class Settings(GenericModel, Generic[EntityType]):
         """Connection settings for the MQTT broker"""
 
         host: str
+        port: Optional[int] = 1883
         username: Optional[str] = None
         password: Optional[str] = None
         client_name: Optional[str] = None
@@ -668,11 +669,13 @@ wrote_configuration: {self.wrote_configuration}
         mqtt_settings = self._settings.mqtt
         logger.debug(
             f"Creating mqtt client({mqtt_settings.client_name}) for "
-            "{mqtt_settings.host}"
+            "{mqtt_settings.host}:{mqtt_settings.port}"
         )
         self.mqtt_client = mqtt.Client(mqtt_settings.client_name)
         if mqtt_settings.tls_key:
-            logger.info(f"Connecting to {mqtt_settings.host} with SSL")
+            logger.info(
+                f"Connecting to {mqtt_settings.host}:{mqtt_settings.port} with SSL"
+            )
             logger.debug(f"ca_certs={mqtt_settings.tls_ca_cert}")
             logger.debug(f"certfile={mqtt_settings.tls_certfile}")
             logger.debug(f"keyfile={mqtt_settings.tls_key}")
@@ -684,7 +687,9 @@ wrote_configuration: {self.wrote_configuration}
                 tls_version=ssl.PROTOCOL_TLS,
             )
         else:
-            logger.debug(f"Connecting to {mqtt_settings.host} without SSL")
+            logger.debug(
+                f"Connecting to {mqtt_settings.host}:{mqtt_settings.port} without SSL"
+            )
             if mqtt_settings.username:
                 self.mqtt_client.username_pw_set(
                     mqtt_settings.username, password=mqtt_settings.password
@@ -699,7 +704,9 @@ wrote_configuration: {self.wrote_configuration}
     def _connect_client(self) -> None:
         """Connect the client to the MQTT broker, start its onw internal loop in
         a separate thread"""
-        result = self.mqtt_client.connect(self._settings.mqtt.host)
+        result = self.mqtt_client.connect(
+            self._settings.mqtt.host, self._settings.mqtt.port
+        )
         # Check if we have established a connection
         if result != mqtt.MQTT_ERR_SUCCESS:
             raise RuntimeError("Error while connecting to MQTT broker")
@@ -749,7 +756,7 @@ wrote_configuration: {self.wrote_configuration}
         config_message = ""
         logger.info(
             f"Writing '{config_message}' to topic {self.config_topic} on "
-            "{self._settings.mqtt.host}"
+            "{self._settings.mqtt.host}:{self._settings.mqtt.port}"
         )
         self.mqtt_client.publish(self.config_topic, config_message, retain=True)
 
@@ -783,7 +790,7 @@ wrote_configuration: {self.wrote_configuration}
 
         logger.debug(
             f"Writing '{config_message}' to topic {self.config_topic} on "
-            "{self._settings.mqtt.host}"
+            "{self._settings.mqtt.host}:{self._settings.mqtt.port}"
         )
         self.wrote_configuration = True
         self.config_message = config_message
