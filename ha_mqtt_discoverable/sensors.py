@@ -48,6 +48,11 @@ class SensorInfo(EntityInfo):
     component: str = "sensor"
     unit_of_measurement: Optional[str] = None
     """Defines the units of measurement of the sensor, if any."""
+    state_class: Optional[str] = None
+    """Defines the type of state.
+    If not None, the sensor is assumed to be numerical
+    and will be displayed as a line-chart
+    in the frontend instead of as discrete values."""
 
 
 class SwitchInfo(EntityInfo):
