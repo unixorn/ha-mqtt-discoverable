@@ -14,21 +14,23 @@
 #    limitations under the License.
 #
 import asyncio
-from concurrent.futures import ThreadPoolExecutor
 import logging
+from concurrent.futures import ThreadPoolExecutor
 from threading import Event
 from unittest.mock import MagicMock
+
+import paho.mqtt.subscribe as subscribe
+import pytest
 from paho.mqtt.client import (
+    MQTT_ERR_SUCCESS,
     Client,
     MQTTMessage,
     MQTTv5,
     SubscribeOptions,
-    MQTT_ERR_SUCCESS,
 )
-import paho.mqtt.subscribe as subscribe
-import pytest
 from pytest_mock import MockerFixture
-from ha_mqtt_discoverable import DeviceInfo, Discoverable, Settings, EntityInfo
+
+from ha_mqtt_discoverable import DeviceInfo, Discoverable, EntityInfo, Settings
 
 
 @pytest.fixture
@@ -232,7 +234,8 @@ def test_str(discoverable: Discoverable[EntityInfo]):
 # Define a callback function to be invoked when we receive a message on the topic
 def message_callback(client: Client, userdata, message: MQTTMessage, tmp=None):
     logging.info("Received %s", message)
-    # If the broker is `dirty` and contains messages send by other test functions, skip these retained messages
+    # If the broker is `dirty` and contains messages send by other test functions,
+    # skip these retained messages
     if message.retain:
         logging.warn("Skipping retained message")
         return
@@ -339,7 +342,8 @@ def test_set_availability(discoverable_availability: Discoverable):
 
 
 def test_set_availability_wrong_config(discoverable: Discoverable):
-    """A discoverable that has not set availability to manual cannot invoke the methods"""
+    """A discoverable that has not set availability to manual cannot invoke the \
+        methods"""
     with pytest.raises(RuntimeError):
         discoverable.set_availability(True)
 

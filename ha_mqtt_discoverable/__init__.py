@@ -483,7 +483,8 @@ class DeviceInfo(BaseModel):
     """A list of connections of the device to the outside world as a list of tuples\
         [connection_type, connection_identifier]"""
     configuration_url: Optional[str] = None
-    """A link to the webpage that can manage the configuration of this device. Can be either an HTTP or HTTPS link."""
+    """A link to the webpage that can manage the configuration of this device.
+        Can be either an HTTP or HTTPS link."""
 
     @root_validator
     def must_have_identifiers_or_connection(cls, values):
@@ -501,14 +502,16 @@ class EntityInfo(BaseModel):
     device: Optional[DeviceInfo] = None
     """Information about the device this sensor belongs to"""
     device_class: Optional[str] = None
-    """Sets the class of the device, changing the device state and icon that is displayed on the frontend."""
+    """Sets the class of the device, changing the device state and icon that is
+        displayed on the frontend."""
     enabled_by_default: Optional[bool] = None
     """Flag which defines if the entity should be enabled when first added."""
     entity_category: Optional[str] = None
     """Classification of a non-primary entity."""
     expire_after: Optional[int] = None
-    """If set, it defines the number of seconds after the sensor’s state expires, if it’s not updated.\
-    After expiry, the sensor’s state becomes unavailable. Default the sensors state never expires."""
+    """If set, it defines the number of seconds after the sensor’s state expires,
+        if it’s not updated. After expiry, the sensor’s state becomes unavailable.
+            Default the sensors state never expires."""
     force_update: Optional[bool] = None
     """Sends update events even if the value hasn’t changed.\
     Useful if you want to have meaningful value graphs in history."""
@@ -520,7 +523,8 @@ class EntityInfo(BaseModel):
     qos: Optional[int] = None
     """The maximum QoS level to be used when receiving messages."""
     unique_id: Optional[str] = None
-    """Set this to enable editing sensor from the HA ui and to integrate with a device"""
+    """Set this to enable editing sensor from the HA ui and to integrate with a
+        device"""
 
     @root_validator
     def device_need_unique_id(cls, values):
@@ -588,8 +592,10 @@ class Discoverable(Generic[EntityType]):
         Args:
             settings: Settings for the entity we want to create in Home Assistant.
             See the `Settings` class for the available options.
-            on_connect: Optional callback function invoked when the MQTT client successfully connects to the broker.
-            If defined, you need to call `_connect_client() to establish the connection manually.`
+            on_connect: Optional callback function invoked when the MQTT client \
+                successfully connects to the broker.
+            If defined, you need to call `_connect_client()` to establish the \
+                connection manually.
         """
         # Import here to avoid circular dependency on imports
         # TODO how to better handle this?
@@ -639,7 +645,8 @@ class Discoverable(Generic[EntityType]):
 
         # Create the MQTT client, registering the user `on_connect` callback
         self._setup_client(on_connect)
-        # If there is a callback function defined, the user must manually connect to the MQTT client
+        # If there is a callback function defined, the user must manually connect
+        # to the MQTT client
         if not on_connect:
             self._connect_client()
 
@@ -660,7 +667,8 @@ wrote_configuration: {self.wrote_configuration}
         """Create an MQTT client and setup some basic properties on it"""
         mqtt_settings = self._settings.mqtt
         logger.debug(
-            f"Creating mqtt client({mqtt_settings.client_name}) for {mqtt_settings.host}"
+            f"Creating mqtt client({mqtt_settings.client_name}) for "
+            "{mqtt_settings.host}"
         )
         self.mqtt_client = mqtt.Client(mqtt_settings.client_name)
         if mqtt_settings.tls_key:
@@ -689,13 +697,15 @@ wrote_configuration: {self.wrote_configuration}
             self.mqtt_client.will_set(self.availability_topic, "offline", retain=True)
 
     def _connect_client(self) -> None:
-        """Connect the client to the MQTT broker, start its onw internal loop in a separate thread"""
+        """Connect the client to the MQTT broker, start its onw internal loop in
+        a separate thread"""
         result = self.mqtt_client.connect(self._settings.mqtt.host)
         # Check if we have established a connection
         if result != mqtt.MQTT_ERR_SUCCESS:
             raise RuntimeError("Error while connecting to MQTT broker")
 
-        # Start the internal network loop of the MQTT library to handle incoming messages in a separate thread
+        # Start the internal network loop of the MQTT library to handle incoming
+        # messages in a separate thread
         self.mqtt_client.loop_start()
 
     def _state_helper(
@@ -738,7 +748,8 @@ wrote_configuration: {self.wrote_configuration}
 
         config_message = ""
         logger.info(
-            f"Writing '{config_message}' to topic {self.config_topic} on {self._settings.mqtt.host}"
+            f"Writing '{config_message}' to topic {self.config_topic} on "
+            "{self._settings.mqtt.host}"
         )
         self.mqtt_client.publish(self.config_topic, config_message, retain=True)
 
@@ -771,7 +782,8 @@ wrote_configuration: {self.wrote_configuration}
         config_message = json.dumps(self.generate_config())
 
         logger.debug(
-            f"Writing '{config_message}' to topic {self.config_topic} on {self._settings.mqtt.host}"
+            f"Writing '{config_message}' to topic {self.config_topic} on "
+            "{self._settings.mqtt.host}"
         )
         self.wrote_configuration = True
         self.config_message = config_message
@@ -786,7 +798,8 @@ wrote_configuration: {self.wrote_configuration}
         """Update the attributes of the entity
 
         Args:
-            attributes: dictionary containing all the attributes that will be set for this entity
+            attributes: dictionary containing all the attributes that will be \
+            set for this entity
         """
         # HA expects a JSON object in the attribute topic
         json_attributes = json.dumps(attributes)
