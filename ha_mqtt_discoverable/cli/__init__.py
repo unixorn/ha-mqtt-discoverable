@@ -52,6 +52,7 @@ def create_base_parser(description: str = "Base parser"):
     parser.add_argument("--mqtt-user", type=str, help="MQTT user.")
     parser.add_argument("--mqtt-password", type=str, help="MQTT password.")
     parser.add_argument("--mqtt-server", type=str, help="MQTT server.")
+    parser.add_argument("--mqtt-port", type=str, help="MQTT port.", default=1883)
     parser.add_argument("--settings-file", type=str, help="Settings file.")
 
     parser.add_argument("--use-tls", "--use-ssl", action="store_true", help="Use TLS.")

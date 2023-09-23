@@ -14,6 +14,7 @@
 #    limitations under the License.
 #
 import pytest
+
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Sensor, SensorInfo
 
@@ -38,7 +39,8 @@ def test_generate_config(sensor: Sensor):
     config = sensor.generate_config()
 
     assert config is not None
-    # If we have defined a custom unit of measurement, check that is part of the output config
+    # If we have defined a custom unit of measurement, check that is part of the
+    # output config
     if sensor._entity.unit_of_measurement:
         assert config["unit_of_measurement"] == sensor._entity.unit_of_measurement
 

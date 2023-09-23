@@ -17,7 +17,6 @@ import logging
 
 from ha_mqtt_discoverable.utils import read_yaml_file
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -43,6 +42,7 @@ def load_mqtt_settings(path: str = None, cli=None) -> dict:
     settings["mqtt_password"] = cli.mqtt_password
     settings["mqtt_prefix"] = cli.mqtt_prefix
     settings["mqtt_server"] = cli.mqtt_server
+    settings["mqtt_port"] = cli.mqtt_port
     settings["mqtt_user"] = cli.mqtt_user
 
     # Optional settings - make sure we don't raise an exception if they're unset
@@ -73,6 +73,8 @@ def load_mqtt_settings(path: str = None, cli=None) -> dict:
         raise RuntimeError("No device_name was specified")
     if "mqtt_prefix" not in settings:
         raise RuntimeError("You need to specify an mqtt prefix")
+    if "mqtt_port" not in settings:
+        raise RuntimeError("You need to specify an mqtt port")
     if "mqtt_user" not in settings:
         raise RuntimeError("No mqtt_user was specified")
     if "mqtt_password" not in settings:
@@ -105,6 +107,8 @@ def sensor_delete_settings(path: str = None, cli=None) -> dict:
         settings["mqtt_prefix"] = cli.mqtt_prefix
     if cli.mqtt_server:
         settings["mqtt_server"] = cli.mqtt_server
+    if cli.mqtt_port:
+        settings["mqtt_port"] = cli.mqtt_port
     if cli.mqtt_user:
         settings["mqtt_user"] = cli.mqtt_user
 
@@ -117,6 +121,8 @@ def sensor_delete_settings(path: str = None, cli=None) -> dict:
         raise RuntimeError("No device_name was specified")
     if "mqtt_prefix" not in settings:
         raise RuntimeError("You need to specify an mqtt prefix")
+    if "mqtt_port" not in settings:
+        raise RuntimeError("You need to specify an mqtt port")
     if "mqtt_user" not in settings:
         raise RuntimeError("No mqtt_user was specified")
     if "mqtt_password" not in settings:
