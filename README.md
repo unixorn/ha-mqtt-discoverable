@@ -18,14 +18,17 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 - [Supported entities](#supported-entities)
   - [Binary sensor](#binary-sensor)
     - [Usage](#usage)
-  - [Switch](#switch)
+  - [Button](#button)
+  - [Device](#device)
     - [Usage](#usage-1)
-  - [Text](#text)
-    - [Usage](#usage-2)
-- [Device](#device)
-  - [Usage](#usage-3)
   - [Device trigger](#device-trigger)
+      - [Usage](#usage-2)
+  - [Switch](#switch)
+    - [Usage](#usage-3)
+  - [Text](#text)
     - [Usage](#usage-4)
+  - [Number](#number)
+    - [Usage](#usage-5)
 - [Contributing](#contributing)
 - [Users of ha-mqtt-discoverable](#users-of-ha-mqtt-discoverable)
 - [Contributors](#contributors)
@@ -40,15 +43,19 @@ ha-mqtt-discoverable runs on Python 3.10 or later.
 
 `pip install ha-mqtt-discoverable` if you want to use it in your own python scripts. This will also install the `hmd` utility scripts.
 
+<!-- Please keep the entities in alphabetical order -->
 ## Supported entities
 
 The following Home Assistant entities are currently implemented:
 
-- Sensor
 - Binary sensor
-- Switch
 - Button
+- Device
 - Device trigger
+- Number
+- Sensor
+- Switch
+- Text
 
 Each entity can associated to a device. See below for details.
 
@@ -81,6 +88,113 @@ mysensor.off()
 # You can also set custom attributes on the sensor via a Python dict
 mysensor.set_attributes({"my attribute": "awesome"})
 
+```
+
+### Button
+
+The button publishes no state, it simply receives a command from HA.
+
+You must call `write_config` on a Button after creating it to make it discoverable.
+
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Button, ButtonInfo
+from paho.mqtt.client import Client, MQTTMessage
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the button
+button_info = ButtonInfo(name="test")
+
+settings = Settings(mqtt=mqtt_settings, entity=button_info)
+
+# To receive button commands from HA, define a callback function:
+def my_callback(client: Client, user_data, message: MQTTMessage):
+    perform_my_custom_action()
+
+# Define an optional object to be passed back to the callback
+user_data = "Some custom data"
+
+# Instantiate the button
+my_button = Button(settings, my_callback, user_data)
+
+# Publish the button's discoverability message to let HA automatically notice it
+my_button.write_config()
+
+```
+
+### Device
+From the [Home Assistant documentation](https://developers.home-assistant.io/docs/device_registry_index):
+> A device is a special entity in Home Assistant that is represented by one or more entities.
+A device is automatically created when an entity defines its `device` property.
+A device will be matched up with an existing device via supplied identifiers or connections, like serial numbers or MAC addresses.
+
+#### Usage
+
+The following example create a device, by associating multiple sensors to the same `DeviceInfo` instance.
+
+```py
+from ha_mqtt_discoverable import Settings, DeviceInfo
+from ha_mqtt_discoverable.sensors import BinarySensor, BinarySensorInfo
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Define the device. At least one of `identifiers` or `connections` must be supplied
+device_info = DeviceInfo(name="My device", identifiers="device_id")
+
+# Associate the sensor with the device via the `device` parameter
+# `unique_id` must also be set, otherwise Home Assistant will not display the device in the UI
+motion_sensor_info = BinarySensorInfo(name="My motion sensor", device_class="motion", unique_id="my_motion_sensor", device=device_info)
+
+motion_settings = Settings(mqtt=mqtt_settings, entity=motion_sensor_info)
+
+# Instantiate the sensor
+motion_sensor = BinarySensor(motion_settings)
+
+# Change the state of the sensor, publishing an MQTT message that gets picked up by HA
+motion_sensor.on()
+
+# An additional sensor can be added to the same device, by re-using the DeviceInfo instance previously defined
+door_sensor_info = BinarySensorInfo(name="My door sensor", device_class="door", unique_id="my_door_sensor", device=device_info)
+door_settings = Settings(mqtt=mqtt_settings, entity=door_sensor_info)
+
+# Instantiate the sensor
+door_sensor = BinarySensor(settings)
+
+# Change the state of the sensor, publishing an MQTT message that gets picked up by HA
+door_sensor.on()
+
+# The two sensors should be visible inside Home Assistant under the device `My device`
+```
+
+### Device trigger
+
+The following example creates a device trigger and generates a trigger event:
+
+##### Usage
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import DeviceInfo, DeviceTriggerInfo, DeviceTrigger
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Define the device. At least one of `identifiers` or `connections` must be supplied
+device_info = DeviceInfo(name="My device", identifiers="device_id")
+
+# Associate the sensor with the device via the `device` parameter
+trigger_into = DeviceTriggerInfo(name="MyTrigger", type="button_press", subtype="button_1", unique_id="my_device_trigger", device=device_info)
+
+settings = Settings(mqtt=mqtt_settings, entity=trigger_info)
+
+# Instantiate the device trigger
+mytrigger = DeviceTrigger(settings)
+
+# Generate a device trigger event, publishing an MQTT message that gets picked up by HA
+# Optionally include a payload as part of the event
+mytrigger.trigger("My custom payload")
 ```
 
 ### Switch
@@ -127,40 +241,6 @@ my_switch.off()
 ```
 
 
-### Button
-
-The button publishes no state, it simply receives a command from HA.
-
-You must call `write_config` on a Button after creating it to make it discoverable.
-
-```py
-from ha_mqtt_discoverable import Settings
-from ha_mqtt_discoverable.sensors import Button, ButtonInfo
-from paho.mqtt.client import Client, MQTTMessage
-
-# Configure the required parameters for the MQTT broker
-mqtt_settings = Settings.MQTT(host="localhost")
-
-# Information about the button
-button_info = ButtonInfo(name="test")
-
-settings = Settings(mqtt=mqtt_settings, entity=button_info)
-
-# To receive button commands from HA, define a callback function:
-def my_callback(client: Client, user_data, message: MQTTMessage):
-    perform_my_custom_action()
-
-# Define an optional object to be passed back to the callback
-user_data = "Some custom data"
-
-# Instantiate the button
-my_button = Button(settings, my_callback, user_data)
-
-# Publish the button's discoverability message to let HA automatically notice it
-my_button.write_config()
-
-```
-
 ### Text
 
 The text is an `helper entity`, showing an input field in the HA UI that the user can interact with.
@@ -202,7 +282,7 @@ my_text.set_text("Some awesome text")
 
 ### Number
 
-The number entity is similar to the text entity, but for a numeric value instead of a string. 
+The number entity is similar to the text entity, but for a numeric value instead of a string.
 It is possible to act upon receiving changes in HA by defining a `callback` function, as the following example shows:
 
 #### Usage
@@ -237,79 +317,6 @@ my_number = Number(settings, my_callback, user_data)
 # Set the initial number displayed in HA UI, publishing an MQTT message that gets picked up by HA
 my_number.set_value(42.0)
 
-```
-
-## Device
-From the [Home Assistant documentation](https://developers.home-assistant.io/docs/device_registry_index):
-> A device is a special entity in Home Assistant that is represented by one or more entities.
-A device is automatically created when an entity defines its `device` property.
-A device will be matched up with an existing device via supplied identifiers or connections, like serial numbers or MAC addresses.
-
-### Usage
-
-The following example create a device, by associating multiple sensors to the same `DeviceInfo` instance.
-
-```py
-from ha_mqtt_discoverable import Settings, DeviceInfo
-from ha_mqtt_discoverable.sensors import BinarySensor, BinarySensorInfo
-
-# Configure the required parameters for the MQTT broker
-mqtt_settings = Settings.MQTT(host="localhost")
-
-# Define the device. At least one of `identifiers` or `connections` must be supplied
-device_info = DeviceInfo(name="My device", identifiers="device_id")
-
-# Associate the sensor with the device via the `device` parameter
-# `unique_id` must also be set, otherwise Home Assistant will not display the device in the UI
-motion_sensor_info = BinarySensorInfo(name="My motion sensor", device_class="motion", unique_id="my_motion_sensor", device=device_info)
-
-motion_settings = Settings(mqtt=mqtt_settings, entity=motion_sensor_info)
-
-# Instantiate the sensor
-motion_sensor = BinarySensor(motion_settings)
-
-# Change the state of the sensor, publishing an MQTT message that gets picked up by HA
-motion_sensor.on()
-
-# An additional sensor can be added to the same device, by re-using the DeviceInfo instance previously defined
-door_sensor_info = BinarySensorInfo(name="My door sensor", device_class="door", unique_id="my_door_sensor", device=device_info)
-door_settings = Settings(mqtt=mqtt_settings, entity=door_sensor_info)
-
-# Instantiate the sensor
-door_sensor = BinarySensor(settings)
-
-# Change the state of the sensor, publishing an MQTT message that gets picked up by HA
-door_sensor.on()
-
-# The two sensors should be visible inside Home Assistant under the device `My device`
-```
-
-### Device trigger
-
-The following example creates a device trigger and generates a trigger event:
-
-#### Usage
-```py
-from ha_mqtt_discoverable import Settings
-from ha_mqtt_discoverable.sensors import DeviceInfo, DeviceTriggerInfo, DeviceTrigger
-
-# Configure the required parameters for the MQTT broker
-mqtt_settings = Settings.MQTT(host="localhost")
-
-# Define the device. At least one of `identifiers` or `connections` must be supplied
-device_info = DeviceInfo(name="My device", identifiers="device_id")
-
-# Associate the sensor with the device via the `device` parameter
-trigger_into = DeviceTriggerInfo(name="MyTrigger", type="button_press", subtype="button_1", unique_id="my_device_trigger", device=device_info)
-
-settings = Settings(mqtt=mqtt_settings, entity=trigger_info)
-
-# Instantiate the device trigger
-mytrigger = DeviceTrigger(settings)
-
-# Generate a device trigger event, publishing an MQTT message that gets picked up by HA
-# Optionally include a payload as part of the event
-mytrigger.trigger("My custom payload")
 ```
 
 ## Contributing
