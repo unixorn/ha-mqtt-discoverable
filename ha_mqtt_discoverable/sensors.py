@@ -15,6 +15,7 @@
 #
 # Required to define a class itself as type https://stackoverflow.com/a/33533514
 from __future__ import annotations
+
 import logging
 from typing import Any, Optional
 
@@ -282,9 +283,7 @@ class Number(Subscriber[NumberInfo]):
         """
         if not self._entity.min <= value <= self._entity.max:
             bound = f"[{self._entity.min}, {self._entity.max}]"
-            raise RuntimeError(
-                f"Value is not within configured boundaries {bound}"
-            )
+            raise RuntimeError(f"Value is not within configured boundaries {bound}")
 
         logger.info(f"Setting {self._entity.name} to {value} using {self.state_topic}")
         self._state_helper(value)
