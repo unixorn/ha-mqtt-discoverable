@@ -669,7 +669,7 @@ wrote_configuration: {self.wrote_configuration}
         mqtt_settings = self._settings.mqtt
         logger.debug(
             f"Creating mqtt client ({mqtt_settings.client_name}) for "
-            "{mqtt_settings.host}:{mqtt_settings.port}"
+            f"{mqtt_settings.host}:{mqtt_settings.port}"
         )
         self.mqtt_client = mqtt.Client(mqtt_settings.client_name)
         if mqtt_settings.tls_key:
@@ -790,7 +790,7 @@ wrote_configuration: {self.wrote_configuration}
 
         logger.debug(
             f"Writing '{config_message}' to topic {self.config_topic} on "
-            "{self._settings.mqtt.host}:{self._settings.mqtt.port}"
+            f"{self._settings.mqtt.host}:{self._settings.mqtt.port}"
         )
         self.wrote_configuration = True
         self.config_message = config_message
