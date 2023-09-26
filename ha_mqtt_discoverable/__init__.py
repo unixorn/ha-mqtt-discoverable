@@ -668,7 +668,7 @@ wrote_configuration: {self.wrote_configuration}
         """Create an MQTT client and setup some basic properties on it"""
         mqtt_settings = self._settings.mqtt
         logger.debug(
-            f"Creating mqtt client({mqtt_settings.client_name}) for "
+            f"Creating mqtt client ({mqtt_settings.client_name}) for "
             "{mqtt_settings.host}:{mqtt_settings.port}"
         )
         self.mqtt_client = mqtt.Client(mqtt_settings.client_name)
