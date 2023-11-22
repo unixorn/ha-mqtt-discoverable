@@ -17,7 +17,7 @@ help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 # If this pukes trying to import paho, try running 'poetry install'
-MODULE_VERSION=$(shell grep vers pyproject.toml | cut -d= -f2 | sed s/\"//g)
+MODULE_VERSION=$(shell grep '^version' pyproject.toml | cut -d= -f2 | sed s/\"//g | sed s/\ //g)
 
 clean: ## Cleans out stale wheels, generated tar files, .pyc and .pyo files
 	rm -fv dist/*.tar dist/*.whl
