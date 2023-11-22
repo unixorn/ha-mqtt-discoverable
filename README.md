@@ -25,10 +25,12 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
       - [Usage](#usage-2)
   - [Switch](#switch)
     - [Usage](#usage-3)
-  - [Text](#text)
+  - [Light](#light)
     - [Usage](#usage-4)
-  - [Number](#number)
+  - [Text](#text)
     - [Usage](#usage-5)
+  - [Number](#number)
+    - [Usage](#usage-6)
 - [Contributing](#contributing)
 - [Users of ha-mqtt-discoverable](#users-of-ha-mqtt-discoverable)
 - [Contributors](#contributors)
@@ -240,6 +242,75 @@ my_switch.off()
 
 ```
 
+### Light
+
+The light is different from other current sensor as it needs its payload encoded/decoded as json.
+It is possible to set brightness, effects and the color of the light. Similar to a _switch_ it can
+also receive 'commands' from HA that request a state change.
+It is possible to act upon reception of this 'command', by defining a `callback` function, as the following example shows:
+
+#### Usage
+
+```py
+import json
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Light, LightInfo
+from paho.mqtt.client import Client, MQTTMessage
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the light
+light_info = LightInfo(
+    name="test_light",
+    brightness=True,
+    color_mode=True,
+    supported_color_modes=["rgb"],
+    effect=True,
+    effect_list=["blink", "my_cusom_effect"])
+
+settings = Settings(mqtt=mqtt_settings, entity=light_info)
+
+# To receive state commands from HA, define a callback function:
+def my_callback(client: Client, user_data, message: MQTTMessage):
+
+    # Make sure received payload is json
+    try:
+        payload = json.loads(message.payload.decode())
+    except ValueError as error:
+        print("Ony JSON schema is supported for light entities!")
+        return
+
+    # Parse received dictionary
+    if "color" in payload:
+        set_color_of_my_light()
+        my_light.color("rgb", payload["color"])
+    elif "brightness" in payload:
+        set_brightness_of_my_light()
+        my_light.brightness(payload["brightness"])
+    elif "effect" in payload:
+        set_effect_of_my_light()
+        my_light.effect(payload["effect"])
+    elif "state" in payload:
+        if payload["state"] == light_info.payload_on:
+            turn_on_my_light()
+            my_light.on()
+        else:
+            turn_off_my_light()
+            my_light.off()
+    else:
+        print("Unknown payload")
+
+# Define an optional object to be passed back to the callback
+user_data = "Some custom data"
+
+# Instantiate the switch
+my_light = Light(settings, my_callback, user_data)
+
+# Set the initial state of the light, which also makes it discoverable
+my_light.off()
+
+```
 
 ### Text
 

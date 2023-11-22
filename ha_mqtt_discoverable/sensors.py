@@ -25,6 +25,7 @@ from ha_mqtt_discoverable import (
     EntityInfo,
     Subscriber,
 )
+from pydantic import Field
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +73,45 @@ class SwitchInfo(EntityInfo):
     comparing to the value in the state_topic (see value_template and state_on
     for details) and sending as on command to the command_topic."""
     retain: Optional[bool] = None
+    """If the published message should have the retain flag on or not"""
+    state_topic: Optional[str] = None
+    """The MQTT topic subscribed to receive state updates."""
+
+
+class LightInfo(EntityInfo):
+    """Light specific information"""
+
+    component: str = "light"
+
+    state_schema: str = Field(
+        default="json", alias="schema"
+    )  # 'schema' is a reserved word by pydantic
+    """Sets the schema of the state topic, ie the 'schema' field in the configuration"""
+    optimistic: Optional[bool] = None
+    """Flag that defines if light works in optimistic mode.
+    Default: true if no state_topic defined, else false."""
+    payload_off: str = "OFF"
+    """The payload that represents off state. If specified, will be used for
+    both comparing to the value in the state_topic (see value_template and
+    state_off for details) and sending as off command to the command_topic"""
+    payload_on: str = "ON"
+    """The payload that represents on state. If specified, will be used for both
+    comparing to the value in the state_topic (see value_template and state_on
+    for details) and sending as on command to the command_topic."""
+    brightness: Optional[bool] = False
+    """Flag that defines if the light supports setting the brightness
+    """
+    color_mode: Optional[bool] = False
+    """Flag that defines if the light supports color mode"""
+    supported_color_modes: Optional[list[str]] = None
+    """List of supported color modes. See
+    https://www.home-assistant.io/integrations/light.mqtt/#supported_color_modes for current list of
+    supported modes. Required if color_mode is set"""
+    effect: Optional[bool] = False
+    """Flag that defines if the light supports effects"""
+    effect_list: Optional[str | list] = None
+    """List of supported effects. Required if effect is set"""
+    retain: Optional[bool] = True
     """If the published message should have the retain flag on or not"""
     state_topic: Optional[str] = None
     """The MQTT topic subscribed to receive state updates."""
@@ -212,6 +252,108 @@ class Switch(Subscriber[SwitchInfo], BinarySensor):
         Set switch to on
         """
         super().on()
+
+
+class Light(Subscriber[LightInfo]):
+    """Implements an MQTT light.
+    https://www.home-assistant.io/integrations/light.mqtt
+    """
+
+    def on(self) -> None:
+        """
+        Set light to on
+        """
+        state_payload = {
+            "state": self._entity.payload_on,
+        }
+        self._update_state(state_payload)
+
+    def off(self) -> None:
+        """
+        Set light to off
+        """
+        state_payload = {
+            "state": self._entity.payload_off,
+        }
+        self._update_state(state_payload)
+
+    def brightness(self, brightness: int) -> None:
+        """
+        Set brightness of the light
+
+        Args:
+            brightness(int): Brightness value of [0,255]
+        """
+        if brightness < 0 or brightness > 255:
+            raise RuntimeError(
+                f"Brightness for light {self._entity.name} is out of range"
+            )
+
+        state_payload = {
+            "brightness": brightness,
+            "state": self._entity.payload_on,
+        }
+
+        self._update_state(state_payload)
+
+    def color(self, color_mode: str, color: dict[str, Any]) -> None:
+        """
+        Set color of the light.
+        NOTE: Make sure color formatting conforms to color mode, it is up to the caller to make sure
+        of this. Also, make sure the color mode is in the list supported_color_modes
+
+        Args:
+            color_mode(str): A valid color mode
+            color(Dict[str, Any]): Color to set, according to color_mode format
+        """
+        if not self._entity.color_mode:
+            raise RuntimeError(
+                f"Light {self._entity.name} does not support setting color"
+            )
+        if color_mode not in self._entity.supported_color_modes:
+            raise RuntimeError(
+                f"Color is not in configured supported_color_modes {str(self._entity.supported_color_modes)}"
+            )
+        # We do not check if color schema conforms to color mode formatting, it is up to the caller
+        state_payload = {
+            "color_mode": color_mode,
+            "color": color,
+            "color_temp": 155,
+            "state": self._entity.payload_on,
+        }
+        self._update_state(state_payload)
+
+    def effect(self, effect: str) -> None:
+        """
+        Enable effect of the light
+
+        Args:
+            effect(str): Effect to apply
+        """
+        if not self._entity.effect:
+            raise RuntimeError(f"Light {self._entity.name} does not support effects")
+        if effect not in self._entity.effect_list:
+            raise RuntimeError(
+                f"Effect is not within configured effect_list {str(self._entity.effect_list)}"
+            )
+        state_payload = {
+            "effect": effect,
+            "state": self._entity.payload_on,
+        }
+        self._update_state(state_payload)
+
+    def _update_state(self, state: str | dict[str, Any]) -> None:
+        """
+        Update MQTT sensor state
+
+        Args:
+            state(str | Dict[str, Any]): What state to set the light to
+        """
+        logger.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
+
+        self._state_helper(
+            state=state, topic=self.state_topic, retain=self._entity.retain
+        )
 
 
 class Button(Subscriber[ButtonInfo]):

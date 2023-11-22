@@ -737,7 +737,10 @@ wrote_configuration: {self.wrote_configuration}
         self.mqtt_client.loop_start()
 
     def _state_helper(
-        self, state: Optional[str], topic: Optional[str] = None, retain=True
+        self,
+        state: Optional[str | dict[str, Any]],
+        topic: Optional[str] = None,
+        retain=True,
     ) -> MQTTMessageInfo:
         """
         Write a state to the given MQTT topic, returning the result of client.publish()
@@ -748,13 +751,18 @@ wrote_configuration: {self.wrote_configuration}
         if not topic:
             logger.debug(f"State topic unset, using default: {self.state_topic}")
             topic = self.state_topic
-        logger.debug(f"Writing '{state}' to {topic}")
+        if state and isinstance(state, dict):
+            logger.debug("State is dict, dumping state to json")
+            state_payload = json.dumps(state)
+        else:
+            state_payload = state
+        logger.debug(f"Writing '{state_payload}' to {topic}")
 
         if self._settings.debug:
             logger.debug(f"Debug is {self.debug}, skipping state write")
             return
 
-        message_info = self.mqtt_client.publish(topic, state, retain=retain)
+        message_info = self.mqtt_client.publish(topic, state_payload, retain=retain)
         logger.debug(f"Publish result: {message_info}")
         return message_info
 
@@ -789,7 +797,7 @@ wrote_configuration: {self.wrote_configuration}
         automagically ingest the new sensor.
         """
         # Automatically generate a dict using pydantic
-        config = self._entity.dict(exclude_none=True)
+        config = self._entity.dict(exclude_none=True, by_alias=True)
         # Add the MQTT topics to be discovered by HA
         topics = {
             "state_topic": self.state_topic,
