@@ -1,8 +1,6 @@
 import pytest
-
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Light, LightInfo
-
 
 # Test data
 color_modes = ["rgb", "rgbw"]

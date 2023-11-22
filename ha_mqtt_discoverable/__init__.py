@@ -738,7 +738,7 @@ wrote_configuration: {self.wrote_configuration}
 
     def _state_helper(
         self,
-        state: Optional[str | dict[str, Any]],
+        state: Optional[str],
         topic: Optional[str] = None,
         retain=True,
     ) -> MQTTMessageInfo:
@@ -751,18 +751,14 @@ wrote_configuration: {self.wrote_configuration}
         if not topic:
             logger.debug(f"State topic unset, using default: {self.state_topic}")
             topic = self.state_topic
-        if state and isinstance(state, dict):
-            logger.debug("State is dict, dumping state to json")
-            state_payload = json.dumps(state)
-        else:
-            state_payload = state
-        logger.debug(f"Writing '{state_payload}' to {topic}")
+
+        logger.debug(f"Writing '{state}' to {topic}")
 
         if self._settings.debug:
             logger.debug(f"Debug is {self.debug}, skipping state write")
             return
 
-        message_info = self.mqtt_client.publish(topic, state_payload, retain=retain)
+        message_info = self.mqtt_client.publish(topic, state, retain=retain)
         logger.debug(f"Publish result: {message_info}")
         return message_info
 

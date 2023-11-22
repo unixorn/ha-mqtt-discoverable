@@ -16,6 +16,7 @@
 # Required to define a class itself as type https://stackoverflow.com/a/33533514
 from __future__ import annotations
 
+import json
 import logging
 from typing import Any, Optional
 
@@ -318,7 +319,6 @@ class Light(Subscriber[LightInfo]):
         state_payload = {
             "color_mode": color_mode,
             "color": color,
-            "color_temp": 155,
             "state": self._entity.payload_on,
         }
         self._update_state(state_payload)
@@ -342,17 +342,17 @@ class Light(Subscriber[LightInfo]):
         }
         self._update_state(state_payload)
 
-    def _update_state(self, state: str | dict[str, Any]) -> None:
+    def _update_state(self, state: dict[str, Any]) -> None:
         """
         Update MQTT sensor state
 
         Args:
-            state(str | Dict[str, Any]): What state to set the light to
+            state(Dict[str, Any]): What state to set the light to
         """
         logger.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
-
+        json_state = json.dumps(state)
         self._state_helper(
-            state=state, topic=self.state_topic, retain=self._entity.retain
+            state=json_state, topic=self.state_topic, retain=self._entity.retain
         )
 
 
