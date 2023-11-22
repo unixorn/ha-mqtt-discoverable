@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ha-mqtt-discoverable"
-version = "0.11.0"
+version = "0.12.0"
 description = ""
 authors = ["Joe Block <jpb@unixorn.net>"]
 readme = "README.md"
