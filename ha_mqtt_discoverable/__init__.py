@@ -548,6 +548,7 @@ class Settings(GenericModel, Generic[EntityType]):
         username: Optional[str] = None
         password: Optional[str] = None
         client_name: Optional[str] = None
+        use_tls: Optional[bool] = False
         tls_key: Optional[str] = None
         tls_certfile: Optional[str] = None
         tls_ca_cert: Optional[str] = None
@@ -674,7 +675,7 @@ wrote_configuration: {self.wrote_configuration}
         self.mqtt_client = mqtt.Client(mqtt_settings.client_name)
         if mqtt_settings.tls_key:
             logger.info(
-                f"Connecting to {mqtt_settings.host}:{mqtt_settings.port} with SSL"
+                f"Connecting to {mqtt_settings.host}:{mqtt_settings.port} with SSL and client certificate authentication"
             )
             logger.debug(f"ca_certs={mqtt_settings.tls_ca_cert}")
             logger.debug(f"certfile={mqtt_settings.tls_certfile}")
@@ -686,6 +687,26 @@ wrote_configuration: {self.wrote_configuration}
                 cert_reqs=ssl.CERT_REQUIRED,
                 tls_version=ssl.PROTOCOL_TLS,
             )
+        elif mqtt_settings.use_tls:
+            logger.info(
+                f"Connecting to {mqtt_settings.host}:{mqtt_settings.port} with SSL and username/password authentication"
+            )
+            logger.debug(f"ca_certs={mqtt_settings.tls_ca_cert}")
+            if mqtt_settings.tls_ca_cert:
+                self.mqtt_client.tls_set(
+                    ca_certs=mqtt_settings.tls_ca_cert,
+                    cert_reqs=ssl.CERT_REQUIRED,
+                    tls_version=ssl.PROTOCOL_TLS,
+                )
+            else:
+                self.mqtt_client.tls_set(
+                    cert_reqs=ssl.CERT_REQUIRED,
+                    tls_version=ssl.PROTOCOL_TLS,
+                )
+            if mqtt_settings.username:
+                self.mqtt_client.username_pw_set(
+                    mqtt_settings.username, password=mqtt_settings.password
+                )
         else:
             logger.debug(
                 f"Connecting to {mqtt_settings.host}:{mqtt_settings.port} without SSL"
