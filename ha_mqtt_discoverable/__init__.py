@@ -789,7 +789,7 @@ wrote_configuration: {self.wrote_configuration}
         automagically ingest the new sensor.
         """
         # Automatically generate a dict using pydantic
-        config = self._entity.dict(exclude_none=True)
+        config = self._entity.dict(exclude_none=True, by_alias=True)
         # Add the MQTT topics to be discovered by HA
         topics = {
             "state_topic": self.state_topic,
