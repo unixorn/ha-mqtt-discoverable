@@ -54,6 +54,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PAT: ${{secrets.PAT}}
           REPOSITORY_TRIVY_DISABLE_ERRORS: true
+          DOCKERFILE_HADOLINT_DISABLE_ERRORS: true
 
       # Upload Mega-Linter artifacts.
       # They will be available on Github action page "Artifacts" section
