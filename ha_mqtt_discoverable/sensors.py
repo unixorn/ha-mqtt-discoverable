@@ -118,6 +118,40 @@ class LightInfo(EntityInfo):
     """The MQTT topic subscribed to receive state updates."""
 
 
+class CoverInfo(EntityInfo):
+    """Cover specific information"""
+
+    component: str = "cover"
+
+    optimistic: Optional[bool] = None
+    """Flag that defines if light works in optimistic mode.
+    Default: true if no state_topic defined, else false."""
+    payload_close: str = "CLOSE"
+    """Command payload to close the cover"""
+    payload_open: str = "OPEN"
+    """Command payload to open the cover"""
+    payload_stop: str = "STOP"
+    """Command payload to open the cover"""
+    position_closed: int = 0
+    """Number which represents the fully closed position"""
+    position_open: int = 100
+    """Number which represents the fully open position"""
+    state_open: str = "open"
+    """Payload that represents open state"""
+    state_opening: str = "opening"
+    """Payload that represents opening state"""
+    state_closed: str = "closed"
+    """Payload that represents closed state"""
+    state_closing: str = "closing"
+    """Payload that represents closing state"""
+    state_stopped: str = "stopped"
+    """Payload that represents stopped state"""
+    state_topic: Optional[str] = None
+    """The MQTT topic subscribed to receive state updates."""
+    retain: Optional[bool] = True
+    """If the published message should have the retain flag on or not"""
+
+
 class ButtonInfo(EntityInfo):
     """Button specific information"""
 
@@ -353,6 +387,45 @@ class Light(Subscriber[LightInfo]):
         json_state = json.dumps(state)
         self._state_helper(
             state=json_state, topic=self.state_topic, retain=self._entity.retain
+        )
+
+
+class Cover(Subscriber[CoverInfo]):
+    """Implements an MQTT cover:
+    https://www.home-assistant.io/integrations/cover.mqtt
+    """
+
+    def open(self) -> None:
+        """Set cover state to open"""
+        self._update_state(self._entity.state_open)
+
+    def closed(self) -> None:
+        """Set cover state to closed"""
+        self._update_state(self._entity.state_closed)
+
+    def closing(self) -> None:
+        """Set cover state to closing"""
+        self._update_state(self._entity.state_closing)
+
+    def opening(self) -> None:
+        """Set cover state to opening"""
+        self._update_state(self._entity.state_closed)
+
+    def stopped(self) -> None:
+        """Set cover state to stopped"""
+        self._update_state(self._entity.state_stopped)
+
+    def _update_state(self, state: str) -> None:
+        """
+        Update MQTT sensor state
+
+        Args:
+            state(str): What state to set the cover to
+        """
+        print("State: " + state)
+        logger.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
+        self._state_helper(
+            state=state, topic=self.state_topic, retain=self._entity.retain
         )
 
 
