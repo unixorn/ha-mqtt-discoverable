@@ -5,9 +5,9 @@
 [![GitHub last commit (branch)](https://img.shields.io/github/last-commit/unixorn/ha-mqtt-discoverable/main.svg)](https://github.com/unixorn/ha-mqtt-discoverable)
 [![Downloads](https://static.pepy.tech/badge/ha-mqtt-discoverable)](https://pepy.tech/project/ha-mqtt-discoverable)
 
-A python 3 module that takes advantage of Home Assistant's MQTT discovery protocol to create sensors without having to define anything on the HA side.
+A Python 3 module that takes advantage of Home Assistant's [MQTT discovery protocol](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery) to create sensors without having to define anything on the HA side.
 
-Using MQTT discoverable devices lets us add new sensors and devices to HA without having to restart HA. The `ha-mqtt-discoverable-cli` module includes scripts to make it easy to create discoverable devices from the command line if you don't want to bother writing python.
+Using MQTT discoverable devices lets us add new sensors and devices to HA without having to restart HA. The `ha-mqtt-discoverable-cli` module includes scripts to make it easy to create discoverable devices from the command line if you don't want to bother writing Python.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -54,14 +54,14 @@ The following Home Assistant entities are currently implemented:
 
 - Binary sensor
 - Button
+- Cover
 - Device
 - Device trigger
+- Light
 - Number
 - Sensor
 - Switch
 - Text
-- Light
-- Cover
 
 Each entity can associated to a device. See below for details.
 
