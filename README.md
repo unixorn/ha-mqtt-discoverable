@@ -27,10 +27,12 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
     - [Usage](#usage-3)
   - [Light](#light)
     - [Usage](#usage-4)
-  - [Text](#text)
+  - [Covers](#covers)
     - [Usage](#usage-5)
-  - [Number](#number)
+  - [Text](#text)
     - [Usage](#usage-6)
+  - [Number](#number)
+    - [Usage](#usage-7)
 - [Contributing](#contributing)
 - [Users of ha-mqtt-discoverable](#users-of-ha-mqtt-discoverable)
 - [Contributors](#contributors)
@@ -58,6 +60,8 @@ The following Home Assistant entities are currently implemented:
 - Sensor
 - Switch
 - Text
+- Light
+- Cover
 
 Each entity can associated to a device. See below for details.
 
@@ -309,6 +313,21 @@ my_light = Light(settings, my_callback, user_data)
 
 # Set the initial state of the light, which also makes it discoverable
 my_light.off()
+
+```
+
+### Covers
+
+A cover has four possible states `open`, `closed`, `opening`, `closing` and `stopped`. Most other entities use the states as command payload, but covers differentiate on this. The user HA user can either open, close or stop it in the covers current position.
+
+Covers do not currently support tilt.
+
+A `callback` function is needed in order to parse the commands sent from HA, as the following
+example shows:
+
+#### Usage
+
+```py
 
 ```
 
