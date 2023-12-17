@@ -888,8 +888,8 @@ class Subscriber(Discoverable[EntityType]):
 
         # Invoke the parent init
         super().__init__(settings, on_client_connected)
-        # Define the command topic to receive commands from HA
-        self._command_topic = f"{self._entity_topic}/command"
+        # Define the command topic to receive commands from HA, using `hmd` topic prefix
+        self._command_topic = f"{self._settings.mqtt.state_prefix}/{self._entity_topic}/command"
 
         # Register the user-supplied callback function with its user_data
         self.mqtt_client.user_data_set(user_data)
