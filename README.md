@@ -400,7 +400,7 @@ If you use this module for your own project, please add a link here.
 
 - [ha-mqtt-discoverable-cli](https://github.com/unixorn/ha-mqtt-discoverable-cli) - Command line tools that allow using this module from shell scripts
 
-- [plejd-mqtt-ha](https://github.com/ha-enthus1ast/plejd-mqtt-ha) - A containerized Python application that bridges Plejd devices with Home Assistant
+- [plejd-mqtt-ha](https://github.com/ha-enthus1ast/plejd-mqtt-ha) - A containerized Python application that bridges Plejd devices to Home Assistant
 
 ## Contributors
 
