@@ -35,9 +35,7 @@ from ha_mqtt_discoverable import DeviceInfo, Discoverable, EntityInfo, Settings
 
 @pytest.fixture
 def discoverable() -> Discoverable[EntityInfo]:
-    mqtt_settings = Settings.MQTT(
-        host="localhost", username="admin", password="password"
-    )
+    mqtt_settings = Settings.MQTT(host="localhost")
     sensor_info = EntityInfo(name="test", component="binary_sensor")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     return Discoverable[EntityInfo](settings)
@@ -46,9 +44,7 @@ def discoverable() -> Discoverable[EntityInfo]:
 @pytest.fixture
 def discoverable_availability() -> Discoverable[EntityInfo]:
     """Return an instance of Discoverable configured with `manual_availability`"""
-    mqtt_settings = Settings.MQTT(
-        host="localhost", username="admin", password="password"
-    )
+    mqtt_settings = Settings.MQTT(host="localhost")
     sensor_info = EntityInfo(name="test", component="binary_sensor")
     settings = Settings(
         mqtt=mqtt_settings, entity=sensor_info, manual_availability=True
@@ -204,9 +200,7 @@ def test_device_with_unique_id():
 
 
 def test_name_with_space():
-    mqtt_settings = Settings.MQTT(
-        host="localhost", username="admin", password="password"
-    )
+    mqtt_settings = Settings.MQTT(host="localhost")
     sensor_info = EntityInfo(name="Name with space", component="binary_sensor")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     d = Discoverable[EntityInfo](settings)
@@ -214,9 +208,7 @@ def test_name_with_space():
 
 
 def test_custom_object_id():
-    mqtt_settings = Settings.MQTT(
-        host="localhost", username="admin", password="password"
-    )
+    mqtt_settings = Settings.MQTT(host="localhost")
     sensor_info = EntityInfo(
         name="Test name", component="binary_sensor", object_id="custom object id"
     )
@@ -301,9 +293,7 @@ def test_disconnect_client(mocker: MockerFixture):
     mocked_client = mocker.patch("paho.mqtt.client.Client")
     mock_instance = mocked_client.return_value
     mock_instance.connect.return_value = MQTT_ERR_SUCCESS
-    mqtt_settings = Settings.MQTT(
-        host="localhost", username="admin", password="password"
-    )
+    mqtt_settings = Settings.MQTT(host="localhost")
     sensor_info = EntityInfo(name="test", component="binary_sensor")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
 
