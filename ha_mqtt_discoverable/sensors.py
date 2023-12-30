@@ -102,7 +102,7 @@ class LightInfo(EntityInfo):
     brightness: Optional[bool] = False
     """Flag that defines if the light supports setting the brightness
     """
-    color_mode: Optional[bool] = False
+    color_mode: Optional[bool] = None
     """Flag that defines if the light supports color mode"""
     supported_color_modes: Optional[list[str]] = None
     """List of supported color modes. See
