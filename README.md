@@ -438,7 +438,7 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
     logging.info(f"Received {number} from HA")
     do_some_custom_thing(number)
     # Send an MQTT message to confirm to HA that the number was changed
-    my_text.set_value(number)
+    my_number.set_value(number)
 
 # Define an optional object to be passed back to the callback
 user_data = "Some custom data"
