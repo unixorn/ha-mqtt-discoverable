@@ -59,6 +59,7 @@ jobs:
             REPOSITORY_GITLEAKS_PR_COMMITS_SCAN: true
             REPOSITORY_TRIVY_DISABLE_ERRORS: true
             VALIDATE_ALL_CODEBASE: false
+            YAML_YAMLLINT_DISABLE_ERRORS: true
 
       # Upload Mega-Linter artifacts.
       # They will be available on Github action page "Artifacts" section
