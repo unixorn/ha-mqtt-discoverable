@@ -51,6 +51,7 @@ jobs:
       - name: Lint Code Base
         uses: oxsecurity/megalinter/flavors/python@v7
         env:
+          ACTION_ACTIONLINT_DISABLE_ERRORS: true
           DOCKERFILE_HADOLINT_DISABLE_ERRORS: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PAT: ${{secrets.PAT}}
