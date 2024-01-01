@@ -1,4 +1,4 @@
-#    Copyright 2022-2023 Joe Block <jpb@unixorn.net>
+#    Copyright 2022-2024 Joe Block <jpb@unixorn.net>
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -889,7 +889,9 @@ class Subscriber(Discoverable[EntityType]):
         # Invoke the parent init
         super().__init__(settings, on_client_connected)
         # Define the command topic to receive commands from HA, using `hmd` topic prefix
-        self._command_topic = f"{self._settings.mqtt.state_prefix}/{self._entity_topic}/command"
+        self._command_topic = (
+            f"{self._settings.mqtt.state_prefix}/{self._entity_topic}/command"
+        )
 
         # Register the user-supplied callback function with its user_data
         self.mqtt_client.user_data_set(user_data)
