@@ -485,6 +485,10 @@ class DeviceInfo(BaseModel):
     configuration_url: Optional[str] = None
     """A link to the webpage that can manage the configuration of this device.
         Can be either an HTTP or HTTPS link."""
+    via_device: Optional[str] = None
+    """Identifier of a device that routes messages between this device and Home
+        Assistant. Examples of such devices are hubs, or parent devices of a sub-device.
+        This is used to show device topology in Home Assistant."""
 
     @root_validator
     def must_have_identifiers_or_connection(cls, values):
