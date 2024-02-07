@@ -191,7 +191,7 @@ mqtt_settings = Settings.MQTT(host="localhost")
 device_info = DeviceInfo(name="My device", identifiers="device_id")
 
 # Associate the sensor with the device via the `device` parameter
-trigger_into = DeviceTriggerInfo(name="MyTrigger", type="button_press", subtype="button_1", unique_id="my_device_trigger", device=device_info)
+trigger_info = DeviceTriggerInfo(name="MyTrigger", type="button_press", subtype="button_1", unique_id="my_device_trigger", device=device_info)
 
 settings = Settings(mqtt=mqtt_settings, entity=trigger_info)
 
