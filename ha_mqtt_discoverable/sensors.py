@@ -409,7 +409,7 @@ class Cover(Subscriber[CoverInfo]):
 
     def opening(self) -> None:
         """Set cover state to opening"""
-        self._update_state(self._entity.state_closed)
+        self._update_state(self._entity.state_opening)
 
     def stopped(self) -> None:
         """Set cover state to stopped"""
