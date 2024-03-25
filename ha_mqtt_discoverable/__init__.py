@@ -20,8 +20,7 @@ from typing import Any, Callable, Generic, Optional, TypeVar
 
 import paho.mqtt.client as mqtt
 from paho.mqtt.client import MQTTMessageInfo
-from pydantic import BaseModel, root_validator
-from pydantic.generics import GenericModel
+from pydantic import BaseModel, model_validator
 
 # Read version from the package metadata
 __version__ = metadata.version(__package__)
@@ -490,7 +489,7 @@ class DeviceInfo(BaseModel):
         Assistant. Examples of such devices are hubs, or parent devices of a sub-device.
         This is used to show device topology in Home Assistant."""
 
-    @root_validator
+    @model_validator(mode="before")
     def must_have_identifiers_or_connection(cls, values):
         """Check that either `identifiers` or `connections` is set"""
         identifiers, connections = values.get("identifiers"), values.get("connections")
@@ -530,7 +529,7 @@ class EntityInfo(BaseModel):
     """Set this to enable editing sensor from the HA ui and to integrate with a
         device"""
 
-    @root_validator
+    @model_validator(mode="before")
     def device_need_unique_id(cls, values):
         """Check that `unique_id` is set if `device` is provided,\
             otherwise Home Assistant will not link the sensor to the device"""
@@ -543,7 +542,7 @@ class EntityInfo(BaseModel):
 EntityType = TypeVar("EntityType", bound=EntityInfo)
 
 
-class Settings(GenericModel, Generic[EntityType]):
+class Settings(BaseModel, Generic[EntityType]):
     class MQTT(BaseModel):
         """Connection settings for the MQTT broker"""
 
@@ -793,7 +792,7 @@ wrote_configuration: {self.wrote_configuration}
         automagically ingest the new sensor.
         """
         # Automatically generate a dict using pydantic
-        config = self._entity.dict(exclude_none=True, by_alias=True)
+        config = self._entity.model_dump(exclude_none=True, by_alias=True)
         # Add the MQTT topics to be discovered by HA
         topics = {
             "state_topic": self.state_topic,
