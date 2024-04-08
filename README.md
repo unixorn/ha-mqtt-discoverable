@@ -91,6 +91,10 @@ mysensor = BinarySensor(settings)
 mysensor.on()
 mysensor.off()
 
+# Or, change the state using a boolean
+mysensor.update_state(True)
+mysensor.update_state(False)
+
 # You can also set custom attributes on the sensor via a Python dict
 mysensor.set_attributes({"my attribute": "awesome"})
 
