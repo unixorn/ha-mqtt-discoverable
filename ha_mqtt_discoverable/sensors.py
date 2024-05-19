@@ -232,15 +232,15 @@ class BinarySensor(Discoverable[BinarySensorInfo]):
         """
         Set binary sensor to off
         """
-        self._update_state(state=False)
+        self.update_state(state=False)
 
     def on(self):
         """
         Set binary sensor to on
         """
-        self._update_state(state=True)
+        self.update_state(state=True)
 
-    def _update_state(self, state: bool) -> None:
+    def update_state(self, state: bool) -> None:
         """
         Update MQTT sensor state
 
