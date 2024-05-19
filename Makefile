@@ -23,8 +23,8 @@ clean: ## Cleans out stale wheels, generated tar files, .pyc and .pyo files
 	rm -fv dist/*.tar dist/*.whl
 	find . -iname '*.py[co]' -delete
 
-format: ## Runs 'black' on all our python source files
-	poetry run black ha_mqtt_discoverable tests
+format: ## Runs 'ruff' on all our python source files
+	poetry run ruff check ha_mqtt_discoverable tests
 
 test: ## Run tests with 'nosetests'
 	nosestests -v
