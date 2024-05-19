@@ -139,3 +139,6 @@ dmypy.json
 
 # Mega-linter reports dir
 megalinter-reports
+
+# Only used for the build system
+requirements.txt
