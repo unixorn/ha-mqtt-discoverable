@@ -33,6 +33,8 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
     - [Usage](#usage-6)
   - [Number](#number)
     - [Usage](#usage-7)
+- [FAQ](#faq)
+  - [I'm having problems on 32 bit ARM](#im-having-problems-on-32-bit-arm)
 - [Contributing](#contributing)
 - [Users of ha-mqtt-discoverable](#users-of-ha-mqtt-discoverable)
 - [Contributors](#contributors)
@@ -454,6 +456,12 @@ my_number = Number(settings, my_callback, user_data)
 my_number.set_value(42.0)
 
 ```
+
+## FAQ
+
+### I'm having problems on 32 bit ARM
+
+Pydantic 2 has issues on 32 bit ARM. More details are on [ha-mqtt-discoverable/pull/191](https://github.com/unixorn/ha-mqtt-discoverable/pull/191). TL;DR: If you're on an ARM32 machine you're going to have to pin to the 0.13.1 version.
 
 ## Contributing
 
