@@ -475,6 +475,8 @@ If you use this module for your own project, please add a link here.
 
 - [plejd-mqtt-ha](https://github.com/ha-enthus1ast/plejd-mqtt-ha) - A containerized Python application that bridges Plejd devices to Home Assistant
 
+- [homeassistant-zodiac-tri-expert](https://github.com/andreondra/homeassistant-zodiac-tri-expert) - A Zodiac Tri Expert salt water generator integration
+
 ## Contributors
 
 <a href="https://github.com/unixorn/ha-mqtt-discoverable/graphs/contributors">
