@@ -29,10 +29,12 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
     - [Usage](#usage-4)
   - [Number](#number)
     - [Usage](#usage-5)
-  - [Switch](#switch)
+  - [Sensor](#sensor)
     - [Usage](#usage-6)
-  - [Text](#text)
+  - [Switch](#switch)
     - [Usage](#usage-7)
+  - [Text](#text)
+    - [Usage](#usage-8)
 - [FAQ](#faq)
   - [I'm having problems on 32 bit ARM](#im-having-problems-on-32-bit-arm)
 - [Contributing](#contributing)
@@ -373,6 +375,36 @@ my_number = Number(settings, my_callback, user_data)
 # Set the initial number displayed in HA UI, publishing an MQTT message that gets picked up by HA
 my_number.set_value(42.0)
 
+```
+
+### Sensor
+
+#### Usage
+
+The following example creates a sensor and sets its state:
+
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Sensor, SensorInfo
+
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the sensor
+sensor_info = SensorInfo(
+    name="MyTemperatureSensor",
+    device_class="temperature",
+    unit_of_measurement="°C",
+)
+
+settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+
+# Instantiate the sensor
+mysensor = Sensor(settings)
+
+# Change the state of the sensor, publishing an MQTT message that gets picked up by HA
+mysensor.set_state(20.5)
 ```
 
 ### Switch
