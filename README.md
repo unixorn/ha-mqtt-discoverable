@@ -19,20 +19,22 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
   - [Binary sensor](#binary-sensor)
     - [Usage](#usage)
   - [Button](#button)
-  - [Device](#device)
+  - [Covers](#covers)
     - [Usage](#usage-1)
+  - [Device](#device)
+    - [Usage](#usage-2)
   - [Device trigger](#device-trigger)
-      - [Usage](#usage-2)
-  - [Switch](#switch)
-    - [Usage](#usage-3)
+      - [Usage](#usage-3)
   - [Light](#light)
     - [Usage](#usage-4)
-  - [Covers](#covers)
-    - [Usage](#usage-5)
-  - [Text](#text)
-    - [Usage](#usage-6)
   - [Number](#number)
+    - [Usage](#usage-5)
+  - [Sensor](#sensor)
+    - [Usage](#usage-6)
+  - [Switch](#switch)
     - [Usage](#usage-7)
+  - [Text](#text)
+    - [Usage](#usage-8)
 - [FAQ](#faq)
   - [I'm having problems on 32 bit ARM](#im-having-problems-on-32-bit-arm)
 - [Contributing](#contributing)
@@ -136,6 +138,63 @@ my_button.write_config()
 
 ```
 
+### Covers
+
+A cover has five possible states `open`, `closed`, `opening`, `closing` and `stopped`. Most other entities use the states as command payload, but covers differentiate on this. The user HA user can either open, close or stop it in the covers current position.
+
+Covers do not currently support tilt.
+
+A `callback` function is needed in order to parse the commands sent from HA, as the following
+example shows:
+
+#### Usage
+
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Cover, CoverInfo
+from paho.mqtt.client import Client, MQTTMessage
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the cover
+cover_info = CoverInfo(name="test")
+
+settings = Settings(mqtt=mqtt_settings, entity=cover_info)
+
+# To receive state commands from HA, define a callback function:
+def my_callback(client: Client, user_data, message: MQTTMessage):
+    payload = message.payload.decode()
+    if payload == "OPEN":
+    # let HA know that the cover is opening
+    my_cover.opening()
+    # call function to open cover
+        open_my_custom_cover()
+        # Let HA know that the cover was opened
+    my_cover.open()
+    if payload == "CLOSE":
+    # let HA know that the cover is closing
+    my_cover.closing()
+    # call function to close the cover
+        close_my_custom_cover()
+        # Let HA know that the cover was closed
+    my_cover.closed()
+    if payload == "STOP":
+    # call function to stop the cover
+        stop_my_custom_cover()
+        # Let HA know that the cover was stopped
+    my_cover.stopped()
+
+# Define an optional object to be passed back to the callback
+user_data = "Some custom data"
+
+# Instantiate the cover
+my_cover = Cover(settings, my_callback, user_data)
+
+# Set the initial state of the cover, which also makes it discoverable
+my_cover.closed()
+```
+
 ### Device
 From the [Home Assistant documentation](https://developers.home-assistant.io/docs/device_registry_index):
 > A device is a special entity in Home Assistant that is represented by one or more entities.
@@ -209,49 +268,6 @@ mytrigger = DeviceTrigger(settings)
 mytrigger.trigger("My custom payload")
 ```
 
-### Switch
-
-The switch is similar to a _binary sensor_, but in addition to publishing state changes toward HA it can also receive 'commands' from HA that request a state change.
-It is possible to act upon reception of this 'command', by defining a `callback` function, as the following example shows:
-
-#### Usage
-
-```py
-from ha_mqtt_discoverable import Settings
-from ha_mqtt_discoverable.sensors import Switch, SwitchInfo
-from paho.mqtt.client import Client, MQTTMessage
-
-# Configure the required parameters for the MQTT broker
-mqtt_settings = Settings.MQTT(host="localhost")
-
-# Information about the switch
-switch_info = SwitchInfo(name="test")
-
-settings = Settings(mqtt=mqtt_settings, entity=switch_info)
-
-# To receive state commands from HA, define a callback function:
-def my_callback(client: Client, user_data, message: MQTTMessage):
-    payload = message.payload.decode()
-    if payload == "ON":
-        turn_my_custom_thing_on()
-        # Let HA know that the switch was successfully activated
-	my_switch.on()
-    elif payload == "OFF":
-        turn_my_custom_thing_off()
-        # Let HA know that the switch was successfully deactivated
-	my_switch.off()
-
-# Define an optional object to be passed back to the callback
-user_data = "Some custom data"
-
-# Instantiate the switch
-my_switch = Switch(settings, my_callback, user_data)
-
-# Set the initial state of the switch, which also makes it discoverable
-my_switch.off()
-
-```
-
 ### Light
 
 The light is different from other current sensor as it needs its payload encoded/decoded as json.
@@ -322,61 +338,116 @@ my_light.off()
 
 ```
 
-### Covers
+### Number
 
-A cover has five possible states `open`, `closed`, `opening`, `closing` and `stopped`. Most other entities use the states as command payload, but covers differentiate on this. The user HA user can either open, close or stop it in the covers current position.
-
-Covers do not currently support tilt.
-
-A `callback` function is needed in order to parse the commands sent from HA, as the following
-example shows:
+The number entity is similar to the text entity, but for a numeric value instead of a string.
+It is possible to act upon receiving changes in HA by defining a `callback` function, as the following example shows:
 
 #### Usage
 
 ```py
 from ha_mqtt_discoverable import Settings
-from ha_mqtt_discoverable.sensors import Cover, CoverInfo
+from ha_mqtt_discoverable.sensors import Number, NumberInfo
 from paho.mqtt.client import Client, MQTTMessage
 
 # Configure the required parameters for the MQTT broker
 mqtt_settings = Settings.MQTT(host="localhost")
 
-# Information about the cover
-cover_info = CoverInfo(name="test")
+# Information about the `number` entity.
+number_info = NumberInfo(name="test", min=0, max=50, mode="slider", step=5)
 
-settings = Settings(mqtt=mqtt_settings, entity=cover_info)
+settings = Settings(mqtt=mqtt_settings, entity=number_info)
 
-# To receive state commands from HA, define a callback function:
+# To receive number updates from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
-    payload = message.payload.decode()
-    if payload == "OPEN":
-	# let HA know that the cover is opening
-	my_cover.opening()
-	# call function to open cover
-        open_my_custom_cover()
-        # Let HA know that the cover was opened
-	my_cover.open()
-    if payload == "CLOSE":
-	# let HA know that the cover is closing
-	my_cover.closing()
-	# call function to close the cover
-        close_my_custom_cover()
-        # Let HA know that the cover was closed
-	my_cover.closed()
-    if payload == "STOP":
-	# call function to stop the cover
-        stop_my_custom_cover()
-        # Let HA know that the cover was stopped
-	my_cover.stopped()
+    number = int(message.payload.decode())
+    logging.info(f"Received {number} from HA")
+    do_some_custom_thing(number)
+    # Send an MQTT message to confirm to HA that the number was changed
+    my_number.set_value(number)
 
 # Define an optional object to be passed back to the callback
 user_data = "Some custom data"
 
-# Instantiate the cover
-my_cover = Cover(settings, my_callback, user_data)
+# Instantiate the number
+my_number = Number(settings, my_callback, user_data)
 
-# Set the initial state of the cover, which also makes it discoverable
-my_cover.closed()
+# Set the initial number displayed in HA UI, publishing an MQTT message that gets picked up by HA
+my_number.set_value(42.0)
+
+```
+
+### Sensor
+
+#### Usage
+
+The following example creates a sensor and sets its state:
+
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Sensor, SensorInfo
+
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the sensor
+sensor_info = SensorInfo(
+    name="MyTemperatureSensor",
+    device_class="temperature",
+    unit_of_measurement="°C",
+)
+
+settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+
+# Instantiate the sensor
+mysensor = Sensor(settings)
+
+# Change the state of the sensor, publishing an MQTT message that gets picked up by HA
+mysensor.set_state(20.5)
+```
+
+### Switch
+
+The switch is similar to a _binary sensor_, but in addition to publishing state changes toward HA it can also receive 'commands' from HA that request a state change.
+It is possible to act upon reception of this 'command', by defining a `callback` function, as the following example shows:
+
+#### Usage
+
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Switch, SwitchInfo
+from paho.mqtt.client import Client, MQTTMessage
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the switch
+switch_info = SwitchInfo(name="test")
+
+settings = Settings(mqtt=mqtt_settings, entity=switch_info)
+
+# To receive state commands from HA, define a callback function:
+def my_callback(client: Client, user_data, message: MQTTMessage):
+    payload = message.payload.decode()
+    if payload == "ON":
+        turn_my_custom_thing_on()
+        # Let HA know that the switch was successfully activated
+	my_switch.on()
+    elif payload == "OFF":
+        turn_my_custom_thing_off()
+        # Let HA know that the switch was successfully deactivated
+	my_switch.off()
+
+# Define an optional object to be passed back to the callback
+user_data = "Some custom data"
+
+# Instantiate the switch
+my_switch = Switch(settings, my_callback, user_data)
+
+# Set the initial state of the switch, which also makes it discoverable
+my_switch.off()
+
 ```
 
 ### Text
@@ -415,45 +486,6 @@ my_text = Text(settings, my_callback, user_data)
 
 # Set the initial text displayed in HA UI, publishing an MQTT message that gets picked up by HA
 my_text.set_text("Some awesome text")
-
-```
-
-### Number
-
-The number entity is similar to the text entity, but for a numeric value instead of a string.
-It is possible to act upon receiving changes in HA by defining a `callback` function, as the following example shows:
-
-#### Usage
-
-```py
-from ha_mqtt_discoverable import Settings
-from ha_mqtt_discoverable.sensors import Number, NumberInfo
-from paho.mqtt.client import Client, MQTTMessage
-
-# Configure the required parameters for the MQTT broker
-mqtt_settings = Settings.MQTT(host="localhost")
-
-# Information about the `number` entity.
-number_info = NumberInfo(name="test", min=0, max=50, mode="slider", step=5)
-
-settings = Settings(mqtt=mqtt_settings, entity=number_info)
-
-# To receive number updates from HA, define a callback function:
-def my_callback(client: Client, user_data, message: MQTTMessage):
-    number = int(message.payload.decode())
-    logging.info(f"Received {number} from HA")
-    do_some_custom_thing(number)
-    # Send an MQTT message to confirm to HA that the number was changed
-    my_number.set_value(number)
-
-# Define an optional object to be passed back to the callback
-user_data = "Some custom data"
-
-# Instantiate the number
-my_number = Number(settings, my_callback, user_data)
-
-# Set the initial number displayed in HA UI, publishing an MQTT message that gets picked up by HA
-my_number.set_value(42.0)
 
 ```
 
