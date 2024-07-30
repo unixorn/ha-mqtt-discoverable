@@ -140,7 +140,7 @@ my_button.write_config()
 
 ### Covers
 
-A cover has five possible states `open`, `closed`, `opening`, `closing` and `stopped`. Most other entities use the states as command payload, but covers differentiate on this. The user HA user can either open, close or stop it in the covers current position.
+A cover has five possible states `open`, `closed`, `opening`, `closing` and `stopped`. Most other entities use the states as command payload, but covers differentiate on this. The HA user can either open, close or stop it in the covers current position.
 
 Covers do not currently support tilt.
 
