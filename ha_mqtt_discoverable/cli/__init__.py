@@ -34,9 +34,7 @@ def create_base_parser(description: str = "Base parser"):
         choices=["DEBUG", "INFO", "ERROR", "WARNING", "CRITICAL"],
         default="INFO",
     )
-    parser.add_argument(
-        "--client-name", type=str, help="MQTT client name", default="cephalopod"
-    )
+    parser.add_argument("--client-name", type=str, help="MQTT client name", default="cephalopod")
     parser.add_argument(
         "--device-class",
         type=str,
@@ -46,9 +44,7 @@ def create_base_parser(description: str = "Base parser"):
     parser.add_argument("--device-id", type=str, help="Device ID")
     parser.add_argument("--device-name", type=str, help="Device Name")
     parser.add_argument("--icon", type=str, help="Icon")
-    parser.add_argument(
-        "--mqtt-prefix", type=str, default="homeassistant", help="MQTT prefix"
-    )
+    parser.add_argument("--mqtt-prefix", type=str, default="homeassistant", help="MQTT prefix")
     parser.add_argument("--mqtt-user", type=str, help="MQTT user.")
     parser.add_argument("--mqtt-password", type=str, help="MQTT password.")
     parser.add_argument("--mqtt-server", type=str, help="MQTT server.")
@@ -60,9 +56,7 @@ def create_base_parser(description: str = "Base parser"):
     parser.add_argument("--tls-certfile", type=str, help="Path to certfile.")
     parser.add_argument("--tls-key", type=str, help="Path to tls key.")
 
-    parser.add_argument(
-        "--version", "-v", help="Show version and exit", action="store_true"
-    )
+    parser.add_argument("--version", "-v", help="Show version and exit", action="store_true")
     return parser
 
 

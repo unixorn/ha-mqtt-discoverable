@@ -84,9 +84,7 @@ class LightInfo(EntityInfo):
 
     component: str = "light"
 
-    state_schema: str = Field(
-        default="json", alias="schema"
-    )  # 'schema' is a reserved word by pydantic
+    state_schema: str = Field(default="json", alias="schema")  # 'schema' is a reserved word by pydantic
     """Sets the schema of the state topic, ie the 'schema' field in the configuration"""
     optimistic: Optional[bool] = None
     """Flag that defines if light works in optimistic mode.
@@ -251,9 +249,7 @@ class BinarySensor(Discoverable[BinarySensorInfo]):
             state_message = self._entity.payload_on
         else:
             state_message = self._entity.payload_off
-        logger.info(
-            f"Setting {self._entity.name} to {state_message} using {self.state_topic}"
-        )
+        logger.info(f"Setting {self._entity.name} to {state_message} using {self.state_topic}")
         self._state_helper(state=state_message)
 
 
@@ -320,9 +316,7 @@ class Light(Subscriber[LightInfo]):
             brightness(int): Brightness value of [0,255]
         """
         if brightness < 0 or brightness > 255:
-            raise RuntimeError(
-                f"Brightness for light {self._entity.name} is out of range"
-            )
+            raise RuntimeError(f"Brightness for light {self._entity.name} is out of range")
 
         state_payload = {
             "brightness": brightness,
@@ -342,13 +336,9 @@ class Light(Subscriber[LightInfo]):
             color(Dict[str, Any]): Color to set, according to color_mode format
         """
         if not self._entity.color_mode:
-            raise RuntimeError(
-                f"Light {self._entity.name} does not support setting color"
-            )
+            raise RuntimeError(f"Light {self._entity.name} does not support setting color")
         if color_mode not in self._entity.supported_color_modes:
-            raise RuntimeError(
-                f"Color is not in configured supported_color_modes {str(self._entity.supported_color_modes)}"
-            )
+            raise RuntimeError(f"Color is not in configured supported_color_modes {str(self._entity.supported_color_modes)}")
         # We do not check if color schema conforms to color mode formatting, it is up to the caller
         state_payload = {
             "color_mode": color_mode,
@@ -367,9 +357,7 @@ class Light(Subscriber[LightInfo]):
         if not self._entity.effect:
             raise RuntimeError(f"Light {self._entity.name} does not support effects")
         if effect not in self._entity.effect_list:
-            raise RuntimeError(
-                f"Effect is not within configured effect_list {str(self._entity.effect_list)}"
-            )
+            raise RuntimeError(f"Effect is not within configured effect_list {str(self._entity.effect_list)}")
         state_payload = {
             "effect": effect,
             "state": self._entity.payload_on,
@@ -385,9 +373,7 @@ class Light(Subscriber[LightInfo]):
         """
         logger.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
         json_state = json.dumps(state)
-        self._state_helper(
-            state=json_state, topic=self.state_topic, retain=self._entity.retain
-        )
+        self._state_helper(state=json_state, topic=self.state_topic, retain=self._entity.retain)
 
 
 class Cover(Subscriber[CoverInfo]):
@@ -424,9 +410,7 @@ class Cover(Subscriber[CoverInfo]):
         """
         print("State: " + state)
         logger.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
-        self._state_helper(
-            state=state, topic=self.state_topic, retain=self._entity.retain
-        )
+        self._state_helper(state=state, topic=self.state_topic, retain=self._entity.retain)
 
 
 class Button(Subscriber[ButtonInfo]):
@@ -476,9 +460,7 @@ class Text(Subscriber[TextInfo]):
         """
         if not self._entity.min <= len(text) <= self._entity.max:
             bound = f"[{self._entity.min}, {self._entity.max}]"
-            raise RuntimeError(
-                f"Text is not within configured length boundaries {bound}"
-            )
+            raise RuntimeError(f"Text is not within configured length boundaries {bound}")
 
         logger.info(f"Setting {self._entity.name} to {text} using {self.state_topic}")
         self._state_helper(str(text))
