@@ -19,7 +19,7 @@ pydantic = "^2.7.2"
 pytest = ">=7.2.2,<9.0.0"
 flake8 = ">=6,<8"
 pre-commit = "^3.8.0"
-ruff = "^0.6.1"
+ruff = "^0.6.2"
 
 
 [tool.poetry.group.test.dependencies]
