@@ -7,7 +7,7 @@
 
 A Python 3 module that takes advantage of Home Assistant's [MQTT discovery protocol](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery) to create sensors without having to define anything on the HA side.
 
-Using MQTT discoverable devices lets us add new sensors and devices to HA without having to restart HA. The `ha-mqtt-discoverable-cli` module includes scripts to make it easy to create discoverable devices from the command line if you don't want to bother writing Python.
+Using MQTT discoverable devices lets us add new sensors and devices to HA without having to restart HA. The [ha-mqtt-discoverable-cli](https://github.com/unixorn/ha-mqtt-discoverable-cli/) module includes scripts to make it easy to create discoverable devices from the command line if you don't want to bother writing Python.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -49,7 +49,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 
 ha-mqtt-discoverable runs on Python 3.10 or later.
 
-`pip install ha-mqtt-discoverable` if you want to use it in your own python scripts. This will also install the `hmd` utility scripts.
+`pip install ha-mqtt-discoverable` if you want to use it in your own python scripts. `pip install ha-mqtt-discoverable-cli` to install the `hmd` utility scripts.
 
 <!-- Please keep the entities in alphabetical order -->
 ## Supported entities
