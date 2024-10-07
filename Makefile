@@ -19,7 +19,15 @@ help:
 # If this pukes trying to import paho, try running 'poetry install'
 MODULE_VERSION=$(shell grep '^version' pyproject.toml | cut -d= -f2 | sed s/\"//g | sed s/\ //g)
 
-clean: ## Cleans out stale wheels, generated tar files, .pyc and .pyo files
+clean-synology-fuckery: ## Deal with Synology's obsession with adding executable bits everywhere
+	chmod 600 poetry.lock Docker* LICENSE Makefile *.toml .gitignore .editorconfig .flake8 *.y*ml .*.y*ml .*.json .trivyignore
+	find . -iname '*.py' -exec chmod 644 '{}' ';'
+	find . -iname '*.md' -exec chmod 644 '{}' ';'
+	find . -iname '*.txt' -exec chmod 644 '{}' ';'
+	find .github -type f -exec chmod 644 '{}' ';'
+	find tests -type f -exec chmod 644 '{}' ';'
+
+clean: clean-synology-fuckery ## Cleans out stale wheels, generated tar files, .pyc and .pyo files
 	rm -fv dist/*.tar dist/*.whl
 	find . -iname '*.py[co]' -delete
 
