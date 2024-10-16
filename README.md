@@ -36,6 +36,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
   - [Text](#text)
     - [Usage](#usage-8)
 - [FAQ](#faq)
+  - [Using an existing MQTT client](#using-an-existing-mqtt-client)
   - [I'm having problems on 32 bit ARM](#im-having-problems-on-32-bit-arm)
 - [Contributing](#contributing)
 - [Users of ha-mqtt-discoverable](#users-of-ha-mqtt-discoverable)
@@ -490,6 +491,26 @@ my_text.set_text("Some awesome text")
 ```
 
 ## FAQ
+
+### Using an existing MQTT client
+
+If you want to use an existing MQTT client for the connection, you can pass it to the `Settings` object:
+
+```py
+from ha_mqtt_discoverable import Settings
+from paho.mqtt.client import Client
+
+# Creating the MQTT client
+client = Client()
+# Doing other stuff with the client, like connecting to the broker
+# ...
+
+# Providing the client to the Settings object
+# In this case, no other MQTT settings are needed
+mqtt_settings = Settings.MQTT(client=client)
+
+# Continue with the rest of the code as usual
+```
 
 ### I'm having problems on 32 bit ARM
 

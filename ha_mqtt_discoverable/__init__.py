@@ -16,7 +16,7 @@ import json
 import logging
 import ssl
 from importlib import metadata
-from typing import Any, Callable, Generic, Optional, TypeVar
+from typing import Any, Callable, Generic, Optional, TypeVar, Union
 
 import paho.mqtt.client as mqtt
 from paho.mqtt.client import MQTTMessageInfo
@@ -546,7 +546,11 @@ class Settings(BaseModel, Generic[EntityType]):
     class MQTT(BaseModel):
         """Connection settings for the MQTT broker"""
 
-        host: str
+        class Config:
+            # To use mqtt.Client
+            arbitrary_types_allowed = True
+
+        host: Optional[str] = "homeassistant"
         port: Optional[int] = 1883
         username: Optional[str] = None
         password: Optional[str] = None
@@ -560,6 +564,9 @@ class Settings(BaseModel, Generic[EntityType]):
         """The root of the topic tree where HA is listening for messages"""
         state_prefix: str = "hmd"
         """The root of the topic tree ha-mqtt-discovery publishes its state messages"""
+
+        client: Optional[mqtt.Client] = None
+        """Optional MQTT client to use for the connection. If provided, most other settings are ignored."""
 
     mqtt: MQTT
     """Connection to MQTT broker"""
@@ -640,7 +647,7 @@ class Discoverable(Generic[EntityType]):
         self._setup_client(on_connect)
         # If there is a callback function defined, the user must manually connect
         # to the MQTT client
-        if not on_connect:
+        if not (on_connect or self._settings.mqtt.client is not None):
             self._connect_client()
 
     def __str__(self) -> str:
@@ -658,9 +665,16 @@ wrote_configuration: {self.wrote_configuration}
 
     def _setup_client(self, on_connect: Optional[Callable] = None) -> None:
         """Create an MQTT client and setup some basic properties on it"""
+
+        # If the user has passed in an MQTT client, use it
+        if self._settings.mqtt.client:
+            self.mqtt_client = self._settings.mqtt.client
+            return
+
         mqtt_settings = self._settings.mqtt
         logger.debug(f"Creating mqtt client ({mqtt_settings.client_name}) for " f"{mqtt_settings.host}:{mqtt_settings.port}")
-        self.mqtt_client = mqtt.Client(mqtt_settings.client_name)
+        # Use named parameter to add compatibility with paho-mqtt >2.0.0
+        self.mqtt_client = mqtt.Client(client_id=mqtt_settings.client_name)
         if mqtt_settings.tls_key:
             logger.info(f"Connecting to {mqtt_settings.host}:{mqtt_settings.port} with SSL and client certificate authentication")
             logger.debug(f"ca_certs={mqtt_settings.tls_ca_cert}")
@@ -703,7 +717,7 @@ wrote_configuration: {self.wrote_configuration}
     def _connect_client(self) -> None:
         """Connect the client to the MQTT broker, start its onw internal loop in
         a separate thread"""
-        result = self.mqtt_client.connect(self._settings.mqtt.host, self._settings.mqtt.port)
+        result = self.mqtt_client.connect(self._settings.mqtt.host, self._settings.mqtt.port or 1883)
         # Check if we have established a connection
         if result != mqtt.MQTT_ERR_SUCCESS:
             raise RuntimeError("Error while connecting to MQTT broker")
@@ -712,7 +726,9 @@ wrote_configuration: {self.wrote_configuration}
         # messages in a separate thread
         self.mqtt_client.loop_start()
 
-    def _state_helper(self, state: Optional[str], topic: Optional[str] = None, retain=True) -> MQTTMessageInfo:
+    def _state_helper(
+        self, state: Optional[Union[str, float, int]], topic: Optional[str] = None, retain=True
+    ) -> Optional[MQTTMessageInfo]:
         """
         Write a state to the given MQTT topic, returning the result of client.publish()
         """
