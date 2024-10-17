@@ -147,7 +147,7 @@ my_button.write_config()
 
 ### Camera
 
-The camera publishes a current image topic.
+The following example creates an camera entity with a topic to an image.
 
 #### Usage
 
@@ -176,7 +176,7 @@ user_data = "Some custom data"
 my_camera = Camera(settings, my_callback, user_data)
 
 # Set the initial state of the cover, which also makes it discoverable
-my_cover.set_topic("zanzito/shared_locations/my-device")	# not needed if already defined
+my_camera.set_topic("zanzito/shared_locations/my-device")	# not needed if already defined
 ```
 
 ### Covers
@@ -311,7 +311,7 @@ mytrigger.trigger("My custom payload")
 
 ### Image
 
-The Image publishes a current image url.
+The following example creates an entity to an image url.
 
 #### Usage
 
@@ -324,7 +324,7 @@ from paho.mqtt.client import Client, MQTTMessage
 mqtt_settings = Settings.MQTT(host="localhost")
 
 # Information about the cover
-image_info = CameraInfo(name="test", url_topic ="http://camera.local/latest.jpg")
+image_info = ImageInfo(name="test", url_topic ="http://camera.local/latest.jpg")
 
 settings = Settings(mqtt=mqtt_settings, entity=image_info)
 
