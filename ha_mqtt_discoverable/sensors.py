@@ -264,6 +264,20 @@ class ImageInfo(EntityInfo):
     retain: Optional[bool] = None
     """If the published message should have the retain flag on or not."""
 
+class SelectInfo(EntityInfo):
+    """Switch specific information"""
+
+    component: str = "select"
+    optimistic: Optional[bool] = None
+    """Flag that defines if switch works in optimistic mode.
+    Default: true if no state_topic defined, else false."""
+    retain: Optional[bool] = None
+    """If the published message should have the retain flag on or not"""
+    state_topic: Optional[str] = None
+    """The MQTT topic subscribed to receive state updates."""
+    options: Optional[list] = None
+    """List of options that can be selected. An empty list or a list with a single item is allowed."""
+    
 
 class BinarySensor(Discoverable[BinarySensorInfo]):
     def off(self):
@@ -541,7 +555,7 @@ class Camera(Subscriber[CameraInfo]):
         if not image_topic:
             raise RuntimeError("Image topic cannot be empty")
 
-        logger.info(f"Publishing camera image URL {image_topic} to {self._entity.topic}")
+        logger.info(f"Publishing camera image topic {image_topic} to {self._entity.topic}")
         self._state_helper(image_topic)
 
     def set_availability(self, available: bool) -> None:
@@ -571,5 +585,24 @@ class Image(Subscriber[ImageInfo]):
         if not image_url:
             raise RuntimeError("Image URL cannot be empty")
 
-        logger.info(f"Publishing camera image URL {image_url} to {self._entity.url_topic}")
+        logger.info(f"Publishing image URL {image_url} to {self._entity.url_topic}")
         self._state_helper(image_url)
+
+class Select(Subscriber[SelectInfo]):
+    """
+    Implements an MQTT camera for Home Assistant MQTT discovery:
+    https://www.home-assistant.io/integrations/image.mqtt/
+    """
+
+    def set_options(self, opt: list) -> None:
+        """
+        Update the selectable options.
+
+        Args:
+            opt (list): List of options that can be selected.
+        """
+        if not opt:
+            raise RuntimeError("Image URL cannot be empty")
+
+        logger.info(f"Publishing options {opt} to {self._entity.options}")
+        self._state_helper(opt)
