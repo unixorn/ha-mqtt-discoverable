@@ -571,5 +571,5 @@ class Image(Subscriber[ImageInfo]):
         if not image_url:
             raise RuntimeError("Image URL cannot be empty")
 
-        logger.info(f"Publishing camera image URL {image_url} to {self._entity.topic}")
+        logger.info(f"Publishing camera image URL {image_url} to {self._entity.url_topic}")
         self._state_helper(image_url)
