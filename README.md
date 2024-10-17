@@ -28,7 +28,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
   - [Device trigger](#device-trigger)
       - [Usage](#usage-4)
   - [Image](#image)
-      - [Usage](#usage-5)
+    - [Usage](#usage-5)
   - [Light](#light)
     - [Usage](#usage-6)
   - [Number](#number)

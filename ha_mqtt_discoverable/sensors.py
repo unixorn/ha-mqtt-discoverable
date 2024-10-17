@@ -224,10 +224,12 @@ class DeviceTriggerInfo(EntityInfo):
     device: DeviceInfo
     """Information about the device this sensor belongs to (required)"""
 
+
 class CameraInfo(EntityInfo):
     """
     Information about the 'camera' entity.
     """
+
     component: str = "camera"
     """The component type is 'camera' for this entity."""
     availability_topic: Optional[str] = None
@@ -244,10 +246,12 @@ class CameraInfo(EntityInfo):
     retain: Optional[bool] = None
     """If the published message should have the retain flag on or not."""
 
+
 class ImageInfo(EntityInfo):
     """
     Information about the 'camera' entity.
     """
+
     component: str = "image"
     """The component type is 'camera' for this entity."""
     availability_topic: Optional[str] = None
@@ -264,6 +268,7 @@ class ImageInfo(EntityInfo):
     retain: Optional[bool] = None
     """If the published message should have the retain flag on or not."""
 
+
 class SelectInfo(EntityInfo):
     """Switch specific information"""
 
@@ -277,7 +282,7 @@ class SelectInfo(EntityInfo):
     """The MQTT topic subscribed to receive state updates."""
     options: Optional[list] = None
     """List of options that can be selected. An empty list or a list with a single item is allowed."""
-    
+
 
 class BinarySensor(Discoverable[BinarySensorInfo]):
     def off(self):
@@ -539,6 +544,7 @@ class Number(Subscriber[NumberInfo]):
         logger.info(f"Setting {self._entity.name} to {value} using {self.state_topic}")
         self._state_helper(value)
 
+
 class Camera(Subscriber[CameraInfo]):
     """
     Implements an MQTT camera for Home Assistant MQTT discovery:
@@ -569,6 +575,7 @@ class Camera(Subscriber[CameraInfo]):
         logger.info(f"Setting camera availability to {payload} using {self._entity.availability_topic}")
         self.mqtt_client.publish(self._entity.availability_topic, payload, retain=self._entity.retain)
 
+
 class Image(Subscriber[ImageInfo]):
     """
     Implements an MQTT camera for Home Assistant MQTT discovery:
@@ -587,6 +594,7 @@ class Image(Subscriber[ImageInfo]):
 
         logger.info(f"Publishing image URL {image_url} to {self._entity.url_topic}")
         self._state_helper(image_url)
+
 
 class Select(Subscriber[SelectInfo]):
     """
