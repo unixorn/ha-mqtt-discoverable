@@ -244,6 +244,26 @@ class CameraInfo(EntityInfo):
     retain: Optional[bool] = None
     """If the published message should have the retain flag on or not."""
 
+class ImageInfo(EntityInfo):
+    """
+    Information about the 'camera' entity.
+    """
+    component: str = "image"
+    """The component type is 'camera' for this entity."""
+    availability_topic: Optional[str] = None
+    """The MQTT topic subscribed to publish the camera availability."""
+    payload_available: Optional[str] = "online"
+    """Payload to publish to indicate the camera is online."""
+    payload_not_available: Optional[str] = "offline"
+    """Payload to publish to indicate the camera is offline."""
+    url_topic: Optional[str] = None
+    """
+    The MQTT topic to subscribe to receive an image URL. A url_template option can extract the URL from the message.
+    The content_type will be derived from the image when downloaded.
+    """
+    retain: Optional[bool] = None
+    """If the published message should have the retain flag on or not."""
+
 
 class BinarySensor(Discoverable[BinarySensorInfo]):
     def off(self):
@@ -511,18 +531,18 @@ class Camera(Subscriber[CameraInfo]):
     https://www.home-assistant.io/integrations/image.mqtt/
     """
 
-    def set_state(self, image_url: str) -> None:
+    def set_topic(self, image_topic: str) -> None:
         """
         Update the camera state (image URL).
 
         Args:
-            image_url (str): URL of the image to be set as the camera state.
+            image_topic (str): Topic of the image to be set as the camera state.
         """
-        if not image_url:
-            raise RuntimeError("Image URL cannot be empty")
+        if not image_topic:
+            raise RuntimeError("Image topic cannot be empty")
 
-        logger.info(f"Publishing camera image URL {image_url} to {self._entity.topic}")
-        self._state_helper(image_url)
+        logger.info(f"Publishing camera image URL {image_topic} to {self._entity.topic}")
+        self._state_helper(image_topic)
 
     def set_availability(self, available: bool) -> None:
         """
@@ -534,3 +554,22 @@ class Camera(Subscriber[CameraInfo]):
         payload = self._entity.payload_available if available else self._entity.payload_not_available
         logger.info(f"Setting camera availability to {payload} using {self._entity.availability_topic}")
         self.mqtt_client.publish(self._entity.availability_topic, payload, retain=self._entity.retain)
+
+class Image(Subscriber[ImageInfo]):
+    """
+    Implements an MQTT camera for Home Assistant MQTT discovery:
+    https://www.home-assistant.io/integrations/image.mqtt/
+    """
+
+    def set_url(self, image_url: str) -> None:
+        """
+        Update the camera state (image URL).
+
+        Args:
+            image_url (str): URL of the image to be set as the camera state.
+        """
+        if not image_url:
+            raise RuntimeError("Image URL cannot be empty")
+
+        logger.info(f"Publishing camera image URL {image_url} to {self._entity.topic}")
+        self._state_helper(image_url)
