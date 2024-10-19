@@ -19,22 +19,28 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
   - [Binary sensor](#binary-sensor)
     - [Usage](#usage)
   - [Button](#button)
-  - [Covers](#covers)
+  - [Camera](#camera)
     - [Usage](#usage-1)
-  - [Device](#device)
+  - [Covers](#covers)
     - [Usage](#usage-2)
+  - [Device](#device)
+    - [Usage](#usage-3)
   - [Device trigger](#device-trigger)
-      - [Usage](#usage-3)
-  - [Light](#light)
-    - [Usage](#usage-4)
-  - [Number](#number)
+      - [Usage](#usage-4)
+  - [Image](#image)
     - [Usage](#usage-5)
-  - [Sensor](#sensor)
+  - [Light](#light)
     - [Usage](#usage-6)
-  - [Switch](#switch)
+  - [Number](#number)
     - [Usage](#usage-7)
-  - [Text](#text)
+  - [Sensor](#sensor)
     - [Usage](#usage-8)
+  - [Select](#select)
+    - [Usage](#usage-9)
+  - [Switch](#switch)
+    - [Usage](#usage-10)
+  - [Text](#text)
+    - [Usage](#usage-11)
 - [FAQ](#faq)
   - [Using an existing MQTT client](#using-an-existing-mqtt-client)
   - [I'm having problems on 32 bit ARM](#im-having-problems-on-32-bit-arm)
@@ -59,12 +65,15 @@ The following Home Assistant entities are currently implemented:
 
 - Binary sensor
 - Button
+- Camera
 - Cover
 - Device
 - Device trigger
+- Image
 - Light
 - Number
 - Sensor
+- Select
 - Switch
 - Text
 
@@ -137,6 +146,40 @@ my_button = Button(settings, my_callback, user_data)
 # Publish the button's discoverability message to let HA automatically notice it
 my_button.write_config()
 
+```
+
+### Camera
+
+The following example creates an camera entity with a topic to an image.
+
+#### Usage
+
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Camera, CameraInfo
+from paho.mqtt.client import Client, MQTTMessage
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the cover
+camera_info = CameraInfo(name="test", topic="zanzito/shared_locations/my-device")
+
+settings = Settings(mqtt=mqtt_settings, entity=camera_info)
+
+# To receive state commands from HA, define a callback function:
+def my_callback(client: Client, user_data, message: MQTTMessage):
+    payload = message.payload.decode()
+    perform_my_custom_action()
+
+# Define an optional object to be passed back to the callback
+user_data = "Some custom data"
+
+# Instantiate the cover
+my_camera = Camera(settings, my_callback, user_data)
+
+# Set the initial state of the cover, which also makes it discoverable
+my_camera.set_topic("zanzito/shared_locations/my-device")	# not needed if already defined
 ```
 
 ### Covers
@@ -267,6 +310,40 @@ mytrigger = DeviceTrigger(settings)
 # Generate a device trigger event, publishing an MQTT message that gets picked up by HA
 # Optionally include a payload as part of the event
 mytrigger.trigger("My custom payload")
+```
+
+### Image
+
+The following example creates an entity to an image url.
+
+#### Usage
+
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Image, ImageInfo
+from paho.mqtt.client import Client, MQTTMessage
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the cover
+image_info = ImageInfo(name="test", url_topic ="http://camera.local/latest.jpg")
+
+settings = Settings(mqtt=mqtt_settings, entity=image_info)
+
+# To receive state commands from HA, define a callback function:
+def my_callback(client: Client, user_data, message: MQTTMessage):
+    payload = message.payload.decode()
+    perform_my_custom_action()
+
+# Define an optional object to be passed back to the callback
+user_data = "Some custom data"
+
+# Instantiate the cover
+my_image = Image(settings, my_callback, user_data)
+
+# Set the initial state of the cover, which also makes it discoverable
+my_image.set_url("http://camera.local/latest.jpg")	# not needed if already defined
 ```
 
 ### Light
@@ -406,6 +483,42 @@ mysensor = Sensor(settings)
 
 # Change the state of the sensor, publishing an MQTT message that gets picked up by HA
 mysensor.set_state(20.5)
+```
+
+### Select
+
+The selection entity is a list of selectable options in homeassistant.
+It is possible to act upon reception of this 'command', by defining a `callback` function, as the following example shows:
+
+#### Usage
+
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Select, SelectInfo
+from paho.mqtt.client import Client, MQTTMessage
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the switch
+select_info = SelectInfo(name="test", options=["option1", "option2", "option3"])
+
+settings = Settings(mqtt=mqtt_settings, entity=select_info)
+
+# To receive state commands from HA, define a callback function:
+def my_callback(client: Client, user_data, message: MQTTMessage):
+    payload = message.payload.decode()
+    do_something()
+
+# Define an optional object to be passed back to the callback
+user_data = "Some custom data"
+
+# Instantiate the selection
+my_selection = Select(settings, my_callback, user_data)
+
+# Set the initial state of the selection, which also makes it discoverable
+opt = ["option3", "option4", "option5"]
+my_selection.set_options()
 ```
 
 ### Switch
