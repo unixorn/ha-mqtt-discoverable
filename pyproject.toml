@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "ha-mqtt-discoverable"
-version = "0.15.0"
-description = ""
+version = "0.16.0"
+description = "Python library for creating MQTT entities compatible with Home Assistant"
 authors = ["Joe Block <jpb@unixorn.net>"]
 readme = "README.md"
 packages = [{include = "ha_mqtt_discoverable"}]
