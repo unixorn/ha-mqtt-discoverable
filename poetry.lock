@@ -223,17 +223,20 @@ virtualenv = ">=20.10.0"
 
 [[package]]
 name = "pyaml"
-version = "21.10.1"
-description = "PyYAML-based module to produce pretty and readable YAML-serialized data"
+version = "24.9.0"
+description = "PyYAML-based module to produce a bit more pretty and readable YAML-serialized data"
 optional = false
-python-versions = "*"
+python-versions = ">=3.8"
 files = [
-    {file = "pyaml-21.10.1-py2.py3-none-any.whl", hash = "sha256:19985ed303c3a985de4cf8fd329b6d0a5a5b5c9035ea240eccc709ebacbaf4a0"},
-    {file = "pyaml-21.10.1.tar.gz", hash = "sha256:c6519fee13bf06e3bb3f20cacdea8eba9140385a7c2546df5dbae4887f768383"},
+    {file = "pyaml-24.9.0-py3-none-any.whl", hash = "sha256:31080551502f1014852b3c966a96c796adc79b4cf86e165f28ed83455bf19c62"},
+    {file = "pyaml-24.9.0.tar.gz", hash = "sha256:e78dee8b0d4fed56bb9fa11a8a7858e6fade1ec70a9a122cee6736efac3e69b5"},
 ]
 
 [package.dependencies]
 PyYAML = "*"
+
+[package.extras]
+anchors = ["unidecode"]
 
 [[package]]
 name = "pycodestyle"
@@ -554,4 +557,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10.0,<4.0"
-content-hash = "4529b143a38bba2b24e99e8c11a2d599990eb7d7c2074383b8274115307fb448"
+content-hash = "c94fb5c001c465505fa5967dc93fc9559ee68352f7bd8363c1e0a2dd1a6d30de"
