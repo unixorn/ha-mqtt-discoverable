@@ -56,6 +56,15 @@ class SensorInfo(EntityInfo):
     If not None, the sensor is assumed to be numerical
     and will be displayed as a line-chart
     in the frontend instead of as discrete values."""
+    last_reset: Optional[str] = None
+    """The time when an accumulating sensor such as an electricity usage meter,
+    gas meter, water meter etc. was initialized.
+    If the time of initialization is unknown, set it to None.
+    Note that the datetime.datetime returned by the last_reset 
+    property will be converted to an ISO 8601-formatted string 
+    when the entity's state attributes are updated. 
+    When changing last_reset, the state must be a valid number.
+    """
 
 
 class SwitchInfo(EntityInfo):
