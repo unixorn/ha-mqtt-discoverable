@@ -56,15 +56,17 @@ class SensorInfo(EntityInfo):
     If not None, the sensor is assumed to be numerical
     and will be displayed as a line-chart
     in the frontend instead of as discrete values."""
-    last_reset: Optional[str] = None
-    """The time when an accumulating sensor such as an electricity usage meter,
-    gas meter, water meter etc. was initialized.
-    If the time of initialization is unknown, set it to None.
-    Note that the datetime.datetime returned by the last_reset
-    property will be converted to an ISO 8601-formatted string
-    when the entity's state attributes are updated.
-    When changing last_reset, the state must be a valid number.
+    value_template: Optional[str] = None
     """
+    Defines a template to extract the value. 
+    If the template throws an error,
+    the current state will be used instead."""
+    last_reset_value_template: Optional[str] = None
+    """
+    Defines a template to extract the last_reset. 
+    When last_reset_value_template is set, the state_class option must be total. 
+    Available variables: entity_id. 
+    The entity_id can be used to reference the entity’s attributes."""
 
 
 class SwitchInfo(EntityInfo):
@@ -322,7 +324,7 @@ class BinarySensor(Discoverable[BinarySensorInfo]):
 
 
 class Sensor(Discoverable[SensorInfo]):
-    def set_state(self, state: str | int | float) -> None:
+    def set_state(self, state: str | int | float, last_reset: str = None) -> None:
         """
         Update the sensor state
 
@@ -330,7 +332,9 @@ class Sensor(Discoverable[SensorInfo]):
             state(str): What state to set the sensor to
         """
         logger.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
-        self._state_helper(str(state))
+        if last_reset:
+            logger.info("Setting last_reset to " + last_reset)
+        self._state_helper(str(state), last_reset=last_reset)
 
 
 # Inherit the on and off methods from the BinarySensor class, changing only the

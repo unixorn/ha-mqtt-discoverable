@@ -727,7 +727,7 @@ wrote_configuration: {self.wrote_configuration}
         self.mqtt_client.loop_start()
 
     def _state_helper(
-        self, state: Optional[Union[str, float, int]], topic: Optional[str] = None, retain=True
+        self, state: Optional[Union[str, float, int]], topic: Optional[str] = None, last_reset: Optional[str] = None, retain=True
     ) -> Optional[MQTTMessageInfo]:
         """
         Write a state to the given MQTT topic, returning the result of client.publish()
@@ -738,6 +738,8 @@ wrote_configuration: {self.wrote_configuration}
         if not topic:
             logger.debug(f"State topic unset, using default: {self.state_topic}")
             topic = self.state_topic
+        if last_reset:
+            state = {"state": state, "last_reset": last_reset}
         logger.debug(f"Writing '{state}' to {topic}")
 
         if self._settings.debug:
