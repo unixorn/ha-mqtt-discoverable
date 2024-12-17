@@ -643,6 +643,8 @@ If you use this module for your own project, please add a link here.
 
 - [homeassistant-zodiac-tri-expert](https://github.com/andreondra/homeassistant-zodiac-tri-expert) - A Zodiac Tri Expert salt water generator integration
 
+- [homeassistant-addon-viessmann-gridbox](https://github.com/unl0ck/homeassistant-addon-viessmann-gridbox) - Get your Viessmann Gridbox Data Home Assistant integration
+
 ## Contributors
 
 <a href="https://github.com/unixorn/ha-mqtt-discoverable/graphs/contributors">
