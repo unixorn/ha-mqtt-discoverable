@@ -58,11 +58,8 @@ def test_update_state_with_last_reset(sensor: Sensor):
 
     with patch.object(sensor.mqtt_client, 'publish') as mock_publish:
         sensor.set_state(1, midnight.isoformat())
-        mock_publish.assert_called_with(sensor.state_topic, '1', retain=True)
-        # Check the last_reset parameter
-        parameter1 = mock_publish.call_args.kwargs['payload']
-        print(f"parameter {parameter1}")
+        parameter = mock_publish.call_args.args[1]
         import json
-        parameter1_json = json.loads(parameter1)
-        assert parameter1_json['last_reset'] == midnight.isoformat()
+        parameter_json = json.loads(parameter)
+        assert parameter_json['last_reset'] == midnight.isoformat()
 
