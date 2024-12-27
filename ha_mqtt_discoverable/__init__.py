@@ -740,6 +740,7 @@ wrote_configuration: {self.wrote_configuration}
             topic = self.state_topic
         if last_reset:
             state = {"state": state, "last_reset": last_reset}
+            state = json.dumps(state)
         logger.debug(f"Writing '{state}' to {topic}")
 
         if self._settings.debug:
