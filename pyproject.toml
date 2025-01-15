@@ -8,7 +8,7 @@ packages = [{include = "ha_mqtt_discoverable"}]
 
 [tool.poetry.dependencies]
 python = ">=3.10.0,<4.0"
-pyaml = "^21.10.1"
+pyaml = ">=21.10.1,<26.0.0"
 paho-mqtt = "^1.6.1"
 gitlike-commands = ">=0.2.1,<0.4.0"
 pydantic = "^2.7.2"
