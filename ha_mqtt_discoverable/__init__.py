@@ -672,7 +672,7 @@ wrote_configuration: {self.wrote_configuration}
             return
 
         mqtt_settings = self._settings.mqtt
-        logger.debug(f"Creating mqtt client ({mqtt_settings.client_name}) for " f"{mqtt_settings.host}:{mqtt_settings.port}")
+        logger.debug(f"Creating mqtt client ({mqtt_settings.client_name}) for {mqtt_settings.host}:{mqtt_settings.port}")
         # Use named parameter to add compatibility with paho-mqtt >2.0.0
         self.mqtt_client = mqtt.Client(client_id=mqtt_settings.client_name)
         if mqtt_settings.tls_key:
@@ -769,7 +769,7 @@ wrote_configuration: {self.wrote_configuration}
 
         config_message = ""
         logger.info(
-            f"Writing '{config_message}' to topic {self.config_topic} on " "{self._settings.mqtt.host}:{self._settings.mqtt.port}"
+            f"Writing '{config_message}' to topic {self.config_topic} on {{self._settings.mqtt.host}}:{{self._settings.mqtt.port}}"
         )
         self.mqtt_client.publish(self.config_topic, config_message, retain=True)
 
@@ -802,7 +802,7 @@ wrote_configuration: {self.wrote_configuration}
         config_message = json.dumps(self.generate_config())
 
         logger.debug(
-            f"Writing '{config_message}' to topic {self.config_topic} on " f"{self._settings.mqtt.host}:{self._settings.mqtt.port}"
+            f"Writing '{config_message}' to topic {self.config_topic} on {self._settings.mqtt.host}:{self._settings.mqtt.port}"
         )
         self.wrote_configuration = True
         self.config_message = config_message
