@@ -1,7 +1,7 @@
 # ha-mqtt-discoverable
 
 [![License](https://img.shields.io/github/license/unixorn/ha-mqtt-discoverable.svg)](https://opensource.org/license/apache-2-0/)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![GitHub last commit (branch)](https://img.shields.io/github/last-commit/unixorn/ha-mqtt-discoverable/main.svg)](https://github.com/unixorn/ha-mqtt-discoverable)
 [![Downloads](https://static.pepy.tech/badge/ha-mqtt-discoverable)](https://pepy.tech/project/ha-mqtt-discoverable)
 
@@ -631,7 +631,7 @@ Pydantic 2 has issues on 32 bit ARM. More details are on [ha-mqtt-discoverable/p
 
 ## Contributing
 
-Please run `black` on your code before submitting. There are `git` hooks already configured to run `black` and other checks before every commit, please run `pre-commit install` to enable them.
+Please run `ruff` on your code before submitting. There are `git` hooks already configured to run `ruff` and other checks before every commit, please run `pre-commit install` to enable them.
 
 ## Users of ha-mqtt-discoverable
 
