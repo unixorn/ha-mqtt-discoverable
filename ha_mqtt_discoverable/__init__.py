@@ -673,8 +673,7 @@ wrote_configuration: {self.wrote_configuration}
 
         mqtt_settings = self._settings.mqtt
         logger.debug(f"Creating mqtt client ({mqtt_settings.client_name}) for {mqtt_settings.host}:{mqtt_settings.port}")
-        # Use named parameter to add compatibility with paho-mqtt >2.0.0
-        self.mqtt_client = mqtt.Client(client_id=mqtt_settings.client_name)
+        self.mqtt_client = mqtt.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION2, client_id=mqtt_settings.client_name)
         if mqtt_settings.tls_key:
             logger.info(f"Connecting to {mqtt_settings.host}:{mqtt_settings.port} with SSL and client certificate authentication")
             logger.debug(f"ca_certs={mqtt_settings.tls_ca_cert}")
