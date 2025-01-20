@@ -1,17 +1,20 @@
-[tool.poetry]
+[project]
 name = "ha-mqtt-discoverable"
 version = "0.16.4"
 description = "Python library for creating MQTT entities compatible with Home Assistant"
-authors = ["Joe Block <jpb@unixorn.net>"]
+authors = [{name = "Joe Block", email = "jpb@unixorn.net"}]
 readme = "README.md"
-packages = [{include = "ha_mqtt_discoverable"}]
+requires-python = ">=3.10.0,<4.0"
+dependencies = [
+    "pyaml==21.10.1",
+    "paho-mqtt==1.6.1",
+    "gitlike-commands (>=0.2.1,<0.4.0)",
+    "pydantic==2.7.2",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.10.0,<4.0"
-pyaml = "^21.10.1"
-paho-mqtt = "^1.6.1"
-gitlike-commands = ">=0.2.1,<0.4.0"
-pydantic = "^2.7.2"
+
+[tool.poetry]
+packages = [{include = "ha_mqtt_discoverable"}]
 
 
 [tool.poetry.group.dev.dependencies]
@@ -90,5 +93,5 @@ line-ending = "auto"
 
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=2.0"]
 build-backend = "poetry.core.masonry.api"
