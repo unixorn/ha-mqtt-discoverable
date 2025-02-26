@@ -28,6 +28,7 @@ from paho.mqtt.client import (
     MQTTv5,
     SubscribeOptions,
 )
+from paho.mqtt.enums import CallbackAPIVersion
 from pytest_mock import MockerFixture
 
 from ha_mqtt_discoverable import DeviceInfo, Discoverable, EntityInfo, Settings
@@ -231,7 +232,7 @@ def message_callback(client: Client, userdata, message: MQTTMessage, tmp=None):
 
 def test_publish_multithread(discoverable: Discoverable):
     received_message = Event()
-    mqtt_client = Client(protocol=MQTTv5, userdata=received_message)
+    mqtt_client = Client(callback_api_version=CallbackAPIVersion.VERSION2, protocol=MQTTv5, userdata=received_message)
 
     mqtt_client.connect(host="localhost")
     mqtt_client.on_message = message_callback
@@ -258,7 +259,7 @@ def test_publish_multithread(discoverable: Discoverable):
 
 def test_publish_async(discoverable: Discoverable):
     received_message = Event()
-    mqtt_client = Client(protocol=MQTTv5, userdata=received_message)
+    mqtt_client = Client(callback_api_version=CallbackAPIVersion.VERSION2, protocol=MQTTv5, userdata=received_message)
 
     mqtt_client.connect(host="localhost", clean_start=True)
     mqtt_client.on_message = message_callback
