@@ -321,29 +321,20 @@ The following example creates an entity to an image url.
 ```py
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Image, ImageInfo
-from paho.mqtt.client import Client, MQTTMessage
 
 # Configure the required parameters for the MQTT broker
 mqtt_settings = Settings.MQTT(host="localhost")
 
-# Information about the cover
-image_info = ImageInfo(name="test", url_topic ="http://camera.local/latest.jpg")
+# Information about the image
+image_info = ImageInfo(name="test", url_topic="topic_to_publish_url_to")
 
 settings = Settings(mqtt=mqtt_settings, entity=image_info)
 
-# To receive state commands from HA, define a callback function:
-def my_callback(client: Client, user_data, message: MQTTMessage):
-    payload = message.payload.decode()
-    perform_my_custom_action()
+# Instantiate the image
+my_image = Image(settings)
 
-# Define an optional object to be passed back to the callback
-user_data = "Some custom data"
-
-# Instantiate the cover
-my_image = Image(settings, my_callback, user_data)
-
-# Set the initial state of the cover, which also makes it discoverable
-my_image.set_url("http://camera.local/latest.jpg")	# not needed if already defined
+# Publish an image URL to url_topic
+my_image.set_url("http://camera.local/latest.jpg")
 ```
 
 ### Light
