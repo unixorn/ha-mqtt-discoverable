@@ -260,17 +260,17 @@ class CameraInfo(EntityInfo):
 
 class ImageInfo(EntityInfo):
     """
-    Information about the 'camera' entity.
+    Information about the 'image' entity.
     """
 
     component: str = "image"
-    """The component type is 'camera' for this entity."""
+    """The component type is 'image' for this entity."""
     availability_topic: Optional[str] = None
-    """The MQTT topic subscribed to publish the camera availability."""
+    """The MQTT topic subscribed to publish the image availability."""
     payload_available: Optional[str] = "online"
-    """Payload to publish to indicate the camera is online."""
+    """Payload to publish to indicate the image is online."""
     payload_not_available: Optional[str] = "offline"
-    """Payload to publish to indicate the camera is offline."""
+    """Payload to publish to indicate the image is offline."""
     url_topic: Optional[str] = None
     """
     The MQTT topic to subscribe to receive an image URL. A url_template option can extract the URL from the message.
@@ -589,9 +589,9 @@ class Camera(Subscriber[CameraInfo]):
         self.mqtt_client.publish(self._entity.availability_topic, payload, retain=self._entity.retain)
 
 
-class Image(Subscriber[ImageInfo]):
+class Image(Discoverable[ImageInfo]):
     """
-    Implements an MQTT camera for Home Assistant MQTT discovery:
+    Implements an MQTT image for Home Assistant MQTT discovery:
     https://www.home-assistant.io/integrations/image.mqtt/
     """
 
@@ -606,7 +606,7 @@ class Image(Subscriber[ImageInfo]):
             raise RuntimeError("Image URL cannot be empty")
 
         logger.info(f"Publishing image URL {image_url} to {self._entity.url_topic}")
-        self._state_helper(image_url)
+        self._state_helper(image_url, self._entity.url_topic)
 
 
 class Select(Subscriber[SelectInfo]):
