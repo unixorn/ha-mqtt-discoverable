@@ -1,9 +1,10 @@
+---
 # This workflow will build a Python wheel, a Docker image containing the CLI tool and publish both to PyPi and DockerHub
 
 name: Build and publish
 
 # Run only when pushing a Git version tag
-on:
+on: # yamllint disable-line rule:truthy
   push:
     tags:
       - "v*"
