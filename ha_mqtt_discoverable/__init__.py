@@ -20,7 +20,7 @@ from typing import Any, Callable, Generic, Optional, TypeVar, Union
 
 import paho.mqtt.client as mqtt
 from paho.mqtt.client import MQTTMessageInfo
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, ConfigDict, model_validator
 
 # Read version from the package metadata
 __version__ = metadata.version(__package__)
@@ -546,9 +546,8 @@ class Settings(BaseModel, Generic[EntityType]):
     class MQTT(BaseModel):
         """Connection settings for the MQTT broker"""
 
-        class Config:
-            # To use mqtt.Client
-            arbitrary_types_allowed = True
+        # To use mqtt.Client
+        model_config = ConfigDict(arbitrary_types_allowed=True)
 
         host: Optional[str] = "homeassistant"
         port: Optional[int] = 1883
