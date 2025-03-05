@@ -4,12 +4,11 @@
 
 name: Python tests
 
-on:
+on: # yamllint disable-line rule:truthy
   push:
-    # Run against all branches
-    # branches: [ "main" ]
+    branches: ["*"]
   pull_request:
-    branches: ["main"]
+    branches: [main]
 
 permissions:
   contents: read
@@ -26,10 +25,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
-          cache: 'poetry'
+          cache: "poetry"
       - name: Install dependencies
         run: poetry install
-        # Setup mosquitto broker for running tests
+      # Setup mosquitto broker for running tests
       - name: Setup mosquitto
         run: |
           docker run -d -v "${GITHUB_WORKSPACE}/tests/mosquitto.conf:/mosquitto/config/mosquitto.conf" -p 1883:1883 eclipse-mosquitto

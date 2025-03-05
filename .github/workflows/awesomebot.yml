@@ -1,23 +1,22 @@
 ---
 name: Check links in README
 
-on:
+on: # yamllint disable-line rule:truthy
   push:
-    branches: [ '*' ]
+    branches: ["*"]
   pull_request:
-    branches: [ '*' ]
+    branches: ["*"]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        # Full git history is needed to get a proper list of changed files
-        # within `mega-linter`
-        fetch-depth: 0
-    - uses: docker://dkhamsing/awesome_bot:latest
-      with:
-        args: /github/workspace/README.md --allow-ssl --allow 500,501,502,503,504,509,521 --allow-dupe --allow-redirect --request-delay 1 --white-list https://github,https://img.shields.io,http://camera.local/latest.jpg
+      - uses: actions/checkout@v4
+        with:
+          # Full git history is needed to get a proper list of changed files
+          # within `mega-linter`
+          fetch-depth: 0
+      - uses: docker://dkhamsing/awesome_bot:latest
+        with:
+          args: /github/workspace/README.md --allow-ssl --allow 500,501,502,503,504,509,521 --allow-dupe --allow-redirect --request-delay 1 --white-list https://github,https://img.shields.io,http://camera.local/latest.jpg

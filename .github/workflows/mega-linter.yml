@@ -14,7 +14,7 @@ name: Lint Code Base
 #############################
 # Start the job on all push #
 #############################
-on:
+on: # yamllint disable-line rule:truthy
   push:
     branches-ignore: [main]
     # Remove the line above to run when pushing to main
@@ -51,21 +51,21 @@ jobs:
       - name: Lint Code Base
         uses: oxsecurity/megalinter/flavors/python@v8
         env:
-            ACTION_ACTIONLINT_DISABLE_ERRORS: true
-            DOCKERFILE_HADOLINT_DISABLE_ERRORS: true
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            PAT: ${{secrets.PAT}}
-            REPOSITORY_GITLEAKS_DISABLE_ERRORS: true
-            REPOSITORY_GITLEAKS_PR_COMMITS_SCAN: true
-            REPOSITORY_TRIVY_DISABLE_ERRORS: true
-            REPOSITORY_TRIVY_SBOM_DISABLE_ERRORS: true
-            VALIDATE_ALL_CODEBASE: false
-            YAML_YAMLLINT_DISABLE_ERRORS: true
+          ACTION_ACTIONLINT_DISABLE_ERRORS: true
+          DOCKERFILE_HADOLINT_DISABLE_ERRORS: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAT: ${{secrets.PAT}}
+          REPOSITORY_GITLEAKS_DISABLE_ERRORS: true
+          REPOSITORY_GITLEAKS_PR_COMMITS_SCAN: true
+          REPOSITORY_TRIVY_DISABLE_ERRORS: true
+          REPOSITORY_TRIVY_SBOM_DISABLE_ERRORS: true
+          VALIDATE_ALL_CODEBASE: false
+          YAML_YAMLLINT_DISABLE_ERRORS: true
 
       # Upload Mega-Linter artifacts.
-      # They will be available on Github action page "Artifacts" section
+      # They will be available on GitHub action page "Artifacts" section
       - name: Archive production artifacts
-        if: ${{ success() }} || ${{ failure() }}
+        if: ${{ success() || failure() }}
         uses: actions/upload-artifact@v4
         env:
           PAT: ${{secrets.PAT}}
