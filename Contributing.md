@@ -26,7 +26,7 @@ We use [pre-commit](https://pre-commit.com/) to run our pre-commit/postcheckout 
 
 ## Linting the project files
 
-This project uses [Megalinter](https://megalinter.io/latest/) to check the codebase automatically using Github Actions.
+This project uses [Megalinter](https://megalinter.io/latest/) to check the codebase automatically using GitHub Actions.
 It is also possible to run the linter locally to better understand the problems and check the code before a commit.
 You can use the [mega-linter-runner](https://megalinter.io/latest/mega-linter-runner/#installation), if you have `Node` and `Docker` locally available.
 
