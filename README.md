@@ -17,33 +17,21 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
   - [Python](#python)
 - [Supported entities](#supported-entities)
   - [Binary sensor](#binary-sensor)
-    - [Usage](#usage)
   - [Button](#button)
   - [Camera](#camera)
-    - [Usage](#usage-1)
   - [Covers](#covers)
-    - [Usage](#usage-2)
   - [Device](#device)
-    - [Usage](#usage-3)
   - [Device trigger](#device-trigger)
-      - [Usage](#usage-4)
   - [Image](#image)
-    - [Usage](#usage-5)
   - [Light](#light)
-    - [Usage](#usage-6)
   - [Number](#number)
-    - [Usage](#usage-7)
-  - [Sensor](#sensor)
-    - [Usage](#usage-8)
   - [Select](#select)
-    - [Usage](#usage-9)
+  - [Sensor](#sensor)
   - [Switch](#switch)
-    - [Usage](#usage-10)
   - [Text](#text)
-    - [Usage](#usage-11)
 - [FAQ](#faq)
   - [Using an existing MQTT client](#using-an-existing-mqtt-client)
-  - [I'm having problems on 32 bit ARM](#im-having-problems-on-32-bit-arm)
+  - [I'm having problems on 32-bit ARM](#im-having-problems-on-32-bit-arm)
 - [Contributing](#contributing)
 - [Users of ha-mqtt-discoverable](#users-of-ha-mqtt-discoverable)
 - [Contributors](#contributors)
@@ -72,16 +60,14 @@ The following Home Assistant entities are currently implemented:
 - Image
 - Light
 - Number
-- Sensor
 - Select
+- Sensor
 - Switch
 - Text
 
-Each entity can associated to a device. See below for details.
+Each entity can be associated to a device. See below for details.
 
 ### Binary sensor
-
-#### Usage
 
 The following example creates a binary sensor and sets its state:
 
@@ -111,7 +97,6 @@ mysensor.update_state(False)
 
 # You can also set custom attributes on the sensor via a Python dict
 mysensor.set_attributes({"my attribute": "awesome"})
-
 ```
 
 ### Button
@@ -145,14 +130,11 @@ my_button = Button(settings, my_callback, user_data)
 
 # Publish the button's discoverability message to let HA automatically notice it
 my_button.write_config()
-
 ```
 
 ### Camera
 
-The following example creates an camera entity with a topic to an image.
-
-#### Usage
+The following example creates a camera entity with a topic to a camera.
 
 ```py
 from ha_mqtt_discoverable import Settings
@@ -179,7 +161,7 @@ user_data = "Some custom data"
 my_camera = Camera(settings, my_callback, user_data)
 
 # Set the initial state of the cover, which also makes it discoverable
-my_camera.set_topic("zanzito/shared_locations/my-device")	# not needed if already defined
+my_camera.set_topic("zanzito/shared_locations/my-device")  # not needed if already defined
 ```
 
 ### Covers
@@ -190,8 +172,6 @@ Covers do not currently support tilt.
 
 A `callback` function is needed in order to parse the commands sent from HA, as the following
 example shows:
-
-#### Usage
 
 ```py
 from ha_mqtt_discoverable import Settings
@@ -210,24 +190,24 @@ settings = Settings(mqtt=mqtt_settings, entity=cover_info)
 def my_callback(client: Client, user_data, message: MQTTMessage):
     payload = message.payload.decode()
     if payload == "OPEN":
-    # let HA know that the cover is opening
-    my_cover.opening()
-    # call function to open cover
+        # let HA know that the cover is opening
+        my_cover.opening()
+        # call function to open cover
         open_my_custom_cover()
         # Let HA know that the cover was opened
-    my_cover.open()
+        my_cover.open()
     if payload == "CLOSE":
-    # let HA know that the cover is closing
-    my_cover.closing()
-    # call function to close the cover
+        # let HA know that the cover is closing
+        my_cover.closing()
+        # call function to close the cover
         close_my_custom_cover()
         # Let HA know that the cover was closed
-    my_cover.closed()
+        my_cover.closed()
     if payload == "STOP":
-    # call function to stop the cover
+        # call function to stop the cover
         stop_my_custom_cover()
         # Let HA know that the cover was stopped
-    my_cover.stopped()
+        my_cover.stopped()
 
 # Define an optional object to be passed back to the callback
 user_data = "Some custom data"
@@ -240,12 +220,11 @@ my_cover.closed()
 ```
 
 ### Device
+
 From the [Home Assistant documentation](https://developers.home-assistant.io/docs/device_registry_index):
 > A device is a special entity in Home Assistant that is represented by one or more entities.
 A device is automatically created when an entity defines its `device` property.
 A device will be matched up with an existing device via supplied identifiers or connections, like serial numbers or MAC addresses.
-
-#### Usage
 
 The following example create a device, by associating multiple sensors to the same `DeviceInfo` instance.
 
@@ -276,7 +255,7 @@ door_sensor_info = BinarySensorInfo(name="My door sensor", device_class="door", 
 door_settings = Settings(mqtt=mqtt_settings, entity=door_sensor_info)
 
 # Instantiate the sensor
-door_sensor = BinarySensor(settings)
+door_sensor = BinarySensor(door_settings)
 
 # Change the state of the sensor, publishing an MQTT message that gets picked up by HA
 door_sensor.on()
@@ -288,7 +267,6 @@ door_sensor.on()
 
 The following example creates a device trigger and generates a trigger event:
 
-##### Usage
 ```py
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import DeviceInfo, DeviceTriggerInfo, DeviceTrigger
@@ -316,8 +294,6 @@ mytrigger.trigger("My custom payload")
 
 The following example creates an entity to an image url.
 
-#### Usage
-
 ```py
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Image, ImageInfo
@@ -344,8 +320,6 @@ It is possible to set brightness, effects and the color of the light. Similar to
 also receive 'commands' from HA that request a state change.
 It is possible to act upon reception of this 'command', by defining a `callback` function, as the following example shows:
 
-#### Usage
-
 ```py
 import json
 from ha_mqtt_discoverable import Settings
@@ -362,17 +336,17 @@ light_info = LightInfo(
     color_mode=True,
     supported_color_modes=["rgb"],
     effect=True,
-    effect_list=["blink", "my_cusom_effect"])
+    effect_list=["blink", "my_custom_effect"])
 
 settings = Settings(mqtt=mqtt_settings, entity=light_info)
 
 # To receive state commands from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
 
-    # Make sure received payload is json
+    # Make sure received payload is JSON
     try:
         payload = json.loads(message.payload.decode())
-    except ValueError as error:
+    except ValueError:
         print("Ony JSON schema is supported for light entities!")
         return
 
@@ -399,12 +373,11 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
 # Define an optional object to be passed back to the callback
 user_data = "Some custom data"
 
-# Instantiate the switch
+# Instantiate the light
 my_light = Light(settings, my_callback, user_data)
 
 # Set the initial state of the light, which also makes it discoverable
 my_light.off()
-
 ```
 
 ### Number
@@ -412,9 +385,8 @@ my_light.off()
 The number entity is similar to the text entity, but for a numeric value instead of a string.
 It is possible to act upon receiving changes in HA by defining a `callback` function, as the following example shows:
 
-#### Usage
-
 ```py
+import logging
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Number, NumberInfo
 from paho.mqtt.client import Client, MQTTMessage
@@ -443,45 +415,12 @@ my_number = Number(settings, my_callback, user_data)
 
 # Set the initial number displayed in HA UI, publishing an MQTT message that gets picked up by HA
 my_number.set_value(42.0)
-
-```
-
-### Sensor
-
-#### Usage
-
-The following example creates a sensor and sets its state:
-
-```py
-from ha_mqtt_discoverable import Settings
-from ha_mqtt_discoverable.sensors import Sensor, SensorInfo
-
-
-# Configure the required parameters for the MQTT broker
-mqtt_settings = Settings.MQTT(host="localhost")
-
-# Information about the sensor
-sensor_info = SensorInfo(
-    name="MyTemperatureSensor",
-    device_class="temperature",
-    unit_of_measurement="°C",
-)
-
-settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
-
-# Instantiate the sensor
-mysensor = Sensor(settings)
-
-# Change the state of the sensor, publishing an MQTT message that gets picked up by HA
-mysensor.set_state(20.5)
 ```
 
 ### Select
 
 The selection entity is a list of selectable options in homeassistant.
 It is possible to act upon reception of this 'command', by defining a `callback` function, as the following example shows:
-
-#### Usage
 
 ```py
 from ha_mqtt_discoverable import Settings
@@ -509,15 +448,41 @@ my_selection = Select(settings, my_callback, user_data)
 
 # Set the initial state of the selection, which also makes it discoverable
 opt = ["option3", "option4", "option5"]
-my_selection.set_options()
+my_selection.set_options(opt)
+```
+
+### Sensor
+
+The following example creates a sensor and sets its state:
+
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Sensor, SensorInfo
+
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the sensor
+sensor_info = SensorInfo(
+    name="MyTemperatureSensor",
+    device_class="temperature",
+    unit_of_measurement="°C",
+)
+
+settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+
+# Instantiate the sensor
+mysensor = Sensor(settings)
+
+# Change the state of the sensor, publishing an MQTT message that gets picked up by HA
+mysensor.set_state(20.5)
 ```
 
 ### Switch
 
 The switch is similar to a _binary sensor_, but in addition to publishing state changes toward HA it can also receive 'commands' from HA that request a state change.
 It is possible to act upon reception of this 'command', by defining a `callback` function, as the following example shows:
-
-#### Usage
 
 ```py
 from ha_mqtt_discoverable import Settings
@@ -538,11 +503,11 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
     if payload == "ON":
         turn_my_custom_thing_on()
         # Let HA know that the switch was successfully activated
-	my_switch.on()
+        my_switch.on()
     elif payload == "OFF":
         turn_my_custom_thing_off()
         # Let HA know that the switch was successfully deactivated
-	my_switch.off()
+        my_switch.off()
 
 # Define an optional object to be passed back to the callback
 user_data = "Some custom data"
@@ -552,7 +517,6 @@ my_switch = Switch(settings, my_callback, user_data)
 
 # Set the initial state of the switch, which also makes it discoverable
 my_switch.off()
-
 ```
 
 ### Text
@@ -560,9 +524,8 @@ my_switch.off()
 The text is an `helper entity`, showing an input field in the HA UI that the user can interact with.
 It is possible to act upon reception of the inputted text by defining a `callback` function, as the following example shows:
 
-#### Usage
-
 ```py
+import logging
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Text, TextInfo
 from paho.mqtt.client import Client, MQTTMessage
@@ -591,7 +554,6 @@ my_text = Text(settings, my_callback, user_data)
 
 # Set the initial text displayed in HA UI, publishing an MQTT message that gets picked up by HA
 my_text.set_text("Some awesome text")
-
 ```
 
 ## FAQ
@@ -616,9 +578,9 @@ mqtt_settings = Settings.MQTT(client=client)
 # Continue with the rest of the code as usual
 ```
 
-### I'm having problems on 32 bit ARM
+### I'm having problems on 32-bit ARM
 
-Pydantic 2 has issues on 32 bit ARM. More details are on [ha-mqtt-discoverable/pull/191](https://github.com/unixorn/ha-mqtt-discoverable/pull/191). TL;DR: If you're on an ARM32 machine you're going to have to pin to the 0.13.1 version.
+Pydantic 2 has issues on 32-bit ARM. More details are on [ha-mqtt-discoverable/pull/191](https://github.com/unixorn/ha-mqtt-discoverable/pull/191). TL;DR: If you're on an ARM32 machine you're going to have to pin to the 0.13.1 version.
 
 ## Contributing
 
@@ -638,8 +600,6 @@ If you use this module for your own project, please add a link here.
 
 ## Contributors
 
-<a href="https://github.com/unixorn/ha-mqtt-discoverable/graphs/contributors">
-  <img src="https://contributors-img.web.app/image?repo=unixorn/ha-mqtt-discoverable" />
-</a>
+[![Contributors](https://contributors-img.web.app/image?repo=unixorn/ha-mqtt-discoverable)](https://github.com/unixorn/ha-mqtt-discoverable/graphs/contributors)
 
 Made with [contributors-img](https://contributors-img.web.app).
