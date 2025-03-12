@@ -5,8 +5,8 @@ services:
   mqtt:
     image: eclipse-mosquitto
     ports:
-      - 1883:1883
-      - 9001:9001
+      - "1883:1883"
+      - "9001:9001"
     volumes:
       - ./tests/mosquitto.conf:/mosquitto/config/mosquitto.conf
 
@@ -14,7 +14,7 @@ services:
     image: homeassistant/home-assistant
     stop_grace_period: 5m
     ports:
-      - 8123:8123
+      - "8123:8123"
     volumes:
       - config:/config
 
