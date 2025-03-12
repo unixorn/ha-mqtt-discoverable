@@ -19,8 +19,8 @@ from concurrent.futures import ThreadPoolExecutor
 from threading import Event
 from unittest.mock import MagicMock
 
-import paho.mqtt.subscribe as subscribe
 import pytest
+from paho.mqtt import subscribe
 from paho.mqtt.client import (
     MQTT_ERR_SUCCESS,
     Client,

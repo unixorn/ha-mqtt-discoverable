@@ -33,10 +33,6 @@ repos:
           - "--fix"
       # Run the formatter.
       - id: ruff-format
-  - repo: https://github.com/pycqa/flake8
-    rev: 7.1.2
-    hooks:
-      - id: flake8
   - repo: https://github.com/thlorenz/doctoc
     rev: v2.2.0
     hooks:

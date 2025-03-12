@@ -14,6 +14,7 @@
 #    limitations under the License.
 #
 import pytest
+
 from ha_mqtt_discoverable import DeviceInfo, Settings
 from ha_mqtt_discoverable.sensors import DeviceTrigger, DeviceTriggerInfo
 

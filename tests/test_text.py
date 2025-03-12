@@ -15,12 +15,14 @@
 #
 import random
 import string
+
 import pytest
+
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Text, TextInfo
 
 
-@pytest.fixture()
+@pytest.fixture
 def text() -> Text:
     mqtt_settings = Settings.MQTT(host="localhost")
     text_info = TextInfo(name="test", min=5)

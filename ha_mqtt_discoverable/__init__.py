@@ -15,8 +15,9 @@
 import json
 import logging
 import ssl
+from collections.abc import Callable
 from importlib import metadata
-from typing import Any, Callable, Generic, Optional, TypeVar, Union
+from typing import Any, Generic, Optional, TypeVar, Union
 
 import paho.mqtt.client as mqtt
 from paho.mqtt.client import MQTTMessageInfo

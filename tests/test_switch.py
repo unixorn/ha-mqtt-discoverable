@@ -14,11 +14,12 @@
 #    limitations under the License.
 #
 import pytest
+
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Switch, SwitchInfo
 
 
-@pytest.fixture()
+@pytest.fixture
 def switch() -> Switch:
     mqtt_settings = Settings.MQTT(host="localhost")
     sensor_info = SwitchInfo(name="test")

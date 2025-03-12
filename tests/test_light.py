@@ -14,6 +14,7 @@
 #    limitations under the License.
 #
 import pytest
+
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Light, LightInfo
 
@@ -22,7 +23,7 @@ color_modes = ["rgb", "rgbw"]
 effects = ["rainbow", "mycustomeffect"]
 
 
-@pytest.fixture()
+@pytest.fixture
 def light() -> Light:
     """Return a light instance"""
     mqtt_settings = Settings.MQTT(host="localhost")
