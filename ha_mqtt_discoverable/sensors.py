@@ -20,13 +20,14 @@ import json
 import logging
 from typing import Any, Optional
 
+from pydantic import Field
+
 from ha_mqtt_discoverable import (
     DeviceInfo,
     Discoverable,
     EntityInfo,
     Subscriber,
 )
-from pydantic import Field
 
 logger = logging.getLogger(__name__)
 
@@ -315,10 +316,7 @@ class BinarySensor(Discoverable[BinarySensorInfo]):
         Args:
             state(bool): What state to set the sensor to
         """
-        if state:
-            state_message = self._entity.payload_on
-        else:
-            state_message = self._entity.payload_off
+        state_message = self._entity.payload_on if state else self._entity.payload_off
         logger.info(f"Setting {self._entity.name} to {state_message} using {self.state_topic}")
         self._state_helper(state=state_message)
 

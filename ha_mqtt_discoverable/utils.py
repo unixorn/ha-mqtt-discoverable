@@ -17,6 +17,7 @@
 import re
 
 import yaml
+
 from ha_mqtt_discoverable import CONFIGURATION_KEY_NAMES
 
 

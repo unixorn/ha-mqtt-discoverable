@@ -16,11 +16,12 @@
 from unittest.mock import patch
 
 import pytest
+
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Image, ImageInfo
 
 
-@pytest.fixture()
+@pytest.fixture
 def image() -> Image:
     mqtt_settings = Settings.MQTT(host="localhost")
     image_info = ImageInfo(name="test", url_topic="topic_to_publish_url_to")

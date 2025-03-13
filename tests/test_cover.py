@@ -14,11 +14,12 @@
 #    limitations under the License.
 #
 import pytest
+
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Cover, CoverInfo
 
 
-@pytest.fixture()
+@pytest.fixture
 def cover() -> Cover:
     """Return a cover instance"""
     mqtt_settings = Settings.MQTT(host="localhost")
