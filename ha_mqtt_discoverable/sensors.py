@@ -614,8 +614,8 @@ class Image(Discoverable[ImageInfo]):
 
 class Select(Subscriber[SelectInfo]):
     """
-    Implements an MQTT camera for Home Assistant MQTT discovery:
-    https://www.home-assistant.io/integrations/image.mqtt/
+    Implements an MQTT select for Home Assistant MQTT discovery:
+    https://www.home-assistant.io/integrations/select.mqtt/
     """
 
     def set_options(self, opt: list) -> None:
