@@ -332,6 +332,7 @@ class Sensor(Discoverable[SensorInfo]):
 
         Args:
             state(str): What state to set the sensor to
+            last_reset(str): ISO 8601-formatted string when an accumulating sensor was initialized
         """
         logger.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
         if last_reset:
