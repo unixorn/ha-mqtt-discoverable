@@ -551,7 +551,7 @@ class Number(Subscriber[NumberInfo]):
         Update the numeric value. Raises an error if not within the acceptable range.
 
         Args:
-            text(str): Value of the text configured for this entity
+            value(str): Value of the number configured for this entity
         """
         if not self._entity.min <= value <= self._entity.max:
             bound = f"[{self._entity.min}, {self._entity.max}]"
