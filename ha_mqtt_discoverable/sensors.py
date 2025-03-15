@@ -495,7 +495,7 @@ class Button(Subscriber[ButtonInfo]):
 
 
 class DeviceTrigger(Discoverable[DeviceTriggerInfo]):
-    """Implements an MWTT Device Trigger
+    """Implements an MQTT Device Trigger
     https://www.home-assistant.io/integrations/device_trigger.mqtt/
     """
 
