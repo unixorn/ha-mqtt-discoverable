@@ -26,9 +26,9 @@ from paho.mqtt.client import (
     Client,
     MQTTMessage,
     MQTTv5,
-    SubscribeOptions,
 )
 from paho.mqtt.enums import CallbackAPIVersion
+from paho.mqtt.subscribeoptions import SubscribeOptions
 from pytest_mock import MockerFixture
 
 from ha_mqtt_discoverable import DeviceInfo, Discoverable, EntityInfo, Settings

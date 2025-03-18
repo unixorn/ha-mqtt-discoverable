@@ -332,6 +332,7 @@ class Sensor(Discoverable[SensorInfo]):
 
         Args:
             state(str): What state to set the sensor to
+            last_reset(str): ISO 8601-formatted string when an accumulating sensor was initialized
         """
         logger.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
         if last_reset:
@@ -494,7 +495,7 @@ class Button(Subscriber[ButtonInfo]):
 
 
 class DeviceTrigger(Discoverable[DeviceTriggerInfo]):
-    """Implements an MWTT Device Trigger
+    """Implements an MQTT Device Trigger
     https://www.home-assistant.io/integrations/device_trigger.mqtt/
     """
 
@@ -550,7 +551,7 @@ class Number(Subscriber[NumberInfo]):
         Update the numeric value. Raises an error if not within the acceptable range.
 
         Args:
-            text(str): Value of the text configured for this entity
+            value(str): Value of the number configured for this entity
         """
         if not self._entity.min <= value <= self._entity.max:
             bound = f"[{self._entity.min}, {self._entity.max}]"
@@ -613,8 +614,8 @@ class Image(Discoverable[ImageInfo]):
 
 class Select(Subscriber[SelectInfo]):
     """
-    Implements an MQTT camera for Home Assistant MQTT discovery:
-    https://www.home-assistant.io/integrations/image.mqtt/
+    Implements an MQTT select for Home Assistant MQTT discovery:
+    https://www.home-assistant.io/integrations/select.mqtt/
     """
 
     def set_options(self, opt: list) -> None:
