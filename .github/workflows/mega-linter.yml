@@ -55,8 +55,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PAT: ${{secrets.PAT}}
           REPOSITORY_GITLEAKS_PR_COMMITS_SCAN: true
-          REPOSITORY_TRIVY_DISABLE_ERRORS: true
-          REPOSITORY_TRIVY_SBOM_DISABLE_ERRORS: true
           VALIDATE_ALL_CODEBASE: false
 
       # Upload Mega-Linter artifacts.
