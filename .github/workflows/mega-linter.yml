@@ -8,8 +8,12 @@ name: Lint Code Base
 
 #
 # Documentation:
-# https://help.github.com/en/articles/workflow-syntax-for-github-actions
+# https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions
 #
+
+permissions:
+  issues: write
+  pull-requests: write
 
 #############################
 # Start the job on all push #
