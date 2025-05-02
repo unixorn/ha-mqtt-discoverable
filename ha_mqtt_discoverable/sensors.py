@@ -280,6 +280,15 @@ class ImageInfo(EntityInfo):
     """
     The MQTT topic to subscribe to receive an image URL. A url_template option can extract the URL from the message.
     The content_type will be derived from the image when downloaded.
+    Cannot be used with image_topic.
+    """
+    image_topic: Optional[str] = None
+    """
+    The MQTT topic to subscribe to receive a binary image. Cannot be used with url_topic.
+    """
+    image_encoding: str = "b64"
+    """
+    Set the Image Encoding to Base64.
     """
     retain: bool | None = None
     """If the published message should have the retain flag on or not."""
@@ -593,7 +602,6 @@ class Camera(Subscriber[CameraInfo]):
         logger.info(f"Setting camera availability to {payload} using {self._entity.availability_topic}")
         self.mqtt_client.publish(self._entity.availability_topic, payload, retain=self._entity.retain)
 
-
 class Image(Discoverable[ImageInfo]):
     """
     Implements an MQTT image for Home Assistant MQTT discovery:
@@ -613,6 +621,18 @@ class Image(Discoverable[ImageInfo]):
         logger.info(f"Publishing image URL {image_url} to {self._entity.url_topic}")
         self._state_helper(image_url, self._entity.url_topic)
 
+    def set_image(self, image_blob: str) -> None:
+        """
+        Update the image state to the provided blob.
+
+        Args:
+            image_blob (str): An encoded blob of the image to be set as the image state.
+        """
+        if not image_blob:
+            raise RuntimeError("Image blob cannot be empty")
+
+        logger.info(f"Publishing image blob to {self._entity.image_topic}")
+        self._state_helper(image_blob, self._entity.image_topic)
 
 class Select(Subscriber[SelectInfo]):
     """
