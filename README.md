@@ -311,7 +311,27 @@ my_image = Image(settings)
 
 # Publish an image URL to url_topic
 my_image.set_url("http://camera.local/latest.jpg")
+
+# Publish a file to a topic.
+from base64 import b64encode
+example_file = open("example.png", "r")
+example_blob = b64encode(example_file.read())
+my_image.set_blob(example_blob)
+
+# Create an image and publish directly.
+from base64 import b64encode
+from IO import BytesIO
+from PIL import Image, ImageDraw
+img = Image.new(RGBA, (32, 32), (0,0,0,0))
+draw = ImageDraw.Draw(img)
+draw.circle((16,16), 10, fill="blue")
+image_buffer = BytesIO()
+image.save(image_buffer, format='PNG')
+my_image.set_blob(b64encode(image_buffer.get_value())
+
 ```
+
+
 
 ### Light
 
