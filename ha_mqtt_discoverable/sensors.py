@@ -626,7 +626,7 @@ class Image(Discoverable[ImageInfo]):
         Update the image state to the provided blob.
 
         Args:
-            image_blob (str): An encoded blob of the image to be set as the image state.
+            image_blob (str): An encoded blob of the image to be set as the image state. Must be Base64 encoded.
         """
         if not image_blob:
             raise RuntimeError("Image blob cannot be empty")

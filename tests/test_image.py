@@ -53,3 +53,17 @@ def test_set_url(image: Image):
     with patch.object(image.mqtt_client, "publish") as mock_publish:
         image.set_url(image_url)
         mock_publish.assert_called_with(image._entity.url_topic, image_url, retain=True)
+
+def test_set_blob(image: Image):
+    image_blob = ("base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV+/qGhFw"
+                  "Q4iDhmqkwVRUUepYhEslLZCqw4ml35Bk4YkxcVRcC04+LFYdXBx1tXBVRAEP0DcBSdFFynxf0mhRYwHx/14d+9x9w7wNipMMfzjg"
+                  "KKaeioeE7K5VSH4igD86MEM+kVmaIn0Ygau4+seHr7eRXmW+7k/R6+cNxjgEYjnmKabxBvE05umxnmfOMxKokx8Tjym0wWJH7kuO"
+                  "fzGuWizl2eG9UxqnjhMLBQ7WOpgVtIV4iniiKyolO/NOixz3uKsVGqsdU/+wlBeXUlzneYw4lhCAkkIkFBDGRWYiNKqkmIgRfsxF"
+                  "/+Q7U+SSyJXGYwcC6hCgWj7wf/gd7dGYXLCSQrFgMCLZX2MAMFdoFm3rO9jy2qeAL5n4Ept+6sNYPaT9HpbixwBfdvAxXVbk/aAy"
+                  "x1g8EkTddGWfDS9hQLwfkbflAMGboHuNae31j5OH4AMdbV8AxwcAqNFyl53eXdXZ2//nmn19wN6HHKqAAggmgAAAAlwSFlzAAAuI"
+                  "wAALiMBeKU/dgAAAAd0SU1FB+kFBAs3LBSX2/sAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAADElEQVQI1"
+                  "2NgYGAAAAAEAAEnNCcKAAAAAElFTkSuQmCC")
+
+    with patch.object(image.mqtt_client, "publish") as mock_publish:
+        image.set_image(image_blob)
+        mock_publish.assert_called_with(image._entity.url_topic, image_blob, retain=True)
