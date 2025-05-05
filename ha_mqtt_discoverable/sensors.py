@@ -602,6 +602,7 @@ class Camera(Subscriber[CameraInfo]):
         logger.info(f"Setting camera availability to {payload} using {self._entity.availability_topic}")
         self.mqtt_client.publish(self._entity.availability_topic, payload, retain=self._entity.retain)
 
+
 class Image(Discoverable[ImageInfo]):
     """
     Implements an MQTT image for Home Assistant MQTT discovery:
@@ -633,6 +634,7 @@ class Image(Discoverable[ImageInfo]):
 
         logger.info(f"Publishing image blob to {self._entity.image_topic}")
         self._state_helper(image_blob, self._entity.image_topic)
+
 
 class Select(Subscriber[SelectInfo]):
     """
