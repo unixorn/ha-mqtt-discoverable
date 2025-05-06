@@ -617,8 +617,12 @@ class Select(Subscriber[SelectInfo]):
     Implements an MQTT select for Home Assistant MQTT discovery:
     https://www.home-assistant.io/integrations/select.mqtt/
     """
-
+    # Should be deprecated in the future. Kept for compatibility
     def set_options(self, opt: list) -> None:
+        self.set_option(opt)
+
+
+    def set_option(self, opt: str) -> None:
         """
         Update the selectable options.
 
@@ -626,7 +630,7 @@ class Select(Subscriber[SelectInfo]):
             opt (list): List of options that can be selected.
         """
         if not opt:
-            raise RuntimeError("Image URL cannot be empty")
+            raise RuntimeError("Option cannot be empty")
 
-        logger.info(f"Publishing options {opt} to {self._entity.options}")
+        logger.info(f"Setting {self._entity.name} to {opt} using {self.state_topic}")
         self._state_helper(opt)
