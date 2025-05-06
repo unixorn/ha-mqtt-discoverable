@@ -618,7 +618,7 @@ class Select(Subscriber[SelectInfo]):
     https://www.home-assistant.io/integrations/select.mqtt/
     """
 
-    # Should be deprecated in the future. Kept for compatibility
+    # Should be deprecated in the future. Kept for compatibility.
     def set_options(self, opt: list) -> None:
         self.set_option(opt)
 
