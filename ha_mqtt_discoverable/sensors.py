@@ -617,10 +617,10 @@ class Select(Subscriber[SelectInfo]):
     Implements an MQTT select for Home Assistant MQTT discovery:
     https://www.home-assistant.io/integrations/select.mqtt/
     """
+
     # Should be deprecated in the future. Kept for compatibility
     def set_options(self, opt: list) -> None:
         self.set_option(opt)
-
 
     def set_option(self, opt: str) -> None:
         """
