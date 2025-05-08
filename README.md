@@ -450,7 +450,7 @@ my_selection = Select(settings, my_callback, user_data)
 my_selection.write_config()
 
 # Or select the initial option of the selection, which also makes it discoverable
-my_selection.set_option("option1")
+my_selection.select_option("option1")
 ```
 
 ### Sensor
