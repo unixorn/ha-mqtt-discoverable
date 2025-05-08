@@ -624,7 +624,7 @@ class Image(Discoverable[ImageInfo]):
 
     def set_image(self, image_blob: str) -> None:
         """
-        Update the image state to the provided blob.
+        Update the image payload.
 
         Args:
             image_blob (str): An encoded blob of the image to be set as the image state. Must be Base64 encoded.
