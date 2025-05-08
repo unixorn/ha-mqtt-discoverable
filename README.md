@@ -446,7 +446,7 @@ user_data = "Some custom data"
 # Instantiate the selection
 my_selection = Select(settings, my_callback, user_data)
 
-# Publish the select's discoverability message to let HA automatically notice it
+# Publish the select's discovery message to let HA automatically notice it
 my_selection.write_config()
 
 # Or set the initial state of the selection, which also makes it discoverable
