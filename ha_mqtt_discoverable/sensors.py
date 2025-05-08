@@ -618,19 +618,18 @@ class Select(Subscriber[SelectInfo]):
     https://www.home-assistant.io/integrations/select.mqtt/
     """
 
-    # Should be deprecated in the future. Kept for compatibility.
-    def set_options(self, opt: list) -> None:
-        self.set_option(opt)
-
-    def set_option(self, opt: str) -> None:
+    def select_option(self, option: str) -> None:
         """
-        Update the selectable options.
+        Update the selected option.
 
         Args:
-            opt (list): List of options that can be selected.
+            option: The option to be selected.
         """
-        if not opt:
+        if not option:
             raise RuntimeError("Option cannot be empty")
 
-        logger.info(f"Setting {self._entity.name} to {opt} using {self.state_topic}")
-        self._state_helper(opt)
+        if option not in self._entity.options:
+            raise RuntimeError(f"Invalid option: {option} (Valid option(s): {self._entity.options})")
+
+        logger.info(f"Changing selection of {self._entity.name} to {option} using {self.state_topic}")
+        self._state_helper(option)
