@@ -632,5 +632,5 @@ class Select(Subscriber[SelectInfo]):
         if not opt:
             raise RuntimeError("Option cannot be empty")
 
-        logger.info(f"Setting {self._entity.name} to {opt} using {self.state_topic}")
+        logger.info(f"Changing selection of {self._entity.name} to {option} using {self.state_topic}")
         self._state_helper(opt)
