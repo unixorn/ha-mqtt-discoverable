@@ -449,7 +449,7 @@ my_selection = Select(settings, my_callback, user_data)
 # Publish the select's discovery message to let HA automatically notice it
 my_selection.write_config()
 
-# Or set the initial state of the selection, which also makes it discoverable
+# Or select the initial option of the selection, which also makes it discoverable
 my_selection.set_option("option1")
 ```
 
