@@ -326,7 +326,7 @@ img = Image.new(RGBA, (32, 32), (0,0,0,0))
 draw = ImageDraw.Draw(img)
 draw.circle((16,16), 10, fill="blue")
 image_buffer = BytesIO()
-image.save(image_buffer, format='PNG')
+img.save(image_buffer, format='PNG')
 my_image.set_blob(b64encode(image_buffer.get_value())
 
 ```
