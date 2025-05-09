@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import Annotated, Any, Optional, Literal, LiteralString
+from typing import Annotated, Any, Literal, Optional
 
 from pydantic import Field, model_validator
 
@@ -286,7 +286,7 @@ class ImageInfo(EntityInfo):
     """
     The MQTT topic to subscribe to receive a binary image. Cannot be used with url_topic.
     """
-    image_encoding: Optional[Literal['raw','b64']] = None
+    image_encoding: Optional[Literal["raw", "b64"]] = None
     """
     Set the image encoding when sending images.
     """
@@ -300,7 +300,9 @@ class ImageInfo(EntityInfo):
         """
         # Don't allow URL and Image to be set at the same time.
         if self.image_topic is not None and self.url_topic is not None:
-            raise ValueError("URL and Image blob sending canot be used at the same time. Set only one of 'image_topic' and 'url_topic'")
+            raise ValueError(
+                "URL and Image blob sending canot be used at the same time. Set only one of 'image_topic' and 'url_topic'"
+            )
 
         # Don't set image_encoding and url_topic at the same time.
         if self.image_encoding is not None and self.url_topic is not None:
