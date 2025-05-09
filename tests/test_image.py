@@ -26,12 +26,9 @@ def image(request) -> Image:
     url_topic, image_topic, image_encoding, content_type = request.param
     mqtt_settings = Settings.MQTT(host="localhost")
     # image_info = ImageInfo(name="test", url_topic="topic_to_publish_url_to")
-    image_info = ImageInfo(name="test",
-                           url_topic=url_topic,
-                           image_topic=image_topic,
-                           image_encoding=image_encoding,
-                           content_type=content_type
-                           )
+    image_info = ImageInfo(
+        name="test", url_topic=url_topic, image_topic=image_topic, image_encoding=image_encoding, content_type=content_type
+    )
     settings = Settings(mqtt=mqtt_settings, entity=image_info)
     return Image(settings)
 
@@ -54,9 +51,11 @@ def test_url_and_encoding_raises_exception():
     with pytest.raises(ValueError):
         ImageInfo(name="test", url_topic="url_to_publish_to", image_encoding="b64")
 
+
 def test_url_and_content_type_raises_exception():
     with pytest.raises(ValueError):
         ImageInfo(name="test", url_topic="url_to_publish_to", image_encoding="b64")
+
 
 def test_invalid_encoding_raises_exception():
     with pytest.raises(ValueError):
