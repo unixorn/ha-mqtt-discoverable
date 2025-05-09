@@ -301,8 +301,8 @@ class ImageInfo(EntityInfo):
         # Don't allow URL and Image to be set at the same time.
         if self.image_topic is not None and self.url_topic is not None:
             raise ValueError(
-                "URL and Image blob sending canot be used at the same time. Set only one of 'image_topic' and 'url_topic'"
-            )
+                "URL and Image blob sending canot be used at the same time. Set only one of 'image_topic' and "
+                "'url_topic'")
 
         # Don't set image_encoding and url_topic at the same time.
         if self.image_encoding is not None and self.url_topic is not None:
