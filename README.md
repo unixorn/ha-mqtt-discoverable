@@ -303,7 +303,6 @@ mqtt_settings = Settings.MQTT(host="localhost")
 
 # Information about the image
 image_info = ImageInfo(name="test", url_topic="topic_to_publish_url_to")
-
 settings = Settings(mqtt=mqtt_settings, entity=image_info)
 
 # Instantiate the image
@@ -316,6 +315,8 @@ my_image.set_url("http://camera.local/latest.jpg")
 from base64 import b64encode
 example_file = open("example.png", "r")
 example_blob = b64encode(example_file.read())
+image_info = ImageInfo(name="test", image_topic="topic_to_publish_image_to", image_encoding="raw")
+my_image = Image(settings)
 my_image.set_blob(example_blob)
 
 # Create an image and publish directly.
@@ -327,6 +328,8 @@ draw = ImageDraw.Draw(img)
 draw.circle((16,16), 10, fill="blue")
 image_buffer = BytesIO()
 img.save(image_buffer, format='PNG')
+image_info = ImageInfo(name="test", image_topic="topic_to_publish_image_to", image_encoding="b64")
+my_image = Image(settings)
 my_image.set_blob(b64encode(image_buffer.get_value())
 
 ```
