@@ -598,7 +598,7 @@ class Image(Discoverable[ImageInfo]):
     https://www.home-assistant.io/integrations/image.mqtt/
     """
 
-    def set_url(self, image_url: str) -> None:
+    def se_url(self, image_url: str) -> None:
         """
         Update the camera state (image URL).
 
