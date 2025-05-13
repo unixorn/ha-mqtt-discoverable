@@ -3,7 +3,7 @@
 # See all available variables at https://megalinter.io/configuration/ and in linters documentation
 
 VALIDATE_ALL_CODEBASE: false
-
+GITHUB_COMMENT_REPORTER: false
 SPELL_MISSPELL_DISABLE_ERRORS: true
 
 DISABLE_LINTERS:
