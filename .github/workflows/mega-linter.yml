@@ -11,10 +11,6 @@ name: Lint Code Base
 # https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions
 #
 
-permissions:
-  issues: write
-  pull-requests: write
-
 #############################
 # Start the job on all push #
 #############################
@@ -34,7 +30,12 @@ jobs:
     name: Megalint Code Base
     # Set the agent to run on
     runs-on: ubuntu-latest
-
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push, comment issues & post new PR
+      # Remove the ones you do not need
+      contents: write
+      issues: write
+      pull-requests: write
     ##################
     # Load all steps #
     ##################
