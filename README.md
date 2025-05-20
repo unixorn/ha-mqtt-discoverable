@@ -446,9 +446,11 @@ user_data = "Some custom data"
 # Instantiate the selection
 my_selection = Select(settings, my_callback, user_data)
 
-# Set the initial state of the selection, which also makes it discoverable
-opt = ["option3", "option4", "option5"]
-my_selection.set_options(opt)
+# Publish the select's discovery message to let HA automatically notice it
+my_selection.write_config()
+
+# Or select the initial option of the selection, which also makes it discoverable
+my_selection.select_option("option1")
 ```
 
 ### Sensor
