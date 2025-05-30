@@ -286,7 +286,9 @@ class ImageInfo(EntityInfo):
 
 
 class SelectInfo(EntityInfo):
-    """Switch specific information"""
+    """
+    Information about the 'select' entity.
+    """
 
     component: str = "select"
     optimistic: Optional[bool] = None
