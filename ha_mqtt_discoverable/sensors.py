@@ -286,7 +286,9 @@ class ImageInfo(EntityInfo):
 
 
 class SelectInfo(EntityInfo):
-    """Switch specific information"""
+    """
+    Information about the 'select' entity.
+    """
 
     component: str = "select"
     optimistic: Optional[bool] = None
@@ -618,15 +620,18 @@ class Select(Subscriber[SelectInfo]):
     https://www.home-assistant.io/integrations/select.mqtt/
     """
 
-    def set_options(self, opt: list) -> None:
+    def select_option(self, option: str) -> None:
         """
-        Update the selectable options.
+        Update the selected option.
 
         Args:
-            opt (list): List of options that can be selected.
+            option: The option to be selected.
         """
-        if not opt:
-            raise RuntimeError("Image URL cannot be empty")
+        if not option:
+            raise RuntimeError("Option cannot be empty")
 
-        logger.info(f"Publishing options {opt} to {self._entity.options}")
-        self._state_helper(opt)
+        if option not in self._entity.options:
+            raise RuntimeError(f"Invalid option: {option} (Valid option(s): {self._entity.options})")
+
+        logger.info(f"Changing selection of {self._entity.name} to {option} using {self.state_topic}")
+        self._state_helper(option)
