@@ -1,6 +1,6 @@
 [project]
 name = "ha-mqtt-discoverable"
-version = "0.19.1"
+version = "0.19.2"
 description = "Python library for creating MQTT entities compatible with Home Assistant"
 authors = [{name = "Joe Block", email = "jpb@unixorn.net"}]
 readme = "README.md"
