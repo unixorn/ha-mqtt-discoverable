@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import Annotated, Any, Optional
+from typing import Annotated, Any
 
 from pydantic import Field
 
@@ -36,7 +36,7 @@ class BinarySensorInfo(EntityInfo):
     """Binary sensor specific information"""
 
     component: str = "binary_sensor"
-    off_delay: Optional[int] = None
+    off_delay: int | None = None
     """For sensors that only send on state updates (like PIRs), this variable
     sets a delay in seconds after which the sensor's state will be updated back
     to off."""
@@ -50,19 +50,19 @@ class SensorInfo(EntityInfo):
     """Sensor specific information"""
 
     component: str = "sensor"
-    unit_of_measurement: Optional[str] = None
+    unit_of_measurement: str | None = None
     """Defines the units of measurement of the sensor, if any."""
-    state_class: Optional[str] = None
+    state_class: str | None = None
     """Defines the type of state.
     If not None, the sensor is assumed to be numerical
     and will be displayed as a line-chart
     in the frontend instead of as discrete values."""
-    value_template: Optional[str] = None
+    value_template: str | None = None
     """
     Defines a template to extract the value.
     If the template throws an error,
     the current state will be used instead."""
-    last_reset_value_template: Optional[str] = None
+    last_reset_value_template: str | None = None
     """
     Defines a template to extract the last_reset.
     When last_reset_value_template is set, the state_class option must be total.
@@ -78,7 +78,7 @@ class SwitchInfo(EntityInfo):
     """Switch specific information"""
 
     component: str = "switch"
-    optimistic: Optional[bool] = None
+    optimistic: bool | None = None
     """Flag that defines if switch works in optimistic mode.
     Default: true if no state_topic defined, else false."""
     payload_off: str = "OFF"
@@ -89,9 +89,9 @@ class SwitchInfo(EntityInfo):
     """The payload that represents on state. If specified, will be used for both
     comparing to the value in the state_topic (see value_template and state_on
     for details) and sending as on command to the command_topic."""
-    retain: Optional[bool] = None
+    retain: bool | None = None
     """If the published message should have the retain flag on or not"""
-    state_topic: Optional[str] = None
+    state_topic: str | None = None
     """The MQTT topic subscribed to receive state updates."""
 
 
@@ -102,7 +102,7 @@ class LightInfo(EntityInfo):
 
     state_schema: str = Field(default="json", alias="schema")  # 'schema' is a reserved word by pydantic
     """Sets the schema of the state topic, ie the 'schema' field in the configuration"""
-    optimistic: Optional[bool] = None
+    optimistic: bool | None = None
     """Flag that defines if light works in optimistic mode.
     Default: true if no state_topic defined, else false."""
     payload_off: str = "OFF"
@@ -113,22 +113,22 @@ class LightInfo(EntityInfo):
     """The payload that represents on state. If specified, will be used for both
     comparing to the value in the state_topic (see value_template and state_on
     for details) and sending as on command to the command_topic."""
-    brightness: Optional[bool] = False
+    brightness: bool | None = False
     """Flag that defines if the light supports setting the brightness
     """
-    color_mode: Optional[bool] = None
+    color_mode: bool | None = None
     """Flag that defines if the light supports color mode"""
-    supported_color_modes: Optional[list[str]] = None
+    supported_color_modes: list[str] | None = None
     """List of supported color modes. See
     https://www.home-assistant.io/integrations/light.mqtt/#supported_color_modes for current list of
     supported modes. Required if color_mode is set"""
-    effect: Optional[bool] = False
+    effect: bool | None = False
     """Flag that defines if the light supports effects"""
-    effect_list: Optional[str | list] = None
+    effect_list: str | list | None = None
     """List of supported effects. Required if effect is set"""
-    retain: Optional[bool] = True
+    retain: bool | None = True
     """If the published message should have the retain flag on or not"""
-    state_topic: Optional[str] = None
+    state_topic: str | None = None
     """The MQTT topic subscribed to receive state updates."""
 
 
@@ -137,7 +137,7 @@ class CoverInfo(EntityInfo):
 
     component: str = "cover"
 
-    optimistic: Optional[bool] = None
+    optimistic: bool | None = None
     """Flag that defines if light works in optimistic mode.
     Default: true if no state_topic defined, else false."""
     payload_close: str = "CLOSE"
@@ -160,9 +160,9 @@ class CoverInfo(EntityInfo):
     """Payload that represents closing state"""
     state_stopped: str = "stopped"
     """Payload that represents stopped state"""
-    state_topic: Optional[str] = None
+    state_topic: str | None = None
     """The MQTT topic subscribed to receive state updates."""
-    retain: Optional[bool] = True
+    retain: bool | None = True
     """If the published message should have the retain flag on or not"""
 
 
@@ -173,7 +173,7 @@ class ButtonInfo(EntityInfo):
 
     payload_press: str = "PRESS"
     """The payload to send to trigger the button."""
-    retain: Optional[bool] = None
+    retain: bool | None = None
     """If the published message should have the retain flag on or not"""
 
 
@@ -186,12 +186,12 @@ class TextInfo(EntityInfo):
     """The maximum size of a text being set or received (maximum is 255)."""
     min: int = 0
     """The minimum size of a text being set or received."""
-    mode: Optional[str] = "text"
+    mode: str | None = "text"
     """The mode off the text entity. Must be either text or password."""
-    pattern: Optional[str] = None
+    pattern: str | None = None
     """A valid regular expression the text being set or received must match with."""
 
-    retain: Optional[bool] = None
+    retain: bool | None = None
     """If the published message should have the retain flag on or not"""
 
 
@@ -204,22 +204,22 @@ class NumberInfo(EntityInfo):
     """The maximum value of the number (defaults to 100)"""
     min: float | int = 1
     """The maximum value of the number (defaults to 1)"""
-    mode: Optional[str] = None
+    mode: str | None = None
     """Control how the number should be displayed in the UI. Can be set to box
     or slider to force a display mode."""
-    optimistic: Optional[bool] = None
+    optimistic: bool | None = None
     """Flag that defines if switch works in optimistic mode.
     Default: true if no state_topic defined, else false."""
-    payload_reset: Optional[str] = None
+    payload_reset: str | None = None
     """A special payload that resets the state to None when received on the
     state_topic."""
-    retain: Optional[bool] = None
+    retain: bool | None = None
     """If the published message should have the retain flag on or not"""
-    state_topic: Optional[str] = None
+    state_topic: str | None = None
     """The MQTT topic subscribed to receive state updates."""
-    step: Optional[float] = None
+    step: float | None = None
     """Step value. Smallest acceptable value is 0.001. Defaults to 1.0."""
-    unit_of_measurement: Optional[str] = None
+    unit_of_measurement: str | None = None
     """Defines the unit of measurement of the sensor, if any. The
     unit_of_measurement can be null."""
 
@@ -231,7 +231,7 @@ class DeviceTriggerInfo(EntityInfo):
     automation_type: str = "trigger"
     """The type of automation, must be ‘trigger’."""
 
-    payload: Optional[str] = None
+    payload: str | None = None
     """Optional payload to match the payload being sent over the topic."""
     type: str
     """The type of the trigger"""
@@ -248,18 +248,18 @@ class CameraInfo(EntityInfo):
 
     component: str = "camera"
     """The component type is 'camera' for this entity."""
-    availability_topic: Optional[str] = None
+    availability_topic: str | None = None
     """The MQTT topic subscribed to publish the camera availability."""
-    payload_available: Optional[str] = "online"
+    payload_available: str | None = "online"
     """Payload to publish to indicate the camera is online."""
-    payload_not_available: Optional[str] = "offline"
+    payload_not_available: str | None = "offline"
     """Payload to publish to indicate the camera is offline."""
-    topic: Optional[str] = None
+    topic: str | None = None
     """
     The MQTT topic to subscribe to receive an image URL. A url_template option can extract the URL from the message.
     The content_type will be derived from the image when downloaded.
     """
-    retain: Optional[bool] = None
+    retain: bool | None = None
     """If the published message should have the retain flag on or not."""
 
 
@@ -270,18 +270,18 @@ class ImageInfo(EntityInfo):
 
     component: str = "image"
     """The component type is 'image' for this entity."""
-    availability_topic: Optional[str] = None
+    availability_topic: str | None = None
     """The MQTT topic subscribed to publish the image availability."""
-    payload_available: Optional[str] = "online"
+    payload_available: str | None = "online"
     """Payload to publish to indicate the image is online."""
-    payload_not_available: Optional[str] = "offline"
+    payload_not_available: str | None = "offline"
     """Payload to publish to indicate the image is offline."""
-    url_topic: Optional[str] = None
+    url_topic: str | None = None
     """
     The MQTT topic to subscribe to receive an image URL. A url_template option can extract the URL from the message.
     The content_type will be derived from the image when downloaded.
     """
-    retain: Optional[bool] = None
+    retain: bool | None = None
     """If the published message should have the retain flag on or not."""
 
 
@@ -291,14 +291,14 @@ class SelectInfo(EntityInfo):
     """
 
     component: str = "select"
-    optimistic: Optional[bool] = None
+    optimistic: bool | None = None
     """Flag that defines if switch works in optimistic mode.
     Default: true if no state_topic defined, else false."""
-    retain: Optional[bool] = None
+    retain: bool | None = None
     """If the published message should have the retain flag on or not"""
-    state_topic: Optional[str] = None
+    state_topic: str | None = None
     """The MQTT topic subscribed to receive state updates."""
-    options: Optional[list] = None
+    options: list | None = None
     """List of options that can be selected. An empty list or a list with a single item is allowed."""
 
 
@@ -512,7 +512,7 @@ class DeviceTrigger(Discoverable[DeviceTriggerInfo]):
         }
         return config | topics
 
-    def trigger(self, payload: Optional[str] = None):
+    def trigger(self, payload: str | None = None):
         """
         Generate a device trigger event
 
