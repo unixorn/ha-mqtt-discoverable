@@ -886,7 +886,7 @@ class Subscriber(Discoverable[EntityType]):
 
         # Register the user-supplied callback function with its user_data
         self.mqtt_client.user_data_set(user_data)
-        self.mqtt_client.on_message = command_callback
+        self.mqtt_client.message_callback_add(self._command_topic, command_callback)
 
         if self._settings.mqtt.client:
             # externally created MQTT client is used
@@ -900,7 +900,7 @@ class Subscriber(Discoverable[EntityType]):
                 # will subscribe to the command topic
                 # when the externally created MQTT client connects
                 pass
-        else :
+        else:
             # Manually connect the MQTT client
             self._connect_client()
 
