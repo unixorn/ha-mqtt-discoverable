@@ -18,9 +18,9 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from ha_mqtt_discoverable import (
     DeviceInfo,
@@ -286,12 +286,27 @@ class ImageInfo(EntityInfo):
     """
     The MQTT topic to subscribe to receive a binary image. Cannot be used with url_topic.
     """
-    image_encoding: str = "b64"
+    image_encoding: Optional[Literal['raw','b64']] = None
     """
-    Set the Image Encoding to Base64.
+    Set the image encoding when sending images.
     """
     retain: bool | None = None
     """If the published message should have the retain flag on or not."""
+
+    @model_validator(mode="after")
+    def image_or_url_mode(self):
+        """
+        Determine sending mode based on image_encoding value if provided.
+        """
+        # Don't allow URL and Image to be set at the same time.
+        if self.image_topic is not None and self.url_topic is not None:
+            raise ValueError("URL and Image blob sending canot be used at the same time. Set only one of 'image_topic' and 'url_topic'")
+
+        # Don't set image_encoding and url_topic at the same time.
+        if self.image_encoding is not None and self.url_topic is not None:
+            raise ValueError("Image encoding should not be set when using url_topic.")
+
+        return self
 
 
 class SelectInfo(EntityInfo):
