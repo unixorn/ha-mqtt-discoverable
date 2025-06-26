@@ -282,11 +282,11 @@ class ImageInfo(EntityInfo):
     The content_type will be derived from the image when downloaded.
     Cannot be used with image_topic.
     """
-    image_topic: Optional[str] = None
+    image_topic: str | None = None
     """
     The MQTT topic to subscribe to receive a binary image. Cannot be used with url_topic.
     """
-    image_encoding: Optional[Literal['raw','b64']] = None
+    image_encoding: Literal["raw", "b64"] | None = None
     """
     Set the image encoding when sending images.
     """
@@ -300,7 +300,9 @@ class ImageInfo(EntityInfo):
         """
         # Don't allow URL and Image to be set at the same time.
         if self.image_topic is not None and self.url_topic is not None:
-            raise ValueError("URL and Image blob sending canot be used at the same time. Set only one of 'image_topic' and 'url_topic'")
+            raise ValueError(
+                "URL and Image blob sending canot be used at the same time. Set only one of 'image_topic' and 'url_topic'"
+            )
 
         # Don't set image_encoding and url_topic at the same time.
         if self.image_encoding is not None and self.url_topic is not None:
