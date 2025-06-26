@@ -486,7 +486,7 @@ class DeviceInfo(BaseModel):
     """A link to the webpage that can manage the configuration of this device.
         Can be either an HTTP or HTTPS link."""
     suggested_area: str | None = None
-    """ The area to put the device in on creation, if it isn't already in one. """
+    """ The suggested name for the area where the device is located. """
     via_device: str | None = None
     """Identifier of a device that routes messages between this device and Home
         Assistant. Examples of such devices are hubs, or parent devices of a sub-device.
