@@ -23,10 +23,15 @@ from ha_mqtt_discoverable.sensors import Image, ImageInfo
 
 @pytest.fixture
 def image(request) -> Image:
-    url_topic, image_topic, image_encoding = request.param
+    url_topic, image_topic, image_encoding, content_type = request.param
     mqtt_settings = Settings.MQTT(host="localhost")
     # image_info = ImageInfo(name="test", url_topic="topic_to_publish_url_to")
-    image_info = ImageInfo(name="test", url_topic=url_topic, image_topic=image_topic, image_encoding=image_encoding)
+    image_info = ImageInfo(name="test",
+                           url_topic=url_topic,
+                           image_topic=image_topic,
+                           image_encoding=image_encoding,
+                           content_type=content_type
+                           )
     settings = Settings(mqtt=mqtt_settings, entity=image_info)
     return Image(settings)
 
@@ -49,13 +54,16 @@ def test_url_and_encoding_raises_exception():
     with pytest.raises(ValueError):
         ImageInfo(name="test", url_topic="url_to_publish_to", image_encoding="b64")
 
+def test_url_and_content_type_raises_exception():
+    with pytest.raises(ValueError):
+        ImageInfo(name="test", url_topic="url_to_publish_to", image_encoding="b64")
 
 def test_invalid_encoding_raises_exception():
     with pytest.raises(ValueError):
         ImageInfo(name="test", image_encoding="invalid_encoding", image_topic="image_to_publish_to")
 
 
-@pytest.mark.parametrize("image", [("topic_to_publish_to", None, None)], indirect=True)
+@pytest.mark.parametrize("image", [("topic_to_publish_to", None, None, None)], indirect=True)
 def test_generate_config_url(image: Image):
     config = image.generate_config()
     assert config is not None
@@ -64,16 +72,20 @@ def test_generate_config_url(image: Image):
         assert config["url_topic"] == image._entity.url_topic
 
 
-@pytest.mark.parametrize("image", [(None, "image_to_publish_to", "b64")], indirect=True)
+@pytest.mark.parametrize("image", [(None, "image_to_publish_to", "b64", "image/png")], indirect=True)
 def test_generate_config_image(image: Image):
     config = image.generate_config()
     assert config is not None
-    # If we have defined an image_topic, check that is part of the output config
+    # Ensure fields for image publication are part of the output config.
     if image._entity.image_topic:
         assert config["image_topic"] == image._entity.image_topic
+    if image._entity.image_encoding:
+        assert config["image_encoding"] == image._entity.image_encoding
+    if image._entity.content_type:
+        assert config["content_type"] == image._entity.content_type
 
 
-@pytest.mark.parametrize("image", [("topic_to_publish_url_to", None, None)], indirect=True)
+@pytest.mark.parametrize("image", [("topic_to_publish_url_to", None, None, None)], indirect=True)
 def test_set_url(image: Image):
     image_url = "http://camera.local/latest.jpg"
 
@@ -82,7 +94,7 @@ def test_set_url(image: Image):
         mock_publish.assert_called_with(image._entity.url_topic, image_url, retain=True)
 
 
-@pytest.mark.parametrize("image", [(None, "image_to_publish_to", "b64")], indirect=True)
+@pytest.mark.parametrize("image", [(None, "image_to_publish_to", "b64", "image/png")], indirect=True)
 def test_set_blob(image: Image):
     image_blob = (
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV+/qGhFw"

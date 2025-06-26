@@ -290,6 +290,10 @@ class ImageInfo(EntityInfo):
     """
     Set the image encoding when sending images.
     """
+    content_type: str | None = None
+    """
+    Content type to use when sending image blobs. If not specified HA assumes 'image/jpeg'
+    """
     retain: bool | None = None
     """If the published message should have the retain flag on or not."""
 
@@ -306,6 +310,10 @@ class ImageInfo(EntityInfo):
 
         # Don't set image_encoding and url_topic at the same time.
         if self.image_encoding is not None and self.url_topic is not None:
+            raise ValueError("Image encoding should not be set when using url_topic.")
+
+        # Don't set content_type and url_topic at the same time.
+        if self.content_type is not None and self.url_topic is not None:
             raise ValueError("Image encoding should not be set when using url_topic.")
 
         return self
