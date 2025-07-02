@@ -27,8 +27,7 @@ def image(request) -> Image:
     url_topic, image_topic, image_encoding, content_type = request.param
     mqtt_settings = Settings.MQTT(host="localhost")
     image_info = ImageInfo(
-        name="test_image", url_topic=url_topic, image_topic=image_topic,
-        image_encoding=image_encoding, content_type=content_type
+        name="test_image", url_topic=url_topic, image_topic=image_topic, image_encoding=image_encoding, content_type=content_type
     )
     settings = Settings(mqtt=mqtt_settings, entity=image_info)
     return Image(settings)
@@ -45,14 +44,12 @@ def test_required_config():
 
 def test_url_topic_and_image_topic_set_raises_exception():
     with pytest.raises(ValueError):
-        ImageInfo(name="test", url_topic="url_to_publish_to",
-                  image_topic="image_to_publish_to")
+        ImageInfo(name="test", url_topic="url_to_publish_to", image_topic="image_to_publish_to")
 
 
 def test_url_topic_encoding_set_raises_exception():
     with pytest.raises(ValueError):
-        ImageInfo(name="test", url_topic="url_to_publish_to",
-                  image_encoding="b64")
+        ImageInfo(name="test", url_topic="url_to_publish_to", image_encoding="b64")
 
 
 def test_url_topic_content_type_set_raises_exception():
@@ -68,6 +65,7 @@ def test_image_topic_invalid_encoding_set_raises_exception():
 def test_image_topic_no_content_type_set_raises_exception():
     with pytest.raises(ValueError):
         ImageInfo(name="test", image_topic="image_to_publish_to")
+
 
 @pytest.mark.parametrize("image", [("topic_to_publish_to", None, None, None)], indirect=True)
 def test_generate_config_url(image: Image):

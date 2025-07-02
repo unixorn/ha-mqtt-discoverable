@@ -310,8 +310,7 @@ class ImageInfo(EntityInfo):
         # Don't set image_topic and url_topic at the same time.
         if self.image_topic and self.url_topic:
             raise ValueError(
-                "URL and Image payload sending cannot be used at the same time."
-                "Set only one of 'image_topic' or 'url_topic'"
+                "URL and Image payload sending cannot be used at the same time.Set only one of 'image_topic' or 'url_topic'"
             )
 
         # Don't set image_encoding and url_topic at the same time.
