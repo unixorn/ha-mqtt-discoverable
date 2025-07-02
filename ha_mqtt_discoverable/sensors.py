@@ -278,43 +278,53 @@ class ImageInfo(EntityInfo):
     """Payload to publish to indicate the image is offline."""
     url_topic: str | None = None
     """
-    The MQTT topic to subscribe to receive an image URL. A url_template option can extract the URL from the message.
+    The MQTT topic to subscribe to receive an image URL.
+    A url_template option can extract the URL from the message.
     The content_type will be derived from the image when downloaded.
     Cannot be used with image_topic.
     """
     image_topic: str | None = None
     """
-    The MQTT topic to subscribe to receive a binary image. Cannot be used with url_topic.
+    The MQTT topic to subscribe to receive the image payload.
+    Cannot be used together with url_topic.
     """
-    image_encoding: Literal["raw", "b64"] | None = None
+    image_encoding: Literal["b64"] | None = None
     """
-    Set the image encoding when sending images.
+    Set the encoding of image payloads when sending images.
+    Set to "b64" to enable base64 decoding of image payloads.
+    If not set, the image payloads must be raw binary data.
     """
     content_type: str | None = None
     """
-    Content type to use when sending image blobs. If not specified HA assumes 'image/jpeg'
+    Content type to use when sending image payloads.
+    Cannot be used together with url_topic.
     """
     retain: bool | None = None
     """If the published message should have the retain flag on or not."""
 
     @model_validator(mode="after")
-    def image_or_url_mode(self):
+    def image_info_entity_model_validator(self) -> ImageInfo:
         """
-        Determine sending mode based on image_encoding value if provided.
+        Determine correct usage of configuration variables.
         """
-        # Don't allow URL and Image to be set at the same time.
-        if self.image_topic is not None and self.url_topic is not None:
+        # Don't set image_topic and url_topic at the same time.
+        if self.image_topic and self.url_topic:
             raise ValueError(
-                "URL and Image blob sending canot be used at the same time. Set only one of 'image_topic' and 'url_topic'"
+                "URL and Image payload sending cannot be used at the same time."
+                "Set only one of 'image_topic' or 'url_topic'"
             )
 
         # Don't set image_encoding and url_topic at the same time.
-        if self.image_encoding is not None and self.url_topic is not None:
+        if self.image_encoding and self.url_topic:
             raise ValueError("Image encoding should not be set when using url_topic.")
 
         # Don't set content_type and url_topic at the same time.
-        if self.content_type is not None and self.url_topic is not None:
-            raise ValueError("Image encoding should not be set when using url_topic.")
+        if self.content_type and self.url_topic:
+            raise ValueError("Content type should not be set when using url_topic.")
+
+        # Ensure content_type is set if image_topic is used.
+        if self.image_topic and not self.content_type:
+            raise ValueError("Content type of image payload not set.")
 
         return self
 
@@ -636,10 +646,10 @@ class Image(Discoverable[ImageInfo]):
 
     def set_url(self, image_url: str) -> None:
         """
-        Update the camera state (image URL).
+        Update the image URL.
 
         Args:
-            image_url (str): URL of the image to be set as the camera state.
+            image_url (str): image URL to be published to url_topic.
         """
         if not image_url:
             raise RuntimeError("Image URL cannot be empty")
@@ -647,18 +657,18 @@ class Image(Discoverable[ImageInfo]):
         logger.info(f"Publishing image URL {image_url} to {self._entity.url_topic}")
         self._state_helper(image_url, self._entity.url_topic)
 
-    def set_image(self, image_blob: str) -> None:
+    def set_payload(self, image_payload: bytes | str) -> None:
         """
         Update the image payload.
 
         Args:
-            image_blob (str): An encoded blob of the image to be set as the image state. Must be Base64 encoded.
+            image_payload (bytes | str): image payload to be published to image_topic.
         """
-        if not image_blob:
-            raise RuntimeError("Image blob cannot be empty")
+        if not image_payload:
+            raise RuntimeError("Image payload cannot be empty")
 
-        logger.info(f"Publishing image blob to {self._entity.image_topic}")
-        self._state_helper(image_blob, self._entity.image_topic)
+        logger.info(f"Publishing image payload to {self._entity.image_topic}")
+        self._state_helper(image_payload, self._entity.image_topic)
 
 
 class Select(Subscriber[SelectInfo]):

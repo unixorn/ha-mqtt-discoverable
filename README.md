@@ -292,7 +292,7 @@ mytrigger.trigger("My custom payload")
 
 ### Image
 
-The following example creates an entity to an image url.
+The following example creates an image entity to an image url.
 
 ```py
 from ha_mqtt_discoverable import Settings
@@ -302,7 +302,7 @@ from ha_mqtt_discoverable.sensors import Image, ImageInfo
 mqtt_settings = Settings.MQTT(host="localhost")
 
 # Information about the image
-image_info = ImageInfo(name="test", url_topic="topic_to_publish_url_to")
+image_info = ImageInfo(name="test", url_topic="topic_to_publish_image_url_to")
 settings = Settings(mqtt=mqtt_settings, entity=image_info)
 
 # Instantiate the image
@@ -310,31 +310,31 @@ my_image = Image(settings)
 
 # Publish an image URL to url_topic
 my_image.set_url("http://camera.local/latest.jpg")
-
-# Publish a file to a topic.
-from base64 import b64encode
-example_file = open("example.png", "r")
-example_blob = b64encode(example_file.read())
-image_info = ImageInfo(name="test", image_topic="topic_to_publish_image_to", image_encoding="raw")
-my_image = Image(settings)
-my_image.set_blob(example_blob)
-
-# Create an image and publish directly.
-from base64 import b64encode
-from IO import BytesIO
-from PIL import Image, ImageDraw
-img = Image.new(RGBA, (32, 32), (0,0,0,0))
-draw = ImageDraw.Draw(img)
-draw.circle((16,16), 10, fill="blue")
-image_buffer = BytesIO()
-img.save(image_buffer, format='PNG')
-image_info = ImageInfo(name="test", image_topic="topic_to_publish_image_to", image_encoding="b64")
-my_image = Image(settings)
-my_image.set_blob(b64encode(image_buffer.get_value())
-
 ```
 
+The following example creates an image entity and sets the base64 encoded payload.
 
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Image, ImageInfo
+from base64 import b64encode
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the image
+image_info = ImageInfo(name="test", image_topic="topic_to_publish_image_payload_to",
+                       image_encoding="b64", content_type="image/png")
+settings = Settings(mqtt=mqtt_settings, entity=image_info)
+
+# Instantiate the image
+my_image = Image(settings)
+
+# Set the image payload
+with open("example.png", "rb") as example_file:
+    example_blob = b64encode(example_file.read())
+    my_image.set_payload(example_blob)
+```
 
 ### Light
 

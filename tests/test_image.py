@@ -16,6 +16,7 @@
 from unittest.mock import patch
 
 import pytest
+from pydantic import ValidationError
 
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Image, ImageInfo
@@ -25,9 +26,9 @@ from ha_mqtt_discoverable.sensors import Image, ImageInfo
 def image(request) -> Image:
     url_topic, image_topic, image_encoding, content_type = request.param
     mqtt_settings = Settings.MQTT(host="localhost")
-    # image_info = ImageInfo(name="test", url_topic="topic_to_publish_url_to")
     image_info = ImageInfo(
-        name="test", url_topic=url_topic, image_topic=image_topic, image_encoding=image_encoding, content_type=content_type
+        name="test_image", url_topic=url_topic, image_topic=image_topic,
+        image_encoding=image_encoding, content_type=content_type
     )
     settings = Settings(mqtt=mqtt_settings, entity=image_info)
     return Image(settings)
@@ -42,31 +43,36 @@ def test_required_config():
     assert image is not None
 
 
-def test_url_and_image_raises_exception():
+def test_url_topic_and_image_topic_set_raises_exception():
     with pytest.raises(ValueError):
-        ImageInfo(name="test", url_topic="url_to_publish_to", image_topic="image_to_publish_to")
+        ImageInfo(name="test", url_topic="url_to_publish_to",
+                  image_topic="image_to_publish_to")
 
 
-def test_url_and_encoding_raises_exception():
+def test_url_topic_encoding_set_raises_exception():
     with pytest.raises(ValueError):
-        ImageInfo(name="test", url_topic="url_to_publish_to", image_encoding="b64")
+        ImageInfo(name="test", url_topic="url_to_publish_to",
+                  image_encoding="b64")
 
 
-def test_url_and_content_type_raises_exception():
+def test_url_topic_content_type_set_raises_exception():
     with pytest.raises(ValueError):
-        ImageInfo(name="test", url_topic="url_to_publish_to", image_encoding="b64")
+        ImageInfo(name="test", url_topic="url_to_publish_to", content_type="image/jpeg")
 
 
-def test_invalid_encoding_raises_exception():
-    with pytest.raises(ValueError):
+def test_image_topic_invalid_encoding_set_raises_exception():
+    with pytest.raises(ValidationError):
         ImageInfo(name="test", image_encoding="invalid_encoding", image_topic="image_to_publish_to")
 
+
+def test_image_topic_no_content_type_set_raises_exception():
+    with pytest.raises(ValueError):
+        ImageInfo(name="test", image_topic="image_to_publish_to")
 
 @pytest.mark.parametrize("image", [("topic_to_publish_to", None, None, None)], indirect=True)
 def test_generate_config_url(image: Image):
     config = image.generate_config()
-    assert config is not None
-    # If we have defined an url_topic, check that is part of the output config
+    # If url_topic is defined, check that is part of config
     if image._entity.url_topic:
         assert config["url_topic"] == image._entity.url_topic
 
@@ -74,8 +80,7 @@ def test_generate_config_url(image: Image):
 @pytest.mark.parametrize("image", [(None, "image_to_publish_to", "b64", "image/png")], indirect=True)
 def test_generate_config_image(image: Image):
     config = image.generate_config()
-    assert config is not None
-    # Ensure fields for image publication are part of the output config.
+    # Ensure attributes for image publication are part of config
     if image._entity.image_topic:
         assert config["image_topic"] == image._entity.image_topic
     if image._entity.image_encoding:
@@ -107,5 +112,5 @@ def test_set_blob(image: Image):
     )
 
     with patch.object(image.mqtt_client, "publish") as mock_publish:
-        image.set_image(image_blob)
+        image.set_payload(image_blob)
         mock_publish.assert_called_with(image._entity.image_topic, image_blob, retain=True)
