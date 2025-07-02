@@ -18,9 +18,9 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from ha_mqtt_discoverable import (
     DeviceInfo,
@@ -278,11 +278,54 @@ class ImageInfo(EntityInfo):
     """Payload to publish to indicate the image is offline."""
     url_topic: str | None = None
     """
-    The MQTT topic to subscribe to receive an image URL. A url_template option can extract the URL from the message.
+    The MQTT topic to subscribe to receive an image URL.
+    A url_template option can extract the URL from the message.
     The content_type will be derived from the image when downloaded.
+    Cannot be used with image_topic.
+    """
+    image_topic: str | None = None
+    """
+    The MQTT topic to subscribe to receive the image payload.
+    Cannot be used together with url_topic.
+    """
+    image_encoding: Literal["b64"] | None = None
+    """
+    Set the encoding of image payloads when sending images.
+    Set to "b64" to enable base64 decoding of image payloads.
+    If not set, the image payloads must be raw binary data.
+    """
+    content_type: str | None = None
+    """
+    Content type to use when sending image payloads.
+    Cannot be used together with url_topic.
     """
     retain: bool | None = None
     """If the published message should have the retain flag on or not."""
+
+    @model_validator(mode="after")
+    def image_info_entity_model_validator(self) -> ImageInfo:
+        """
+        Determine correct usage of configuration variables.
+        """
+        # Don't set image_topic and url_topic at the same time.
+        if self.image_topic and self.url_topic:
+            raise ValueError(
+                "URL and Image payload sending cannot be used at the same time.Set only one of 'image_topic' or 'url_topic'"
+            )
+
+        # Don't set image_encoding and url_topic at the same time.
+        if self.image_encoding and self.url_topic:
+            raise ValueError("Image encoding should not be set when using url_topic.")
+
+        # Don't set content_type and url_topic at the same time.
+        if self.content_type and self.url_topic:
+            raise ValueError("Content type should not be set when using url_topic.")
+
+        # Ensure content_type is set if image_topic is used.
+        if self.image_topic and not self.content_type:
+            raise ValueError("Content type of image payload not set.")
+
+        return self
 
 
 class SelectInfo(EntityInfo):
@@ -602,16 +645,29 @@ class Image(Discoverable[ImageInfo]):
 
     def set_url(self, image_url: str) -> None:
         """
-        Update the camera state (image URL).
+        Update the image URL.
 
         Args:
-            image_url (str): URL of the image to be set as the camera state.
+            image_url (str): image URL to be published to url_topic.
         """
         if not image_url:
             raise RuntimeError("Image URL cannot be empty")
 
         logger.info(f"Publishing image URL {image_url} to {self._entity.url_topic}")
         self._state_helper(image_url, self._entity.url_topic)
+
+    def set_payload(self, image_payload: bytes | str) -> None:
+        """
+        Update the image payload.
+
+        Args:
+            image_payload (bytes | str): image payload to be published to image_topic.
+        """
+        if not image_payload:
+            raise RuntimeError("Image payload cannot be empty")
+
+        logger.info(f"Publishing image payload to {self._entity.image_topic}")
+        self._state_helper(image_payload, self._entity.image_topic)
 
 
 class Select(Subscriber[SelectInfo]):

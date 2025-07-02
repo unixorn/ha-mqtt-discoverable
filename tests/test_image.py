@@ -16,15 +16,19 @@
 from unittest.mock import patch
 
 import pytest
+from pydantic import ValidationError
 
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Image, ImageInfo
 
 
 @pytest.fixture
-def image() -> Image:
+def image(request) -> Image:
+    url_topic, image_topic, image_encoding, content_type = request.param
     mqtt_settings = Settings.MQTT(host="localhost")
-    image_info = ImageInfo(name="test", url_topic="topic_to_publish_url_to")
+    image_info = ImageInfo(
+        name="test_image", url_topic=url_topic, image_topic=image_topic, image_encoding=image_encoding, content_type=content_type
+    )
     settings = Settings(mqtt=mqtt_settings, entity=image_info)
     return Image(settings)
 
@@ -38,18 +42,73 @@ def test_required_config():
     assert image is not None
 
 
-def test_generate_config(image: Image):
-    config = image.generate_config()
+def test_url_topic_and_image_topic_set_raises_exception():
+    with pytest.raises(ValueError):
+        ImageInfo(name="test", url_topic="url_to_publish_to", image_topic="image_to_publish_to")
 
-    assert config is not None
-    # If we have defined an url_topic, check that is part of the output config
+
+def test_url_topic_encoding_set_raises_exception():
+    with pytest.raises(ValueError):
+        ImageInfo(name="test", url_topic="url_to_publish_to", image_encoding="b64")
+
+
+def test_url_topic_content_type_set_raises_exception():
+    with pytest.raises(ValueError):
+        ImageInfo(name="test", url_topic="url_to_publish_to", content_type="image/jpeg")
+
+
+def test_image_topic_invalid_encoding_set_raises_exception():
+    with pytest.raises(ValidationError):
+        ImageInfo(name="test", image_encoding="invalid_encoding", image_topic="image_to_publish_to")
+
+
+def test_image_topic_no_content_type_set_raises_exception():
+    with pytest.raises(ValueError):
+        ImageInfo(name="test", image_topic="image_to_publish_to")
+
+
+@pytest.mark.parametrize("image", [("topic_to_publish_to", None, None, None)], indirect=True)
+def test_generate_config_url(image: Image):
+    config = image.generate_config()
+    # If url_topic is defined, check that is part of config
     if image._entity.url_topic:
         assert config["url_topic"] == image._entity.url_topic
 
 
+@pytest.mark.parametrize("image", [(None, "image_to_publish_to", "b64", "image/png")], indirect=True)
+def test_generate_config_image(image: Image):
+    config = image.generate_config()
+    # Ensure attributes for image publication are part of config
+    if image._entity.image_topic:
+        assert config["image_topic"] == image._entity.image_topic
+    if image._entity.image_encoding:
+        assert config["image_encoding"] == image._entity.image_encoding
+    if image._entity.content_type:
+        assert config["content_type"] == image._entity.content_type
+
+
+@pytest.mark.parametrize("image", [("topic_to_publish_url_to", None, None, None)], indirect=True)
 def test_set_url(image: Image):
     image_url = "http://camera.local/latest.jpg"
 
     with patch.object(image.mqtt_client, "publish") as mock_publish:
         image.set_url(image_url)
         mock_publish.assert_called_with(image._entity.url_topic, image_url, retain=True)
+
+
+@pytest.mark.parametrize("image", [(None, "image_to_publish_to", "b64", "image/png")], indirect=True)
+def test_set_blob(image: Image):
+    image_blob = (
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV+/qGhFw"
+        "Q4iDhmqkwVRUUepYhEslLZCqw4ml35Bk4YkxcVRcC04+LFYdXBx1tXBVRAEP0DcBSdFFynxf0mhRYwHx/14d+9x9w7wNipMMfzjg"
+        "KKaeioeE7K5VSH4igD86MEM+kVmaIn0Ygau4+seHr7eRXmW+7k/R6+cNxjgEYjnmKabxBvE05umxnmfOMxKokx8Tjym0wWJH7kuO"
+        "fzGuWizl2eG9UxqnjhMLBQ7WOpgVtIV4iniiKyolO/NOixz3uKsVGqsdU/+wlBeXUlzneYw4lhCAkkIkFBDGRWYiNKqkmIgRfsxF"
+        "/+Q7U+SSyJXGYwcC6hCgWj7wf/gd7dGYXLCSQrFgMCLZX2MAMFdoFm3rO9jy2qeAL5n4Ept+6sNYPaT9HpbixwBfdvAxXVbk/aAy"
+        "x1g8EkTddGWfDS9hQLwfkbflAMGboHuNae31j5OH4AMdbV8AxwcAqNFyl53eXdXZ2//nmn19wN6HHKqAAggmgAAAAlwSFlzAAAuI"
+        "wAALiMBeKU/dgAAAAd0SU1FB+kFBAs3LBSX2/sAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAADElEQVQI1"
+        "2NgYGAAAAAEAAEnNCcKAAAAAElFTkSuQmCC"
+    )
+
+    with patch.object(image.mqtt_client, "publish") as mock_publish:
+        image.set_payload(image_blob)
+        mock_publish.assert_called_with(image._entity.image_topic, image_blob, retain=True)
