@@ -67,10 +67,10 @@ class SensorInfo(EntityInfo):
     Defines a template to extract the last_reset.
     When last_reset_value_template is set, the state_class option must be total.
     Available variables: entity_id.
-    The entity_id can be used to reference the entity’s attributes."""
+    The entity_id can be used to reference the entity's attributes."""
     suggested_display_precision: None | Annotated[int, Field(ge=0)] = None
     """
-    The number of decimals which should be used in the sensor’s state after rounding.
+    The number of decimals which should be used in the sensor's state after rounding.
     """
 
 
@@ -229,7 +229,7 @@ class DeviceTriggerInfo(EntityInfo):
 
     component: str = "device_automation"
     automation_type: str = "trigger"
-    """The type of automation, must be ‘trigger’."""
+    """The type of automation, must be 'trigger'."""
 
     payload: str | None = None
     """Optional payload to match the payload being sent over the topic."""
