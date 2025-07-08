@@ -29,6 +29,7 @@
 - [ ] New feature
 - [ ] Test updates
 - [ ] Text cleanups/updates
+- [ ] New release to PyPi
 
 # Checklist
 
