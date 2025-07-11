@@ -19,6 +19,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
   - [Binary sensor](#binary-sensor)
   - [Button](#button)
   - [Camera](#camera)
+  - [Climate](#climate)
   - [Covers](#covers)
   - [Device](#device)
   - [Device trigger](#device-trigger)
@@ -55,6 +56,7 @@ The following Home Assistant entities are currently implemented:
 - Button
 - Camera
 - Cover
+- Climate
 - Device
 - Device trigger
 - Image
@@ -162,6 +164,61 @@ my_camera = Camera(settings, my_callback, user_data)
 
 # Set the initial state of the cover, which also makes it discoverable
 my_camera.set_topic("zanzito/shared_locations/my-device")  # not needed if already defined
+```
+
+### Climate
+
+The following example creates a climate entity with temperature control and mode selection:
+
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Climate, ClimateInfo
+from paho.mqtt.client import Client, MQTTMessage
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the climate entity
+climate_info = ClimateInfo(
+    name="MyThermostat",
+    temperature_unit="C",
+    min_temp=16,
+    max_temp=32,
+    modes=["off", "heat", "cool", "auto"],
+    current_temperature_topic="home/thermostat/temperature"
+)
+
+settings = Settings(mqtt=mqtt_settings, entity=climate_info)
+
+# To receive commands from HA, define a callback function:
+def my_callback(client: Client, user_data, message: MQTTMessage):
+    # Make sure received payload is JSON
+    try:
+        payload = json.loads(message.payload.decode())
+    except ValueError:
+        print("Ony JSON schema is supported for climate entities!")
+        return
+    
+    # Handle the command (e.g., mode changes, temperature setpoints)
+    handle_climate_command(payload)
+    # Update the state in HA
+    my_climate.set_temperature(25.0)
+    my_climate.set_mode("heat")
+
+# Define an optional object to be passed back to the callback
+user_data = "Some custom data"
+
+# Instantiate the climate entity
+my_climate = Climate(settings, my_callback, user_data)
+
+# Update the current temperature reading
+my_climate.update_current_temperature(24.5)
+
+# Set the target temperature
+my_climate.set_temperature(25.0)
+
+# Change the HVAC mode
+my_climate.set_mode("heat")
 ```
 
 ### Covers
