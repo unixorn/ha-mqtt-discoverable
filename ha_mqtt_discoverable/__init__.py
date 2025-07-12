@@ -908,10 +908,10 @@ class ClimateSubscriber(Discoverable[EntityType]):
     T = TypeVar("T")  # Used in the callback function
 
     def __init__(
-            self,
-            settings: Settings[EntityType],
-            command_callback: Callable[[mqtt.Client, T, mqtt.MQTTMessage], Any],
-            user_data: T = None,
+        self,
+        settings: Settings[EntityType],
+        command_callback: Callable[[mqtt.Client, T, mqtt.MQTTMessage], Any],
+        user_data: T = None,
     ) -> None:
         """
         Entity that listens to commands from an MQTT topic.
@@ -955,15 +955,19 @@ class ClimateSubscriber(Discoverable[EntityType]):
         # Add the MQTT command topic to the existing config object
         topics = {
             "mode_command_topic": self._mode_command_topic,
-            "mode_command_template": json.dumps({
-                "command": "mode",
-                "value": "{{ value }}",
-            }),
+            "mode_command_template": json.dumps(
+                {
+                    "command": "mode",
+                    "value": "{{ value }}",
+                }
+            ),
             "temperature_command_topic": self._temperature_command_topic,
-            "temperature_command_template": json.dumps({
-                "command": "temperature",
-                "value": "{{ value }}",
-            }),
+            "temperature_command_template": json.dumps(
+                {
+                    "command": "temperature",
+                    "value": "{{ value }}",
+                }
+            ),
             "mode_state_topic": self._mode_state_topic,
             "current_temperature_topic": self._current_temperature_topic,
             "temperature_state_topic": self._temperature_state_topic,

@@ -180,12 +180,11 @@ mqtt_settings = Settings.MQTT(host="localhost")
 
 # Information about the climate entity
 climate_info = ClimateInfo(
-    name="MyThermostat",
+    name="MyClimate",
     temperature_unit="C",
     min_temp=16,
     max_temp=32,
-    modes=["off", "heat", "cool", "auto"],
-    current_temperature_topic="home/thermostat/temperature"
+    modes=["off", "heat"]
 )
 
 settings = Settings(mqtt=mqtt_settings, entity=climate_info)
@@ -198,12 +197,13 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
     except ValueError:
         print("Ony JSON schema is supported for climate entities!")
         return
-    
-    # Handle the command (e.g., mode changes, temperature setpoints)
-    handle_climate_command(payload)
-    # Update the state in HA
-    my_climate.set_temperature(25.0)
-    my_climate.set_mode("heat")
+
+    if payload['command'] == "mode":
+        set_my_custom_climate_mode(payload['value'])
+    elif payload['command'] == "temperature":
+        set_my_custom_climate_temperature(payload['value'])
+    else:
+        print("Unknown command")
 
 # Define an optional object to be passed back to the callback
 user_data = "Some custom data"
@@ -211,11 +211,11 @@ user_data = "Some custom data"
 # Instantiate the climate entity
 my_climate = Climate(settings, my_callback, user_data)
 
-# Update the current temperature reading
-my_climate.update_current_temperature(24.5)
+# Set the current temperature
+my_climate.set_current_temperature(24.5)
 
 # Set the target temperature
-my_climate.set_temperature(25.0)
+my_climate.set_target_temperature(25.0)
 
 # Change the HVAC mode
 my_climate.set_mode("heat")
