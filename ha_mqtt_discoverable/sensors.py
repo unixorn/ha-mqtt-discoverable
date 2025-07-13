@@ -23,11 +23,11 @@ from typing import Annotated, Any, Literal
 from pydantic import Field, model_validator
 
 from ha_mqtt_discoverable import (
+    ClimateSubscriber,
     DeviceInfo,
     Discoverable,
     EntityInfo,
     Subscriber,
-    ClimateSubscriber,
 )
 
 logger = logging.getLogger(__name__)
@@ -392,8 +392,7 @@ class Climate(ClimateSubscriber[ClimateInfo]):
         """Set target temperature"""
         if temperature < self._entity.min_temp or temperature > self._entity.max_temp:
             raise RuntimeError(
-                f"Temperature {temperature} is outside valid range "
-                f"[{self._entity.min_temp}, {self._entity.max_temp}]"
+                f"Temperature {temperature} is outside valid range [{self._entity.min_temp}, {self._entity.max_temp}]"
             )
         self._state_helper(temperature, self._current_temperature_topic)
 
@@ -401,8 +400,7 @@ class Climate(ClimateSubscriber[ClimateInfo]):
         """Set target temperature"""
         if temperature < self._entity.min_temp or temperature > self._entity.max_temp:
             raise RuntimeError(
-                f"Temperature {temperature} is outside valid range "
-                f"[{self._entity.min_temp}, {self._entity.max_temp}]"
+                f"Temperature {temperature} is outside valid range [{self._entity.min_temp}, {self._entity.max_temp}]"
             )
         self._state_helper(temperature, self._temperature_state_topic)
 
