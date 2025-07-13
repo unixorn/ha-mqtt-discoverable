@@ -4,7 +4,7 @@ from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Climate, ClimateInfo
 
 # Test data
-modes = ["off", "heat", "cool"]
+modes = ["off", "heat"]
 
 @pytest.fixture
 def climate() -> Climate:
@@ -23,13 +23,18 @@ def climate() -> Climate:
 
 def test_set_temperature(climate: Climate):
     """Test setting the temperature"""
-    climate.set_temperature(20.0)
+    climate.set_current_temperature(20.0)
+    climate.set_target_temperature(25.0)
 
     # Test with out-of-range temperature
     with pytest.raises(RuntimeError):
-        climate.set_temperature(15.0)  # Below min_temp
+        climate.set_current_temperature(15.0)  # Below min_temp
     with pytest.raises(RuntimeError):
-        climate.set_temperature(33.0)  # Above max_temp
+        climate.set_current_temperature(33.0)  # Above max_temp
+    with pytest.raises(RuntimeError):
+        climate.set_target_temperature(15.0)  # Below min_temp
+    with pytest.raises(RuntimeError):
+        climate.set_target_temperature(33.0)  # Above max_temp
 
 def test_climate_mode(climate: Climate):
     """Test climate mode settings"""
