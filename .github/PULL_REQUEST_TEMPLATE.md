@@ -3,17 +3,24 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [Description](#description)
+- [Credit](#credit)
 - [License Acceptance](#license-acceptance)
 - [Type of changes](#type-of-changes)
 - [Checklist](#checklist)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-<!--- Provide a general summary of your changes in the Title above -->
+<!-- Provide a general summary of your changes in the Title above -->
 
 # Description
 
-<!--- Describe your changes in detail -->
+<!-- Describe your changes in detail -->
+
+# Credit
+<!-- Releases are announced on Mastodon. In order for me to credit people properly, -->
+<!-- if you have a mastodon account, please put it here to have it mentioned in the -->
+<!-- release announcement. If there's another way you want to be credited, please   -->
+<!-- add details here. -->
 
 # License Acceptance
 
@@ -21,7 +28,7 @@
 
 # Type of changes
 
-<!--- What types of changes does your submission introduce? Put an `x` in all the boxes that apply: [x] -->
+<!-- What types of changes does your submission introduce? Put an `x` in all the boxes that apply: [x] -->
 
 - [ ] Add/update a helper script
 - [ ] Add/update link to an external resource like a blog post or video
@@ -33,8 +40,8 @@
 
 # Checklist
 
-<!--- Go over all the following points, and put an `x` in all the boxes that apply. [x] -->
-<!--- If you're unsure about any of these, don't hesitate to ask. I'm happy to help! -->
+<!-- Go over all the following points, and put an `x` in all the boxes that apply. [x] -->
+<!-- If you're unsure about any of these, don't hesitate to ask. I'm happy to help! -->
 
 - [ ] I have read the [CONTRIBUTING](https://github.com/unixorn/ha-mqtt-discovery/blob/main/Contributing.md) document.
 - [ ] All new and existing tests pass.
