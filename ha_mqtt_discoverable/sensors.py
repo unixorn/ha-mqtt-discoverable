@@ -27,6 +27,7 @@ from ha_mqtt_discoverable import (
     Discoverable,
     EntityInfo,
     Subscriber,
+    ClimateSubscriber,
 )
 
 logger = logging.getLogger(__name__)
@@ -44,6 +45,18 @@ class BinarySensorInfo(EntityInfo):
     """Payload to send for the ON state"""
     payload_on: str = "on"
     """Payload to send for the OFF state"""
+
+
+class ClimateInfo(EntityInfo):
+    """Climate specific information"""
+
+    component: str = "climate"
+    optimistic: bool | None = None
+    temperature_unit: Literal["C", "F"] = "C"
+    min_temp: float = 7.0
+    max_temp: float = 35.0
+    modes: list[str] = ["off", "heat"]  # "cool", "auto", "dry", "fan_only"
+    retain: bool | None = True
 
 
 class SensorInfo(EntityInfo):
@@ -370,6 +383,36 @@ class BinarySensor(Discoverable[BinarySensorInfo]):
         self._state_helper(state=state_message)
 
 
+class Climate(ClimateSubscriber[ClimateInfo]):
+    """Implements an MQTT climate device:
+    https://www.home-assistant.io/integrations/climate.mqtt/
+    """
+
+    def set_current_temperature(self, temperature: float) -> None:
+        """Set target temperature"""
+        if temperature < self._entity.min_temp or temperature > self._entity.max_temp:
+            raise RuntimeError(
+                f"Temperature {temperature} is outside valid range "
+                f"[{self._entity.min_temp}, {self._entity.max_temp}]"
+            )
+        self._state_helper(temperature, self._current_temperature_topic)
+
+    def set_target_temperature(self, temperature: float) -> None:
+        """Set target temperature"""
+        if temperature < self._entity.min_temp or temperature > self._entity.max_temp:
+            raise RuntimeError(
+                f"Temperature {temperature} is outside valid range "
+                f"[{self._entity.min_temp}, {self._entity.max_temp}]"
+            )
+        self._state_helper(temperature, self._temperature_state_topic)
+
+    def set_mode(self, mode: str) -> None:
+        """Set HVAC mode"""
+        if mode not in self._entity.modes:
+            raise RuntimeError(f"Mode {mode} is not in supported modes: {self._entity.modes}")
+        self._state_helper(mode, self._mode_state_topic)
+
+
 class Sensor(Discoverable[SensorInfo]):
     def set_state(self, state: str | int | float, last_reset: str = None) -> None:
         """
@@ -691,61 +734,3 @@ class Select(Subscriber[SelectInfo]):
 
         logger.info(f"Changing selection of {self._entity.name} to {option} using {self.state_topic}")
         self._state_helper(option)
-
-
-class ClimateInfo(EntityInfo):
-    """Climate specific information"""
-
-    component: str = "climate"
-    state_schema: str = Field(default="json", alias="schema")  # 'schema' is a reserved word by pydantic
-    optimistic: bool | None = None
-    temperature_unit: Literal["C", "F"] = "C"
-    min_temp: float = 7.0
-    max_temp: float = 35.0
-    current_temperature_topic: str | None = None
-    current_temperature_template: str | None = None
-    modes: list[str] = ["off", "heat", "cool", "auto", "dry", "fan_only"]
-    retain: bool | None = None
-    state_topic: str | None = None
-
-
-
-class Climate(Subscriber[ClimateInfo]):
-    """Implements an MQTT climate device:
-    https://www.home-assistant.io/integrations/climate.mqtt/
-    """
-
-    def set_temperature(self, temperature: float) -> None:
-        """Set target temperature"""
-        if not self._entity.min_temp <= temperature <= self._entity.max_temp:
-            raise RuntimeError(
-                f"Temperature {temperature} is outside valid range "
-                f"[{self._entity.min_temp}, {self._entity.max_temp}]"
-            )
-        state_payload = {"temperature": temperature}
-        self._update_state(state_payload)
-
-    def set_mode(self, mode: str) -> None:
-        """Set HVAC mode"""
-        if mode not in self._entity.modes:
-            raise RuntimeError(
-                f"Mode {mode} is not in supported modes: {self._entity.modes}"
-            )
-        state_payload = {"mode": mode}
-        self._update_state(state_payload)
-
-    def update_current_temperature(self, temperature: float) -> None:
-        """Update current temperature reading"""
-        if not self._entity.current_temperature_topic:
-            raise RuntimeError("Current temperature topic not configured")
-        self._state_helper(
-            str(temperature),
-            topic=self._entity.current_temperature_topic,
-            retain=self._entity.retain
-        )
-
-    def _update_state(self, state: dict[str, Any]) -> None:
-        """Update climate state"""
-        logger.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
-        json_state = json.dumps(state)
-        self._state_helper(state=json_state, retain=self._entity.retain)
