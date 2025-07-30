@@ -23,6 +23,7 @@ from typing import Annotated, Any, Literal
 from pydantic import Field, model_validator
 
 from ha_mqtt_discoverable import (
+    ClimateSubscriber,
     DeviceInfo,
     Discoverable,
     EntityInfo,
@@ -44,6 +45,18 @@ class BinarySensorInfo(EntityInfo):
     """Payload to send for the ON state"""
     payload_on: str = "on"
     """Payload to send for the OFF state"""
+
+
+class ClimateInfo(EntityInfo):
+    """Climate specific information"""
+
+    component: str = "climate"
+    optimistic: bool | None = None
+    temperature_unit: Literal["C", "F"] = "C"
+    min_temp: float = 7.0
+    max_temp: float = 35.0
+    modes: list[str] = ["off", "heat"]  # "cool", "auto", "dry", "fan_only"
+    retain: bool | None = True
 
 
 class SensorInfo(EntityInfo):
@@ -368,6 +381,34 @@ class BinarySensor(Discoverable[BinarySensorInfo]):
         state_message = self._entity.payload_on if state else self._entity.payload_off
         logger.info(f"Setting {self._entity.name} to {state_message} using {self.state_topic}")
         self._state_helper(state=state_message)
+
+
+class Climate(ClimateSubscriber[ClimateInfo]):
+    """Implements an MQTT climate device:
+    https://www.home-assistant.io/integrations/climate.mqtt/
+    """
+
+    def set_current_temperature(self, temperature: float) -> None:
+        """Set target temperature"""
+        if temperature < self._entity.min_temp or temperature > self._entity.max_temp:
+            raise RuntimeError(
+                f"Temperature {temperature} is outside valid range [{self._entity.min_temp}, {self._entity.max_temp}]"
+            )
+        self._state_helper(temperature, self._current_temperature_topic)
+
+    def set_target_temperature(self, temperature: float) -> None:
+        """Set target temperature"""
+        if temperature < self._entity.min_temp or temperature > self._entity.max_temp:
+            raise RuntimeError(
+                f"Temperature {temperature} is outside valid range [{self._entity.min_temp}, {self._entity.max_temp}]"
+            )
+        self._state_helper(temperature, self._temperature_state_topic)
+
+    def set_mode(self, mode: str) -> None:
+        """Set HVAC mode"""
+        if mode not in self._entity.modes:
+            raise RuntimeError(f"Mode {mode} is not in supported modes: {self._entity.modes}")
+        self._state_helper(mode, self._mode_state_topic)
 
 
 class Sensor(Discoverable[SensorInfo]):
