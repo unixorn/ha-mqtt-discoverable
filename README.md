@@ -122,11 +122,8 @@ settings = Settings(mqtt=mqtt_settings, entity=button_info)
 def my_callback(client: Client, user_data, message: MQTTMessage):
     perform_my_custom_action()
 
-# Define an optional object to be passed back to the callback
-user_data = "Some custom data"
-
 # Instantiate the button
-my_button = Button(settings, my_callback, user_data)
+my_button = Button(settings, my_callback)
 
 # Publish the button's discoverability message to let HA automatically notice it
 my_button.write_config()
@@ -154,11 +151,8 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
     payload = message.payload.decode()
     perform_my_custom_action()
 
-# Define an optional object to be passed back to the callback
-user_data = "Some custom data"
-
 # Instantiate the cover
-my_camera = Camera(settings, my_callback, user_data)
+my_camera = Camera(settings, my_callback)
 
 # Set the initial state of the cover, which also makes it discoverable
 my_camera.set_topic("zanzito/shared_locations/my-device")  # not needed if already defined
@@ -209,11 +203,8 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
         # Let HA know that the cover was stopped
         my_cover.stopped()
 
-# Define an optional object to be passed back to the callback
-user_data = "Some custom data"
-
 # Instantiate the cover
-my_cover = Cover(settings, my_callback, user_data)
+my_cover = Cover(settings, my_callback)
 
 # Set the initial state of the cover, which also makes it discoverable
 my_cover.closed()
@@ -393,11 +384,8 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
     else:
         print("Unknown payload")
 
-# Define an optional object to be passed back to the callback
-user_data = "Some custom data"
-
 # Instantiate the light
-my_light = Light(settings, my_callback, user_data)
+my_light = Light(settings, my_callback)
 
 # Set the initial state of the light, which also makes it discoverable
 my_light.off()
@@ -430,11 +418,9 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
     # Send an MQTT message to confirm to HA that the number was changed
     my_number.set_value(number)
 
-# Define an optional object to be passed back to the callback
-user_data = "Some custom data"
 
 # Instantiate the number
-my_number = Number(settings, my_callback, user_data)
+my_number = Number(settings, my_callback)
 
 # Set the initial number displayed in HA UI, publishing an MQTT message that gets picked up by HA
 my_number.set_value(42.0)
@@ -463,11 +449,8 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
     payload = message.payload.decode()
     do_something()
 
-# Define an optional object to be passed back to the callback
-user_data = "Some custom data"
-
 # Instantiate the selection
-my_selection = Select(settings, my_callback, user_data)
+my_selection = Select(settings, my_callback)
 
 # Publish the select's discovery message to let HA automatically notice it
 my_selection.write_config()
@@ -534,11 +517,8 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
         # Let HA know that the switch was successfully deactivated
         my_switch.off()
 
-# Define an optional object to be passed back to the callback
-user_data = "Some custom data"
-
 # Instantiate the switch
-my_switch = Switch(settings, my_callback, user_data)
+my_switch = Switch(settings, my_callback)
 
 # Set the initial state of the switch, which also makes it discoverable
 my_switch.off()
@@ -571,11 +551,8 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
     # Send an MQTT message to confirm to HA that the text was changed
     my_text.set_text(text)
 
-# Define an optional object to be passed back to the callback
-user_data = "Some custom data"
-
 # Instantiate the text
-my_text = Text(settings, my_callback, user_data)
+my_text = Text(settings, my_callback)
 
 # Set the initial text displayed in HA UI, publishing an MQTT message that gets picked up by HA
 my_text.set_text("Some awesome text")
