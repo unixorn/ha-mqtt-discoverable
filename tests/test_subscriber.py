@@ -58,17 +58,15 @@ def test_command_callback():
     # Flag that waits for the command to be received
     message_received = Event()
 
-    custom_user_data = "data"
-
     # Callback to receive the command message
     def custom_callback(client, user_data, message: MQTTMessage):
         payload = message.payload.decode()
         logging.info(f"Received {payload}")
         assert payload == "on"
-        assert user_data == custom_user_data
+        assert user_data is None
         message_received.set()
 
-    switch = Subscriber(settings, custom_callback, custom_user_data)
+    switch = Subscriber(settings, custom_callback)
     # Wait some seconds for the subscription to take effect
     time.sleep(2)
 
