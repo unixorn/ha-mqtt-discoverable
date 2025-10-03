@@ -74,3 +74,27 @@ def test_update_state_with_last_reset(sensor: Sensor):
 def test_invalid_suggested_display_precision(make_sensor):
     with pytest.raises(ValidationError):
         make_sensor(suggested_display_precision=-1)
+
+
+def test_empty_options_list_raises_exception():
+    with pytest.raises(ValidationError, match="An empty options list is not allowed"):
+        SensorInfo(name="test", options=[], device_class="enum")
+
+
+def test_options_wrong_device_class_raises_exception():
+    with pytest.raises(ValidationError, match="The sensor’s device_class must be set to enum."):
+        SensorInfo(name="test", options=["a", "b", "c"], device_class="temperature")
+
+
+def test_options_with_state_class_raises_exception():
+    with pytest.raises(
+        ValidationError, match="The options option cannot be used together with state_class or unit_of_measurement."
+    ):
+        SensorInfo(name="test", options=["a", "b", "c"], device_class="enum", state_class="measurement")
+
+
+def test_options_with_unit_of_measurement_raises_exception():
+    with pytest.raises(
+        ValidationError, match="The options option cannot be used together with state_class or unit_of_measurement."
+    ):
+        SensorInfo(name="test", options=["a", "b", "c"], device_class="enum", unit_of_measurement="kWh")
