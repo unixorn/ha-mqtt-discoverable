@@ -72,6 +72,28 @@ class SensorInfo(EntityInfo):
     """
     The number of decimals which should be used in the sensor's state after rounding.
     """
+    options: list | None = None
+    """
+    List of allowed sensor state values.
+    An empty list is not allowed.
+    The sensor’s device_class must be set to enum.
+    The options option cannot be used together with state_class or
+    unit_of_measurement.
+    """
+
+    @model_validator(mode="after")
+    def sensor_info_entity_model_validator(self) -> SensorInfo:
+        """
+        Determine correct usage of configuration variables.
+        """
+        if self.options is not None:
+            if not self.options:
+                raise ValueError("An empty options list is not allowed")
+            if self.device_class != "enum":
+                raise ValueError("The sensor’s device_class must be set to enum.")
+            if self.unit_of_measurement or self.state_class:
+                raise ValueError("The options option cannot be used together with state_class or unit_of_measurement.")
+        return self
 
 
 class SwitchInfo(EntityInfo):
