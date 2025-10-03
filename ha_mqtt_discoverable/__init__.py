@@ -21,6 +21,7 @@ from typing import Any, Generic, TypeVar, Union
 
 import paho.mqtt.client as mqtt
 from paho.mqtt.client import MQTTMessageInfo
+from paho.mqtt.enums import CallbackAPIVersion
 from pydantic import BaseModel, ConfigDict, model_validator
 
 # Read version from the package metadata
@@ -671,11 +672,14 @@ wrote_configuration: {self.wrote_configuration}
         # If the user has passed in an MQTT client, use it
         if self._settings.mqtt.client:
             self.mqtt_client = self._settings.mqtt.client
+            if on_connect:
+                logger.debug("Registering custom callback function")
+                self.mqtt_client.on_connect = on_connect
             return
 
         mqtt_settings = self._settings.mqtt
         logger.debug(f"Creating mqtt client ({mqtt_settings.client_name}) for {mqtt_settings.host}:{mqtt_settings.port}")
-        self.mqtt_client = mqtt.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION2, client_id=mqtt_settings.client_name)
+        self.mqtt_client = mqtt.Client(callback_api_version=CallbackAPIVersion.VERSION2, client_id=mqtt_settings.client_name)
         if mqtt_settings.tls_key:
             logger.info(f"Connecting to {mqtt_settings.host}:{mqtt_settings.port} with SSL and client certificate authentication")
             logger.debug(f"ca_certs={mqtt_settings.tls_ca_cert}")
@@ -716,9 +720,9 @@ wrote_configuration: {self.wrote_configuration}
             self.mqtt_client.will_set(self.availability_topic, "offline", retain=True)
 
     def _connect_client(self) -> None:
-        """Connect the client to the MQTT broker, start its onw internal loop in
+        """Connect the client to the MQTT broker, start its own internal loop in
         a separate thread"""
-        result = self.mqtt_client.connect(self._settings.mqtt.host, self._settings.mqtt.port or 1883)
+        result = self.mqtt_client.connect(self._settings.mqtt.host, self._settings.mqtt.port)
         # Check if we have established a connection
         if result != mqtt.MQTT_ERR_SUCCESS:
             raise RuntimeError("Error while connecting to MQTT broker")
@@ -871,7 +875,6 @@ class Subscriber(Discoverable[EntityType]):
 
         # Callback invoked when the MQTT connection is established
         def on_client_connected(client: mqtt.Client, *args):
-            # Publish this button in Home Assistant
             # Subscribe to the command topic
             result, _ = client.subscribe(self._command_topic, qos=1)
             if result is not mqtt.MQTT_ERR_SUCCESS:
@@ -885,8 +888,21 @@ class Subscriber(Discoverable[EntityType]):
         # Register the user-supplied callback function
         self.mqtt_client.on_message = command_callback
 
-        # Manually connect the MQTT client
-        self._connect_client()
+        if self._settings.mqtt.client:
+            # externally created MQTT client is used
+            if self.mqtt_client.is_connected():
+                # MQTT client is already connected, therefor explicitly
+                # subscribe to the command topic
+                on_client_connected(self.mqtt_client)
+            else:
+                # externally created MQTT client is not connected yet
+                # the 'on_connect' callback named 'on_client_connected'
+                # will subscribe to the command topic
+                # when the externally created MQTT client connects
+                pass
+        else:
+            # Manually connect the MQTT client
+            self._connect_client()
 
     def generate_config(self) -> dict[str, Any]:
         """Override base config to add the command topic of this switch"""
