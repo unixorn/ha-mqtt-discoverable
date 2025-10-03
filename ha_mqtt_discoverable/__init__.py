@@ -891,7 +891,7 @@ class Subscriber(Discoverable[EntityType]):
         if self._settings.mqtt.client:
             # externally created MQTT client is used
             if self.mqtt_client.is_connected():
-                # MQTT client is already connect, therefor explicitly
+                # MQTT client is already connected, therefor explicitly
                 # subscribe to the command topic
                 on_client_connected(self.mqtt_client)
             else:
@@ -900,7 +900,7 @@ class Subscriber(Discoverable[EntityType]):
                 # will subscribe to the command topic
                 # when the externally created MQTT client connects
                 pass
-        else :
+        else:
             # Manually connect the MQTT client
             self._connect_client()
 
