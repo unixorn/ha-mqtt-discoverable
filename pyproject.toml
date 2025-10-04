@@ -9,7 +9,7 @@ dependencies = [
     "pyaml==25.7.0",
     "paho-mqtt==2.1.0",
     "gitlike-commands (>=0.2.1,<0.4.0)",
-    "pydantic==2.11.9",
+    "pydantic==2.11.10",
 ]
 
 
