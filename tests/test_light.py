@@ -35,7 +35,7 @@ def light() -> Light:
         effect_list=EFFECTS,
     )
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
-    return Light(settings, lambda *_: None)
+    return Light(settings, lambda _, __, ___: None)
 
 
 def test_required_config():
@@ -43,7 +43,7 @@ def test_required_config():
     mqtt_settings = Settings.MQTT(host="localhost")
     sensor_info = LightInfo(name="test")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
-    sensor = Light(settings, lambda *_: None)
+    sensor = Light(settings, lambda _, __, ___: None)
     assert sensor is not None
 
 
