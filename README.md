@@ -141,7 +141,7 @@ from paho.mqtt.client import Client, MQTTMessage
 # Configure the required parameters for the MQTT broker
 mqtt_settings = Settings.MQTT(host="localhost")
 
-# Information about the cover
+# Information about the camera
 camera_info = CameraInfo(name="test", topic="zanzito/shared_locations/my-device")
 
 settings = Settings(mqtt=mqtt_settings, entity=camera_info)
@@ -151,7 +151,7 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
     payload = message.payload.decode()
     perform_my_custom_action()
 
-# Instantiate the cover
+# Instantiate the camera
 my_camera = Camera(settings, my_callback)
 
 # Set the initial state of the cover, which also makes it discoverable
