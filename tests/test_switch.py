@@ -25,7 +25,7 @@ def switch() -> Switch:
     sensor_info = SwitchInfo(name="test")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     # Define an empty `command_callback`
-    return Switch(settings, lambda *_: None)
+    return Switch(settings, lambda _, __, ___: None)
 
 
 def test_required_config():
@@ -33,7 +33,7 @@ def test_required_config():
     sensor_info = SwitchInfo(name="test")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     # Define empty callback
-    sensor = Switch(settings, lambda *_: None)
+    sensor = Switch(settings, lambda _, __, ___: None)
     assert sensor is not None
 
 

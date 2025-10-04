@@ -25,7 +25,7 @@ def cover() -> Cover:
     mqtt_settings = Settings.MQTT(host="localhost")
     sensor_info = CoverInfo(name="test")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
-    return Cover(settings, lambda *_: None)
+    return Cover(settings, lambda _, __, ___: None)
 
 
 def test_required_config():
@@ -33,7 +33,7 @@ def test_required_config():
     mqtt_settings = Settings.MQTT(host="localhost")
     sensor_info = CoverInfo(name="test")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
-    sensor = Cover(settings, lambda *_: None)
+    sensor = Cover(settings, lambda _, __, ___: None)
     assert sensor is not None
 
 

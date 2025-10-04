@@ -30,7 +30,7 @@ def subscriber() -> Subscriber[EntityInfo]:
     sensor_info = EntityInfo(name="test", component="button")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     # Define an empty `command_callback`
-    return Subscriber(settings, lambda *_: None)
+    return Subscriber(settings, lambda _, __, ___: None)
 
 
 def test_required_config():
@@ -38,7 +38,7 @@ def test_required_config():
     sensor_info = EntityInfo(name="test", component="button")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     # Define empty callback
-    sensor = Subscriber(settings, lambda *_: None)
+    sensor = Subscriber(settings, lambda _, __, ___: None)
     assert sensor is not None
 
 
@@ -59,7 +59,7 @@ def test_command_callback():
     message_received = Event()
 
     # Callback to receive the command message
-    def custom_callback(client, user_data, message: MQTTMessage):
+    def custom_callback(_, user_data, message: MQTTMessage):
         payload = message.payload.decode()
         logging.info(f"Received {payload}")
         assert payload == "on"

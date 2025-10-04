@@ -9,7 +9,7 @@ dependencies = [
     "pyaml==25.7.0",
     "paho-mqtt==2.1.0",
     "gitlike-commands (>=0.2.1,<0.4.0)",
-    "pydantic==2.11.9",
+    "pydantic==2.11.10",
 ]
 
 
@@ -28,5 +28,5 @@ pytest-mock = "^3.10.0"
 
 
 [build-system]
-requires = ["poetry-core>=2.0"]
+requires = ["poetry-core>=2.2.1"]
 build-backend = "poetry.core.masonry.api"

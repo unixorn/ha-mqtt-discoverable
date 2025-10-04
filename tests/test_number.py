@@ -26,7 +26,7 @@ def number() -> Number:
     number_info = NumberInfo(name="test", min=5.0, max=90.0)
     settings = Settings(mqtt=mqtt_settings, entity=number_info)
     # Define empty callback
-    return Number(settings, lambda *_: None)
+    return Number(settings, lambda _, __, ___: None)
 
 
 def test_required_config():
@@ -34,7 +34,7 @@ def test_required_config():
     number_info = NumberInfo(name="test")
     settings = Settings(mqtt=mqtt_settings, entity=number_info)
     # Define empty callback
-    number = Number(settings, lambda *_: None)
+    number = Number(settings, lambda _, __, ___: None)
     assert number is not None
 
 

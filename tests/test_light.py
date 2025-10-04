@@ -19,8 +19,8 @@ from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Light, LightInfo
 
 # Test data
-color_modes = ["rgb", "rgbw"]
-effects = ["rainbow", "mycustomeffect"]
+COLOR_MODES = ["rgb", "rgbw"]
+EFFECTS = ["rainbow", "my_custom_effect"]
 
 
 @pytest.fixture
@@ -30,12 +30,12 @@ def light() -> Light:
     sensor_info = LightInfo(
         name="test",
         color_mode=True,
-        supported_color_modes=color_modes,
+        supported_color_modes=COLOR_MODES,
         effect=True,
-        effect_list=effects,
+        effect_list=EFFECTS,
     )
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
-    return Light(settings, lambda *_: None)
+    return Light(settings, lambda _, __, ___: None)
 
 
 def test_required_config():
@@ -43,7 +43,7 @@ def test_required_config():
     mqtt_settings = Settings.MQTT(host="localhost")
     sensor_info = LightInfo(name="test")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
-    sensor = Light(settings, lambda *_: None)
+    sensor = Light(settings, lambda _, __, ___: None)
     assert sensor is not None
 
 
@@ -66,7 +66,7 @@ def test_brightness_out_of_range(light: Light, brightness):
         light.brightness(brightness)
 
 
-@pytest.mark.parametrize("color_modes", color_modes)
+@pytest.mark.parametrize("color_modes", COLOR_MODES)
 def test_color(light: Light, color_modes):
     """Test to set the color"""
     light.color(color_modes, {"test": 123})
@@ -78,7 +78,7 @@ def test_color_unsupported(light: Light):
         light.color("test", {"r": 255, "g": 255, "b": 255})
 
 
-@pytest.mark.parametrize("effects", effects)
+@pytest.mark.parametrize("effects", EFFECTS)
 def test_effect(light: Light, effects):
     """Test to enable effect"""
     light.effect(effects)
