@@ -52,6 +52,6 @@ def test_too_short_string(text: Text):
 def test_too_long_string(text: Text):
     length = 500
     letters = string.ascii_lowercase
-    random_string = "".join(random.choice(letters) for i in range(length))
+    random_string = "".join(random.choice(letters) for _ in range(length))
     with pytest.raises(RuntimeError):
         text.set_text(random_string)

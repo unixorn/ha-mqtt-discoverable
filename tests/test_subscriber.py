@@ -59,7 +59,7 @@ def test_command_callback():
     message_received = Event()
 
     # Callback to receive the command message
-    def custom_callback(client, user_data, message: MQTTMessage):
+    def custom_callback(_, user_data, message: MQTTMessage):
         payload = message.payload.decode()
         logging.info(f"Received {payload}")
         assert payload == "on"
