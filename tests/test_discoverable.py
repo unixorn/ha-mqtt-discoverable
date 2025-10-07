@@ -71,7 +71,6 @@ def test_custom_on_connect():
 
     def custom_callback(*args):
         is_connected.set()
-        pass
 
     d = Discoverable(settings, custom_callback)
     d._connect_client()
