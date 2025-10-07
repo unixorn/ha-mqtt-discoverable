@@ -494,6 +494,7 @@ class DeviceInfo(BaseModel):
         This is used to show device topology in Home Assistant."""
 
     @model_validator(mode="before")
+    @classmethod
     def must_have_identifiers_or_connection(cls, values):
         """Check that either `identifiers` or `connections` is set"""
         identifiers, connections = values.get("identifiers"), values.get("connections")
@@ -534,6 +535,7 @@ class EntityInfo(BaseModel):
         device"""
 
     @model_validator(mode="before")
+    @classmethod
     def device_need_unique_id(cls, values):
         """Check that `unique_id` is set if `device` is provided,\
             otherwise Home Assistant will not link the sensor to the device"""
