@@ -806,7 +806,6 @@ wrote_configuration: {self.wrote_configuration}
             f"Writing '{config_message}' to topic {self.config_topic} on {self._settings.mqtt.host}:{self._settings.mqtt.port}"
         )
         self.wrote_configuration = True
-        self.config_message = config_message
 
         if self._settings.debug:
             logger.debug("Debug mode is enabled, skipping config write.")
