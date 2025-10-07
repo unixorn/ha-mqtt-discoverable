@@ -127,7 +127,7 @@ def test_generate_config(discoverable: Discoverable):
 
 
 def test_setup_client(discoverable: Discoverable):
-    # Try to setup client
+    # Try to set up client
     discoverable._setup_client()
     # Check that we save the client
     assert discoverable.mqtt_client is not None
@@ -318,8 +318,8 @@ def test_set_availability(discoverable_availability: Discoverable):
 
 
 def test_set_availability_wrong_config(discoverable: Discoverable):
-    """A discoverable that has not set availability to manual cannot invoke the \
-        methods"""
+    """A discoverable that has not set availability to manual
+    cannot invoke the method"""
     with pytest.raises(RuntimeError):
         discoverable.set_availability(True)
 
