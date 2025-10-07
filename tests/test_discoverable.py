@@ -288,8 +288,7 @@ def test_disconnect_client(mocker: MockerFixture):
     sensor_info = EntityInfo(name="test", component="binary_sensor")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
 
-    discoverable = Discoverable[EntityInfo](settings)
-    del discoverable
+    Discoverable[EntityInfo](settings)
 
     mock_instance.disconnect.assert_called_once()
     mock_instance.loop_stop.assert_called_once()
