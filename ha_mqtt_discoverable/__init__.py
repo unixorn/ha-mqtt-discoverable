@@ -749,16 +749,12 @@ wrote_configuration: {self.wrote_configuration}
         logger.debug(f"Writing '{state}' to {topic}")
 
         if self._settings.debug:
-            logger.debug(f"Debug is {self.debug}, skipping state write")
+            logger.debug("Debug mode is enabled, skipping state write.")
             return None
 
         message_info = self.mqtt_client.publish(topic, state, retain=retain)
         logger.debug(f"Publish result: {message_info}")
         return message_info
-
-    def debug_mode(self, mode: bool):
-        self.debug = mode
-        logger.debug(f"Set debug mode to {self.debug}")
 
     def delete(self) -> None:
         """
