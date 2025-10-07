@@ -750,7 +750,7 @@ wrote_configuration: {self.wrote_configuration}
 
         if self._settings.debug:
             logger.debug(f"Debug is {self.debug}, skipping state write")
-            return
+            return None
 
         message_info = self.mqtt_client.publish(topic, state, retain=retain)
         logger.debug(f"Publish result: {message_info}")
