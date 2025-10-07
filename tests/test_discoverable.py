@@ -69,7 +69,7 @@ def test_custom_on_connect():
 
     is_connected = Event()
 
-    def custom_callback(*args):
+    def custom_callback(*_):
         is_connected.set()
 
     d = Discoverable(settings, custom_callback)
@@ -216,7 +216,7 @@ def test_str(discoverable: Discoverable[EntityInfo]):
 
 
 # Define a callback function to be invoked when we receive a message on the topic
-def message_callback(client: Client, userdata, message: MQTTMessage, tmp=None):
+def message_callback(client: Client, userdata, message: MQTTMessage, _=None):
     logging.info("Received %s", message)
     # If the broker is `dirty` and contains messages send by other test functions,
     # skip these retained messages

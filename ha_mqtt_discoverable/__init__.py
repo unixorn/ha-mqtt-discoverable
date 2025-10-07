@@ -869,7 +869,7 @@ class Subscriber(Discoverable[EntityType]):
         """
 
         # Callback invoked when the MQTT connection is established
-        def on_client_connected(client: mqtt.Client, *args):
+        def on_client_connected(client: mqtt.Client, *_):
             # Subscribe to the command topic
             result, _ = client.subscribe(self._command_topic, qos=1)
             if result is not mqtt.MQTT_ERR_SUCCESS:
