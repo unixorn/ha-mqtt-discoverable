@@ -20,7 +20,7 @@ packages = [{include = "ha_mqtt_discoverable"}]
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.4.2"
 pre-commit = "^4.3.0"
-ruff = "^0.13.3"
+ruff = "^0.14.0"
 
 
 [tool.poetry.group.test.dependencies]
