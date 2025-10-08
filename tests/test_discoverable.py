@@ -17,16 +17,11 @@ import asyncio
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from threading import Event
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 from paho.mqtt import subscribe
-from paho.mqtt.client import (
-    MQTT_ERR_SUCCESS,
-    Client,
-    MQTTMessage,
-    MQTTv5,
-)
+from paho.mqtt.client import MQTT_ERR_SUCCESS, Client, MQTTMessage, MQTTv5
 from paho.mqtt.enums import CallbackAPIVersion
 from paho.mqtt.subscribeoptions import SubscribeOptions
 from pytest_mock import MockerFixture
@@ -74,9 +69,8 @@ def test_custom_on_connect():
 
     is_connected = Event()
 
-    def custom_callback(*args):
+    def custom_callback(*_):
         is_connected.set()
-        pass
 
     d = Discoverable(settings, custom_callback)
     d._connect_client()
@@ -133,7 +127,7 @@ def test_generate_config(discoverable: Discoverable):
 
 
 def test_setup_client(discoverable: Discoverable):
-    # Try to setup client
+    # Try to set up client
     discoverable._setup_client()
     # Check that we save the client
     assert discoverable.mqtt_client is not None
@@ -148,19 +142,24 @@ def test_connect_client(discoverable: Discoverable):
 
 
 def test_write_config(discoverable: Discoverable):
-    # Write config to MQTT
-    discoverable.write_config()
-
-    assert discoverable.wrote_configuration is True
-    assert discoverable.config_message is not None
+    with patch.object(discoverable.mqtt_client, "publish") as mock_publish:
+        # Write config to MQTT
+        discoverable.write_config()
+        mock_publish.assert_called_once_with(
+            "homeassistant/binary_sensor/test/config",
+            '{"component": "binary_sensor", "name": "test", '
+            '"state_topic": "hmd/binary_sensor/test/state", '
+            '"json_attributes_topic": "hmd/binary_sensor/test/attributes"}',
+            retain=True,
+        )
 
 
 def test_state_helper(discoverable: Discoverable):
-    # Write a state to MQTT
-    discoverable._state_helper("test")
-    # Check that flag is set
-    assert discoverable.wrote_configuration is True
-    assert discoverable.config_message is not None
+    discoverable.write_config().wait_for_publish(1)
+    with patch.object(discoverable.mqtt_client, "publish") as mock_publish:
+        # Write a state to MQTT
+        discoverable._state_helper("test")
+        mock_publish.assert_called_once_with("hmd/binary_sensor/test/state", "test", retain=True)
 
 
 def test_device_info(discoverable: Discoverable[EntityInfo]):
@@ -217,7 +216,7 @@ def test_str(discoverable: Discoverable[EntityInfo]):
 
 
 # Define a callback function to be invoked when we receive a message on the topic
-def message_callback(client: Client, userdata, message: MQTTMessage, tmp=None):
+def message_callback(client: Client, userdata, message: MQTTMessage, _=None):
     logging.info("Received %s", message)
     # If the broker is `dirty` and contains messages send by other test functions,
     # skip these retained messages
@@ -244,14 +243,13 @@ def test_publish_multithread(discoverable: Discoverable):
     )
     mqtt_client.loop_start()
 
+    discoverable.write_config().wait_for_publish(1)
+
     # Write a state to MQTT from another thread
     with ThreadPoolExecutor() as executor:
         future = executor.submit(discoverable._state_helper, "test")
         # Wait for executor to finish
         future.result(1)
-        # Check that flag is set
-        assert discoverable.wrote_configuration is True
-        assert discoverable.config_message is not None
 
     # Wait until we receive the published message
     assert received_message.wait(1)
@@ -290,8 +288,7 @@ def test_disconnect_client(mocker: MockerFixture):
     sensor_info = EntityInfo(name="test", component="binary_sensor")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
 
-    discoverable = Discoverable[EntityInfo](settings)
-    del discoverable
+    Discoverable[EntityInfo](settings)
 
     mock_instance.disconnect.assert_called_once()
     mock_instance.loop_stop.assert_called_once()
@@ -320,8 +317,8 @@ def test_set_availability(discoverable_availability: Discoverable):
 
 
 def test_set_availability_wrong_config(discoverable: Discoverable):
-    """A discoverable that has not set availability to manual cannot invoke the \
-        methods"""
+    """A discoverable that has not set availability to manual
+    cannot invoke the method"""
     with pytest.raises(RuntimeError):
         discoverable.set_availability(True)
 

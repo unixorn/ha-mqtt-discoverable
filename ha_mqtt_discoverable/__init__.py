@@ -494,6 +494,7 @@ class DeviceInfo(BaseModel):
         This is used to show device topology in Home Assistant."""
 
     @model_validator(mode="before")
+    @classmethod
     def must_have_identifiers_or_connection(cls, values):
         """Check that either `identifiers` or `connections` is set"""
         identifiers, connections = values.get("identifiers"), values.get("connections")
@@ -534,6 +535,7 @@ class EntityInfo(BaseModel):
         device"""
 
     @model_validator(mode="before")
+    @classmethod
     def device_need_unique_id(cls, values):
         """Check that `unique_id` is set if `device` is provided,\
             otherwise Home Assistant will not link the sensor to the device"""
@@ -749,16 +751,12 @@ wrote_configuration: {self.wrote_configuration}
         logger.debug(f"Writing '{state}' to {topic}")
 
         if self._settings.debug:
-            logger.debug(f"Debug is {self.debug}, skipping state write")
-            return
+            logger.debug("Debug mode is enabled, skipping state write.")
+            return None
 
         message_info = self.mqtt_client.publish(topic, state, retain=retain)
         logger.debug(f"Publish result: {message_info}")
         return message_info
-
-    def debug_mode(self, mode: bool):
-        self.debug = mode
-        logger.debug(f"Set debug mode to {self.debug}")
 
     def delete(self) -> None:
         """
@@ -810,7 +808,6 @@ wrote_configuration: {self.wrote_configuration}
             f"Writing '{config_message}' to topic {self.config_topic} on {self._settings.mqtt.host}:{self._settings.mqtt.port}"
         )
         self.wrote_configuration = True
-        self.config_message = config_message
 
         if self._settings.debug:
             logger.debug("Debug mode is enabled, skipping config write.")
@@ -874,7 +871,7 @@ class Subscriber(Discoverable[EntityType]):
         """
 
         # Callback invoked when the MQTT connection is established
-        def on_client_connected(client: mqtt.Client, *args):
+        def on_client_connected(client: mqtt.Client, *_):
             # Subscribe to the command topic
             result, _ = client.subscribe(self._command_topic, qos=1)
             if result is not mqtt.MQTT_ERR_SUCCESS:

@@ -19,7 +19,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
   - [Binary sensor](#binary-sensor)
   - [Button](#button)
   - [Camera](#camera)
-  - [Covers](#covers)
+  - [Cover](#cover)
   - [Device](#device)
   - [Device trigger](#device-trigger)
   - [Image](#image)
@@ -158,7 +158,7 @@ my_camera = Camera(settings, my_callback)
 my_camera.set_topic("zanzito/shared_locations/my-device")  # not needed if already defined
 ```
 
-### Covers
+### Cover
 
 A cover has five possible states `open`, `closed`, `opening`, `closing` and `stopped`. Most other entities use the states as command payload, but covers differentiate on this. The HA user can either open, close or stop it in the covers current position.
 

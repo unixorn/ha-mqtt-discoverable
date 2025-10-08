@@ -550,7 +550,6 @@ class Cover(Subscriber[CoverInfo]):
         Args:
             state(str): What state to set the cover to
         """
-        print("State: " + state)
         logger.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
         self._state_helper(state=state, topic=self.state_topic, retain=self._entity.retain)
 
