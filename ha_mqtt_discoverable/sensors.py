@@ -367,6 +367,37 @@ class SelectInfo(EntityInfo):
     """List of options that can be selected. An empty list or a list with a single item is allowed."""
 
 
+class LockInfo(EntityInfo):
+    """
+    Information about the 'lock' entity.
+    """
+
+    component: str = "lock"
+    optimistic: bool | None = None
+    """Flag that defines if lock works in optimistic mode.
+    Default: true if no state_topic defined, else false."""
+    retain: bool = True
+    """If the published message should have the retain flag on or not"""
+    state_topic: str | None = None
+    """The MQTT topic subscribed to receive state updates."""
+
+    payload_lock: str = "LOCK"
+    """Command payload to lock the lock"""
+    payload_unlock: str = "UNLOCK"
+    """Command payload to unlock the lock"""
+
+    state_locked: str = "LOCKED"
+    """The payload sent to state_topic by the lock when it’s locked."""
+    state_locking: str = "LOCKING"
+    """The payload sent to state_topic by the lock when it’s locking."""
+    state_unlocked: str = "UNLOCKED"
+    """The payload sent to state_topic by the lock when it’s unlocked."""
+    state_unlocking: str = "UNLOCKING"
+    """The payload sent to state_topic by the lock when it’s unlocking."""
+    state_jammed: str = "JAMMED"
+    """The payload sent to state_topic by the lock when it’s jammed."""
+
+
 class BinarySensor(Discoverable[BinarySensorInfo]):
     def off(self):
         """
@@ -712,3 +743,40 @@ class Select(Subscriber[SelectInfo]):
 
         logger.info(f"Changing selection of {self._entity.name} to {option} using {self.state_topic}")
         self._state_helper(option)
+
+
+class Lock(Subscriber[LockInfo]):
+    """
+    Implements a MQTT lock:
+    https://www.home-assistant.io/integrations/lock.mqtt/
+    """
+
+    def locking(self) -> None:
+        """Set lock state to locking"""
+        self._update_state(self._entity.state_locking)
+
+    def locked(self) -> None:
+        """Set lock state to locked"""
+        self._update_state(self._entity.state_locked)
+
+    def unlocking(self) -> None:
+        """Set lock state to unlocking"""
+        self._update_state(self._entity.state_unlocking)
+
+    def unlocked(self) -> None:
+        """Set lock state to unlocked"""
+        self._update_state(self._entity.state_unlocked)
+
+    def jammed(self) -> None:
+        """Set lock state to jammed"""
+        self._update_state(self._entity.state_jammed)
+
+    def _update_state(self, state: str) -> None:
+        """
+        Update MQTT lock state
+
+        Args:
+            state(str): What state to set the lock to
+        """
+        logger.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
+        self._state_helper(state=state, topic=self.state_topic, retain=self._entity.retain)
