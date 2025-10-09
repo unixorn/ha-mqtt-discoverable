@@ -24,6 +24,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
   - [Device trigger](#device-trigger)
   - [Image](#image)
   - [Light](#light)
+  - [Lock](#lock)
   - [Number](#number)
   - [Select](#select)
   - [Sensor](#sensor)
@@ -59,6 +60,7 @@ The following Home Assistant entities are currently implemented:
 - Device trigger
 - Image
 - Light
+- Lock
 - Number
 - Select
 - Sensor
@@ -389,6 +391,51 @@ my_light = Light(settings, my_callback)
 
 # Set the initial state of the light, which also makes it discoverable
 my_light.off()
+```
+
+### Lock
+
+A lock has five possible states `locked`, `unlocked`, `locking`, `unlocking` and `jammed`.
+
+A `callback` function is needed in order to parse the commands sent from HA,
+as the following example shows:
+
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Lock, LockInfo
+from paho.mqtt.client import Client, MQTTMessage
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the lock
+lock_info = LockInfo(name="test")
+
+settings = Settings(mqtt=mqtt_settings, entity=lock_info)
+
+# To receive state commands from HA, define a callback function:
+def my_callback(client: Client, user_data, message: MQTTMessage):
+    payload = message.payload.decode()
+    if payload == my_lock._entity.payload_lock:
+        # let HA know that the lock is locking
+        my_lock.locking()
+        # call function to lock the lock
+        lock_my_custom_lock()
+        # Let HA know that the lock is locked now
+        my_lock.locked()
+    if payload == my_lock._entity.payload_unlock:
+        # let HA know that the lock is unlocking
+        my_lock.unlocking()
+        # call function to unlock the lock
+        unlock_my_custom_lock()
+        # Let HA know that the lock is unlocked now
+        my_lock.unlocked()
+
+# Instantiate the lock
+my_lock = Lock(settings, my_callback)
+
+# Set the initial state of the lock, which also makes it discoverable
+my_lock.locked()
 ```
 
 ### Number
