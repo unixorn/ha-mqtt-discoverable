@@ -18,8 +18,6 @@ import re
 
 import yaml
 
-from ha_mqtt_discoverable import CONFIGURATION_KEY_NAMES
-
 
 def clean_string(raw: str) -> str:
     """
@@ -42,10 +40,3 @@ def read_yaml_file(path: str = None) -> dict:
     with open(path) as yamlFile:
         data = yaml.safe_load(yamlFile)
         return data
-
-
-def valid_configuration_key(name: str) -> bool:
-    """
-    Confirm that a configuration key is in the allowed list
-    """
-    return name in CONFIGURATION_KEY_NAMES
