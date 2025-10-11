@@ -647,6 +647,8 @@ If you use this module for your own project, please add a link here.
 
 - [homeassistant-addon-viessmann-gridbox](https://github.com/unl0ck/homeassistant-addon-viessmann-gridbox) - Get your Viessmann Gridbox Data Home Assistant integration
 
+- [yahac](https://github.com/dseichter/yahac) - Yet Another Home Assistant Client
+
 ## Contributors
 
 [![Contributors](https://contributors-img.web.app/image?repo=unixorn/ha-mqtt-discoverable)](https://github.com/unixorn/ha-mqtt-discoverable/graphs/contributors)
