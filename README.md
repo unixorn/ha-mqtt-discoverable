@@ -33,6 +33,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 - [FAQ](#faq)
   - [Using an existing MQTT client](#using-an-existing-mqtt-client)
   - [I'm having problems on 32-bit ARM](#im-having-problems-on-32-bit-arm)
+  - [I'm having problems running in systemd-Service](#im-having-problems-running-in-systemd-service)
 - [Contributing](#contributing)
 - [Users of ha-mqtt-discoverable](#users-of-ha-mqtt-discoverable)
 - [Contributors](#contributors)
