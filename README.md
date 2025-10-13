@@ -631,6 +631,10 @@ mqtt_settings = Settings.MQTT(client=client)
 
 Pydantic 2 has issues on 32-bit ARM. More details are on [ha-mqtt-discoverable/pull/191](https://github.com/unixorn/ha-mqtt-discoverable/pull/191). TL;DR: If you're on an ARM32 machine you're going to have to pin to the 0.13.1 version.
 
+### I'm having problems running in systemd-Service
+
+Each entity creates it's own thread for the MQTT-loop, so you increase the task count. systemd may limit the tasks to a too low number for your needs (check with `systemctl status your.service`), which may lead to new entities failing to create a worker-thread. Try setting `TasksMax=` to an apropiate high number accommodating your entity count and other threads that may spawn.
+
 ## Contributing
 
 Please run `ruff` on your code before submitting. There are `git` hooks already configured to run `ruff` and other checks before every commit, please run `pre-commit install` to enable them.
