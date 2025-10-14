@@ -634,7 +634,7 @@ Pydantic 2 has issues on 32-bit ARM. More details are on [ha-mqtt-discoverable/p
 
 ### I'm having problems running in systemd-Service
 
-Each entity creates its own thread for the MQTT-client-loop, which increases the task count. systemd may limit the tasks to a too low number for your needs (check with `systemctl status your.service`), which may lead to new entities failing to create a worker-thread. Try setting `TasksMax=` to an apropiate high number accommodating your entity count and other threads that may spawn.
+Each entity creates its own thread for the MQTT-client-loop, which increases the task count. systemd may limit the tasks to a too low number for your needs (check with `systemctl status your.service`), which may lead to new entities failing to create a worker-thread. Try setting `TasksMax=` to an appropriate high number accommodating your entity count and other threads that may spawn.
 
 Alternatively [use an existing MQTT client](#using-an-existing-mqtt-client) without each entity generating their own MQTT-client-loop.
 
