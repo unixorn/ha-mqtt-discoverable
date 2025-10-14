@@ -33,6 +33,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 - [FAQ](#faq)
   - [Using an existing MQTT client](#using-an-existing-mqtt-client)
   - [I'm having problems on 32-bit ARM](#im-having-problems-on-32-bit-arm)
+  - [I'm having problems running in systemd-Service](#im-having-problems-running-in-systemd-service)
 - [Contributing](#contributing)
 - [Users of ha-mqtt-discoverable](#users-of-ha-mqtt-discoverable)
 - [Contributors](#contributors)
@@ -630,6 +631,12 @@ mqtt_settings = Settings.MQTT(client=client)
 ### I'm having problems on 32-bit ARM
 
 Pydantic 2 has issues on 32-bit ARM. More details are on [ha-mqtt-discoverable/pull/191](https://github.com/unixorn/ha-mqtt-discoverable/pull/191). TL;DR: If you're on an ARM32 machine you're going to have to pin to the 0.13.1 version.
+
+### I'm having problems running in systemd-Service
+
+Each entity creates its own thread for the MQTT-client-loop, which increases the task count. systemd may limit the tasks to a too low number for your needs (check with `systemctl status your.service`), which may lead to new entities failing to create a worker-thread. Try setting `TasksMax=` to an appropriate high number accommodating your entity count and other threads that may spawn.
+
+Alternatively [use an existing MQTT client](#using-an-existing-mqtt-client) without each entity generating their own MQTT-client-loop.
 
 ## Contributing
 
