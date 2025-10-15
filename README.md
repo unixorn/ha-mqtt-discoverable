@@ -31,6 +31,7 @@ The [ha-mqtt-discoverable-cli](https://github.com/unixorn/ha-mqtt-discoverable-c
   - [Sensor](#sensor)
   - [Switch](#switch)
   - [Text](#text)
+- [Availability Management](#availability-management)
 - [FAQ](#faq)
   - [Using an existing MQTT client](#using-an-existing-mqtt-client)
   - [I'm having problems on 32-bit ARM](#im-having-problems-on-32-bit-arm)
@@ -605,6 +606,16 @@ my_text = Text(settings, my_callback)
 # Set the initial text displayed in HA UI, publishing an MQTT message that gets picked up by HA
 my_text.set_text("Some awesome text")
 ```
+
+## Availability Management
+
+This project supports manual availability topics so Home Assistant can reflect whether an entity is online or offline.
+
+- Set `manual_availability=True` in `Settings` to enable manual availability handling.
+- The library will set a retained LWT ("offline"). After your entity is ready, publish "online" to the same topic.
+- Entities created with manual availability expose `availability_topic` and the helper `set_availability(True|False)`.
+
+See detailed guidance and examples in `docs/availability.md`.
 
 ## FAQ
 
