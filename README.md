@@ -7,7 +7,8 @@
 
 A Python 3 module that takes advantage of Home Assistant's [MQTT discovery protocol](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery) to create sensors without having to define anything on the HA side.
 
-Using MQTT discoverable devices lets us add new sensors and devices to HA without having to restart HA. The [ha-mqtt-discoverable-cli](https://github.com/unixorn/ha-mqtt-discoverable-cli/) module includes scripts to make it easy to create discoverable devices from the command line if you don't want to bother writing Python.
+Using MQTT discoverable devices lets us add new sensors and devices to HA without having to restart HA.
+The [ha-mqtt-discoverable-cli](https://github.com/unixorn/ha-mqtt-discoverable-cli/) module includes scripts to make it easy to create discoverable devices from the command line if you don't want to bother writing Python.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -46,7 +47,8 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 
 ha-mqtt-discoverable runs on Python 3.10 or later.
 
-`pip install ha-mqtt-discoverable` if you want to use it in your own python scripts. `pip install ha-mqtt-discoverable-cli` to install the `hmd` utility scripts.
+`pip install ha-mqtt-discoverable` if you want to use it in your own python scripts.
+`pip install ha-mqtt-discoverable-cli` to install the `hmd` utility scripts.
 
 <!-- Please keep the entities in alphabetical order -->
 ## Supported entities
@@ -163,12 +165,12 @@ my_camera.set_topic("zanzito/shared_locations/my-device")  # not needed if alrea
 
 ### Cover
 
-A cover has five possible states `open`, `closed`, `opening`, `closing` and `stopped`. Most other entities use the states as command payload, but covers differentiate on this. The HA user can either open, close or stop it in the covers current position.
+A cover has five possible states `open`, `closed`, `opening`, `closing` and `stopped`.
+Most other entities use the states as command payload, but covers differentiate on this. The HA user can either open, close or stop it in the covers current position.
 
 Covers do not currently support tilt.
 
-A `callback` function is needed in order to parse the commands sent from HA, as the following
-example shows:
+A `callback` function is needed in order to parse the commands sent from HA, as the following example shows:
 
 ```py
 from ha_mqtt_discoverable import Settings
@@ -333,8 +335,7 @@ with open("example.png", "rb") as example_file:
 ### Light
 
 The light is different from other current sensor as it needs its payload encoded/decoded as json.
-It is possible to set brightness, effects and the color of the light. Similar to a _switch_ it can
-also receive 'commands' from HA that request a state change.
+It is possible to set brightness, effects and the color of the light. Similar to a _switch_ it can also receive 'commands' from HA that request a state change.
 It is possible to act upon reception of this 'command', by defining a `callback` function, as the following example shows:
 
 ```py
@@ -398,8 +399,7 @@ my_light.off()
 
 A lock has five possible states `locked`, `unlocked`, `locking`, `unlocking` and `jammed`.
 
-A `callback` function is needed in order to parse the commands sent from HA,
-as the following example shows:
+A `callback` function is needed in order to parse the commands sent from HA, as the following example shows:
 
 ```py
 from ha_mqtt_discoverable import Settings
@@ -476,7 +476,7 @@ my_number.set_value(42.0)
 
 ### Select
 
-The selection entity is a list of selectable options in homeassistant.
+The selection entity is a list of selectable options in Home Assistant.
 It is possible to act upon reception of this 'command', by defining a `callback` function, as the following example shows:
 
 ```py
@@ -630,11 +630,14 @@ mqtt_settings = Settings.MQTT(client=client)
 
 ### I'm having problems on 32-bit ARM
 
-Pydantic 2 has issues on 32-bit ARM. More details are on [ha-mqtt-discoverable/pull/191](https://github.com/unixorn/ha-mqtt-discoverable/pull/191). TL;DR: If you're on an ARM32 machine you're going to have to pin to the 0.13.1 version.
+Pydantic 2 has issues on 32-bit ARM. More details are on [ha-mqtt-discoverable/pull/191](https://github.com/unixorn/ha-mqtt-discoverable/pull/191).
+TL;DR: If you're on an ARM32 machine you're going to have to pin to the 0.13.1 version.
 
 ### I'm having problems running in systemd-Service
 
-Each entity creates its own thread for the MQTT-client-loop, which increases the task count. systemd may limit the tasks to a too low number for your needs (check with `systemctl status your.service`), which may lead to new entities failing to create a worker-thread. Try setting `TasksMax=` to an appropriate high number accommodating your entity count and other threads that may spawn.
+Each entity creates its own thread for the MQTT-client-loop, which increases the task count.
+systemd may limit the tasks to a too low number for your needs (check with `systemctl status your.service`), which may lead to new entities failing to create a worker-thread.
+Try setting `TasksMax=` to an appropriate high number accommodating your entity count and other threads that may spawn.
 
 Alternatively [use an existing MQTT client](#using-an-existing-mqtt-client) without each entity generating their own MQTT-client-loop.
 
