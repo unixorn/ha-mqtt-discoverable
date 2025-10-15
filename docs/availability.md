@@ -1,3 +1,16 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Availability Management](#availability-management)
+  - [Quick start](#quick-start)
+  - [Topics and payloads](#topics-and-payloads)
+  - [Multiple entities per device](#multiple-entities-per-device)
+  - [Troubleshooting](#troubleshooting)
+  - [Best practices](#best-practices)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Availability Management
 
 This library can publish availability so Home Assistant (HA) knows whether an entity is online or offline. When `manual_availability` is enabled, a retained Last Will and Testament (LWT) is configured and you are responsible for marking the entity online when ready.
@@ -45,4 +58,3 @@ Prefer a single availability lifecycle per physical device. If multiple entities
 - Keep availability payloads small (e.g., `online`/`offline`).
 - Use retained messages so state survives restarts.
 - Re-assert `online` after reconnects.
-
