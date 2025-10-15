@@ -13,6 +13,7 @@ limitations under the License.
 """
 
 import pytest
+
 from ha_mqtt_discoverable import EntityInfo, Settings
 
 
