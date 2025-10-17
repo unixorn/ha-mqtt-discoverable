@@ -98,3 +98,7 @@ def test_options_with_unit_of_measurement_raises_exception():
         ValidationError, match="The options option cannot be used together with state_class or unit_of_measurement."
     ):
         SensorInfo(name="test", options=["a", "b", "c"], device_class="enum", unit_of_measurement="kWh")
+
+
+def test_options_successful():
+    assert SensorInfo(name="test", options=["a", "b", "c"], device_class="enum")

@@ -112,3 +112,15 @@ def test_set_blob(image: Image):
     with patch.object(image.mqtt_client, "publish") as mock_publish:
         image.set_payload(image_blob)
         mock_publish.assert_called_with(image._entity.image_topic, image_blob, retain=True)
+
+
+@pytest.mark.parametrize("image", [(None, "image_to_publish_to", "b64", "image/png")], indirect=True)
+def test_set_empty_url_raises(image: Image):
+    with pytest.raises(RuntimeError, match="Image URL cannot be empty"):
+        image.set_url("")
+
+
+@pytest.mark.parametrize("image", [(None, "image_to_publish_to", "b64", "image/png")], indirect=True)
+def test_set_empty_payload_raises(image: Image):
+    with pytest.raises(RuntimeError, match="Image payload cannot be empty"):
+        image.set_payload("")
