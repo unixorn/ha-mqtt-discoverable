@@ -136,7 +136,7 @@ my_button.write_config()
 
 ### Camera
 
-The following example creates a camera entity with a topic to a camera.
+The following example creates a camera entity with a topic for the image payload.
 
 ```py
 from ha_mqtt_discoverable import Settings
@@ -147,20 +147,16 @@ from paho.mqtt.client import Client, MQTTMessage
 mqtt_settings = Settings.MQTT(host="localhost")
 
 # Information about the camera
-camera_info = CameraInfo(name="test", topic="zanzito/shared_locations/my-device")
+camera_info = CameraInfo(name="test", topic="topic_to_publish_image_payload_to")
 
 settings = Settings(mqtt=mqtt_settings, entity=camera_info)
 
-# To receive state commands from HA, define a callback function:
-def my_callback(client: Client, user_data, message: MQTTMessage):
-    payload = message.payload.decode()
-    perform_my_custom_action()
-
 # Instantiate the camera
-my_camera = Camera(settings, my_callback)
+my_camera = Camera(settings)
 
-# Set the initial state of the cover, which also makes it discoverable
-my_camera.set_topic("zanzito/shared_locations/my-device")  # not needed if already defined
+# Set the image payload of the camera
+with open("example.png", "rb") as example_file:
+    my_camera.set_payload(example_file.read())
 ```
 
 ### Cover
