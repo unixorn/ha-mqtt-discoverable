@@ -1,0 +1,7 @@
+[run]
+branch = True
+relative_files = True
+# only used by ha-mqtt-discoverable-cli
+omit =
+  ha_mqtt_discoverable/cli/__init__.py
+  ha_mqtt_discoverable/settings.py
