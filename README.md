@@ -32,6 +32,7 @@ The [ha-mqtt-discoverable-cli](https://github.com/unixorn/ha-mqtt-discoverable-c
   - [Sensor](#sensor)
   - [Switch](#switch)
   - [Text](#text)
+- [Availability Management](#availability-management)
 - [FAQ](#faq)
   - [Using an existing MQTT client](#using-an-existing-mqtt-client)
   - [I'm having problems on 32-bit ARM](#im-having-problems-on-32-bit-arm)
@@ -601,6 +602,34 @@ my_text = Text(settings, my_callback)
 
 # Set the initial text displayed in HA UI, publishing an MQTT message that gets picked up by HA
 my_text.set_text("Some awesome text")
+```
+
+## Availability Management
+
+If `manual_availability` is set to `True`:
+
+* `set_availability` has to be called to indicate if an entity is _available_ or _unavailable_
+* a retained Last Will and Testament (LWT) is set, marking the entity _unavailable_ in case the MQTT client disconnects unexpectedly
+
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Sensor, SensorInfo
+
+
+mqtt_settings = Settings.MQTT(host="localhost")
+
+sensor_info = SensorInfo(
+    name="Power",
+    unit_of_measurement="W",
+    device_class="power",
+    state_class="measurement",
+)
+settings = Settings(mqtt=mqtt_settings, entity=sensor_info, manual_availability=True)
+sensor = Sensor(settings)
+# When the entity is ready, set availability to 'True'
+sensor.set_availability(True)
+sensor.set_state(1337)
+
 ```
 
 ## FAQ
