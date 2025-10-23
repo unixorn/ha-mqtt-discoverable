@@ -211,7 +211,6 @@ def test_custom_object_id():
 
 def test_str(discoverable: Discoverable[EntityInfo]):
     string = str(discoverable)
-    print(string)
     assert "settings" in string
 
 
