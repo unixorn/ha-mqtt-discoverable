@@ -291,12 +291,6 @@ class ImageInfo(EntityInfo):
 
     component: str = "image"
     """The component type is 'image' for this entity."""
-    availability_topic: str | None = None
-    """The MQTT topic subscribed to publish the image availability."""
-    payload_available: str | None = "online"
-    """Payload to publish to indicate the image is online."""
-    payload_not_available: str | None = "offline"
-    """Payload to publish to indicate the image is offline."""
     url_topic: str | None = None
     """
     The MQTT topic to subscribe to receive an image URL.
