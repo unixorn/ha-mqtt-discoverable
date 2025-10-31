@@ -464,7 +464,7 @@ class Subscriber(Discoverable[EntityType]):
             self._connect_client()
 
     def generate_config(self) -> dict[str, Any]:
-        """Override base config to add the command topic of this switch"""
+        """Override base config to add the command topic"""
         config = super().generate_config()
         # Add the MQTT command topic to the existing config object
         topics = {
