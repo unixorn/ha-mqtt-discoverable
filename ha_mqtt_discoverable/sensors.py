@@ -413,7 +413,7 @@ class BinarySensor(Discoverable[BinarySensorInfo]):
         """
         state_message = self._entity.payload_on if state else self._entity.payload_off
         logger.info(f"Setting {self._entity.name} to {state_message} using {self.state_topic}")
-        self._state_helper(state=state_message)
+        self._update_state(state=state_message)
 
 
 class Sensor(Discoverable[SensorInfo]):
@@ -428,7 +428,7 @@ class Sensor(Discoverable[SensorInfo]):
         logger.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
         if last_reset:
             logger.info("Setting last_reset to " + last_reset)
-        self._state_helper(str(state), last_reset=last_reset)
+        self._update_state(str(state), last_reset=last_reset)
 
 
 # Inherit the on and off methods from the BinarySensor class, changing only the
@@ -463,7 +463,7 @@ class Light(Subscriber[LightInfo]):
         state_payload = {
             "state": self._entity.payload_on,
         }
-        self._update_state(state_payload)
+        self._update_state_helper(state_payload)
 
     def off(self) -> None:
         """
@@ -472,7 +472,7 @@ class Light(Subscriber[LightInfo]):
         state_payload = {
             "state": self._entity.payload_off,
         }
-        self._update_state(state_payload)
+        self._update_state_helper(state_payload)
 
     def brightness(self, brightness: int) -> None:
         """
@@ -489,7 +489,7 @@ class Light(Subscriber[LightInfo]):
             "state": self._entity.payload_on,
         }
 
-        self._update_state(state_payload)
+        self._update_state_helper(state_payload)
 
     def color(self, color_mode: str, color: dict[str, Any]) -> None:
         """
@@ -511,7 +511,7 @@ class Light(Subscriber[LightInfo]):
             "color": color,
             "state": self._entity.payload_on,
         }
-        self._update_state(state_payload)
+        self._update_state_helper(state_payload)
 
     def effect(self, effect: str) -> None:
         """
@@ -528,18 +528,17 @@ class Light(Subscriber[LightInfo]):
             "effect": effect,
             "state": self._entity.payload_on,
         }
-        self._update_state(state_payload)
+        self._update_state_helper(state_payload)
 
-    def _update_state(self, state: dict[str, Any]) -> None:
+    def _update_state_helper(self, state: dict[str, Any]) -> None:
         """
         Update MQTT sensor state
 
         Args:
             state(Dict[str, Any]): What state to set the light to
         """
-        logger.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
         json_state = json.dumps(state)
-        self._state_helper(state=json_state, topic=self.state_topic, retain=self._entity.retain)
+        self._update_state(state=json_state, topic=self.state_topic, retain=self._entity.retain)
 
 
 class Cover(Subscriber[CoverInfo]):
@@ -566,16 +565,6 @@ class Cover(Subscriber[CoverInfo]):
     def stopped(self) -> None:
         """Set cover state to stopped"""
         self._update_state(self._entity.state_stopped)
-
-    def _update_state(self, state: str) -> None:
-        """
-        Update MQTT sensor state
-
-        Args:
-            state(str): What state to set the cover to
-        """
-        logger.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
-        self._state_helper(state=state, topic=self.state_topic, retain=self._entity.retain)
 
 
 class Button(Subscriber[ButtonInfo]):
@@ -608,7 +597,7 @@ class DeviceTrigger(Discoverable[DeviceTriggerInfo]):
             payload: custom payload to send in the trigger topic
 
         """
-        return self._state_helper(payload, self.state_topic, retain=False)
+        return self._update_state(payload, self.state_topic, retain=False)
 
 
 class Text(Subscriber[TextInfo]):
@@ -628,7 +617,7 @@ class Text(Subscriber[TextInfo]):
             raise RuntimeError(f"Text is not within configured length boundaries {bound}")
 
         logger.info(f"Setting {self._entity.name} to {text} using {self.state_topic}")
-        self._state_helper(str(text))
+        self._update_state(str(text))
 
 
 class Number(Subscriber[NumberInfo]):
@@ -648,7 +637,7 @@ class Number(Subscriber[NumberInfo]):
             raise RuntimeError(f"Value is not within configured boundaries {bound}")
 
         logger.info(f"Setting {self._entity.name} to {value} using {self.state_topic}")
-        self._state_helper(value)
+        self._update_state(value)
 
 
 class Camera(Discoverable[CameraInfo]):
@@ -668,7 +657,7 @@ class Camera(Discoverable[CameraInfo]):
             raise RuntimeError("Image payload of the camera cannot be empty")
 
         logger.info(f"Publishing image payload of the camera to {self._entity.topic}")
-        self._state_helper(image_payload, self._entity.topic)
+        self._update_state(image_payload, self._entity.topic)
 
 
 class Image(Discoverable[ImageInfo]):
@@ -688,7 +677,7 @@ class Image(Discoverable[ImageInfo]):
             raise RuntimeError("Image URL cannot be empty")
 
         logger.info(f"Publishing image URL {image_url} to {self._entity.url_topic}")
-        self._state_helper(image_url, self._entity.url_topic)
+        self._update_state(image_url, self._entity.url_topic)
 
     def set_payload(self, image_payload: bytes | str) -> None:
         """
@@ -701,7 +690,7 @@ class Image(Discoverable[ImageInfo]):
             raise RuntimeError("Image payload cannot be empty")
 
         logger.info(f"Publishing image payload to {self._entity.image_topic}")
-        self._state_helper(image_payload, self._entity.image_topic)
+        self._update_state(image_payload, self._entity.image_topic)
 
 
 class Select(Subscriber[SelectInfo]):
@@ -724,7 +713,7 @@ class Select(Subscriber[SelectInfo]):
             raise RuntimeError(f"Invalid option: {option} (Valid option(s): {self._entity.options})")
 
         logger.info(f"Changing selection of {self._entity.name} to {option} using {self.state_topic}")
-        self._state_helper(option)
+        self._update_state(option)
 
 
 class Lock(Subscriber[LockInfo]):
@@ -752,13 +741,3 @@ class Lock(Subscriber[LockInfo]):
     def jammed(self) -> None:
         """Set lock state to jammed"""
         self._update_state(self._entity.state_jammed)
-
-    def _update_state(self, state: str) -> None:
-        """
-        Update MQTT lock state
-
-        Args:
-            state(str): What state to set the lock to
-        """
-        logger.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
-        self._state_helper(state=state, topic=self.state_topic, retain=self._entity.retain)

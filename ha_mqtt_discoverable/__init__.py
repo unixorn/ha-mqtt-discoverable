@@ -295,7 +295,7 @@ wrote_configuration: {self.wrote_configuration}
         # messages in a separate thread
         self.mqtt_client.loop_start()
 
-    def _state_helper(
+    def _update_state(
         self, state: Union[str, float, int] | None, topic: str | None = None, last_reset: str | None = None, retain=True
     ) -> MQTTMessageInfo | None:
         """
@@ -310,8 +310,8 @@ wrote_configuration: {self.wrote_configuration}
         if last_reset:
             state = {"state": state, "last_reset": last_reset}
             state = json.dumps(state)
-        logger.debug(f"Writing '{state}' to {topic}")
 
+        logger.info(f"Setting {self._entity.name} to {state} using {topic}")
         if self._settings.debug:
             logger.debug("Debug mode is enabled, skipping state write.")
             return None
@@ -387,21 +387,13 @@ wrote_configuration: {self.wrote_configuration}
         # HA expects a JSON object in the attribute topic
         json_attributes = json.dumps(attributes)
         logger.debug("Updating attributes: %s", json_attributes)
-        self._state_helper(json_attributes, topic=self.attributes_topic)
+        self._update_state(json_attributes, topic=self.attributes_topic)
 
     def set_availability(self, availability: bool):
         if not hasattr(self, "availability_topic"):
             raise RuntimeError("Manual availability is not configured for this entity!")
         message = "online" if availability else "offline"
-        self._state_helper(message, topic=self.availability_topic)
-
-    def _update_state(self, state) -> None:
-        """
-        Update MQTT device state
-
-        Override in subclasses
-        """
-        self._state_helper(state=state)
+        self._update_state(message, topic=self.availability_topic)
 
     def __del__(self):
         """Cleanly shutdown the internal MQTT client"""

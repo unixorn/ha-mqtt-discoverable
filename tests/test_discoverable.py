@@ -158,7 +158,7 @@ def test_state_helper(discoverable: Discoverable):
     discoverable.write_config().wait_for_publish(1)
     with patch.object(discoverable.mqtt_client, "publish") as mock_publish:
         # Write a state to MQTT
-        discoverable._state_helper("test")
+        discoverable._update_state("test")
         mock_publish.assert_called_once_with("hmd/binary_sensor/test/state", "test", retain=True)
 
 
@@ -246,7 +246,7 @@ def test_publish_multithread(discoverable: Discoverable):
 
     # Write a state to MQTT from another thread
     with ThreadPoolExecutor() as executor:
-        future = executor.submit(discoverable._state_helper, "test")
+        future = executor.submit(discoverable._update_state, "test")
         # Wait for executor to finish
         future.result(1)
 
@@ -270,7 +270,7 @@ def test_publish_async(discoverable: Discoverable):
 
     # Write a state to MQTT from an asyncio event loop
     async def publish_state():
-        discoverable._state_helper("test")
+        discoverable._update_state("test")
 
     asyncio.run(publish_state())
 
