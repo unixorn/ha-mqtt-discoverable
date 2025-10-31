@@ -4,8 +4,8 @@
 
 | Name                                   |    Stmts |     Miss |   Branch |   BrPart |   Cover |   Missing |
 |--------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
-| ha\_mqtt\_discoverable/\_\_init\_\_.py |      219 |       31 |       48 |        9 |     82% |238-242, 248-252, 260-274, 278, 292, 316-317, 335-339, 375-376, 404, 440, 452-461 |
-| ha\_mqtt\_discoverable/sensors.py      |      343 |        0 |       42 |        0 |    100% |           |
+| ha\_mqtt\_discoverable/\_\_init\_\_.py |      217 |       30 |       48 |        9 |     82% |238-242, 248-252, 260-274, 278, 292, 316-317, 335-339, 375-376, 432, 444-453 |
+| ha\_mqtt\_discoverable/sensors.py      |      336 |        0 |       42 |        0 |    100% |           |
 | ha\_mqtt\_discoverable/utils.py        |        9 |        3 |        0 |        0 |     67% |     40-42 |
 | tests/\_\_init\_\_.py                  |        0 |        0 |        0 |        0 |    100% |           |
 | tests/test\_binary\_sensor.py          |       26 |        0 |        2 |        1 |     96% |  43->exit |
@@ -24,7 +24,7 @@
 | tests/test\_subscriber.py              |       38 |        0 |        0 |        0 |    100% |           |
 | tests/test\_switch.py                  |       18 |        0 |        0 |        0 |    100% |           |
 | tests/test\_text.py                    |       28 |        0 |        0 |        0 |    100% |           |
-|                              **TOTAL** | **1213** |   **40** |  **102** |   **15** | **95%** |           |
+|                              **TOTAL** | **1204** |   **39** |  **102** |   **15** | **95%** |           |
 
 
 ## Setup coverage badge
