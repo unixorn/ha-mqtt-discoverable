@@ -27,6 +27,8 @@ from pydantic import BaseModel, ConfigDict, model_validator
 # Read version from the package metadata
 __version__ = metadata.version(__package__)
 
+from ha_mqtt_discoverable.utils import clean_string
+
 logger = logging.getLogger(__name__)
 
 
@@ -174,10 +176,6 @@ class Discoverable(Generic[EntityType]):
             If defined, you need to call `_connect_client()` to establish the \
                 connection manually.
         """
-        # Import here to avoid circular dependency on imports
-        # TODO how to better handle this?
-        from ha_mqtt_discoverable.utils import clean_string
-
         self._settings = settings
         self._entity = settings.entity
 
