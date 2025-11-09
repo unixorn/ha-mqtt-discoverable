@@ -394,10 +394,11 @@ wrote_configuration: {self.wrote_configuration}
         self._update_state(message, topic=self.availability_topic)
 
     def __del__(self):
-        """Cleanly shutdown the internal MQTT client"""
-        logger.debug("Shutting down MQTT client")
-        self.mqtt_client.disconnect()
-        self.mqtt_client.loop_stop()
+        """Cleanly shutdown the internal MQTT client if it wasn't provided by user"""
+        if self._settings.mqtt.client is None:
+            logger.debug("Shutting down MQTT client")
+            self.mqtt_client.disconnect()
+            self.mqtt_client.loop_stop()
 
 
 class Subscriber(Discoverable[EntityType]):
