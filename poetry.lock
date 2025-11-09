@@ -191,18 +191,6 @@ testing = ["covdefaults (>=2.3)", "coverage (>=7.6.10)", "diff-cover (>=9.2.1)",
 typing = ["typing-extensions (>=4.12.2) ; python_version < \"3.11\""]
 
 [[package]]
-name = "gitlike-commands"
-version = "0.3.0"
-description = "Makes driver scripts that enable git-like commands so that foo bar will run foo-bar"
-optional = false
-python-versions = ">=3.9,<4.0"
-groups = ["main"]
-files = [
-    {file = "gitlike_commands-0.3.0-py3-none-any.whl", hash = "sha256:c262f8f532639ec8558369bdc2cd904bd0b65638834ed333c42a51be69578f21"},
-    {file = "gitlike_commands-0.3.0.tar.gz", hash = "sha256:72f4e65239cb6a4a2c614867c5f914b5d5994edd2863335515b543689b01ff70"},
-]
-
-[[package]]
 name = "identify"
 version = "2.6.10"
 description = "File identification library for Python"
@@ -738,4 +726,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10.0,<4.0"
-content-hash = "3f42b798e005b863ded9000ea76efd945fc12db8828da7fc53ed4ae481310738"
+content-hash = "af1b8f4053e64548cf11e16a580522f8cb799d26fa3c7de62d477fa429188664"
