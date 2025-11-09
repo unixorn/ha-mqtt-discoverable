@@ -8,7 +8,6 @@ requires-python = ">=3.10.0,<4.0"
 dependencies = [
     "pyaml==25.7.0",
     "paho-mqtt==2.1.0",
-    "gitlike-commands (>=0.2.1,<0.4.0)",
     "pydantic==2.12.4",
 ]
 
