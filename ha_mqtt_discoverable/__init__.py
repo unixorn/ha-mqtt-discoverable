@@ -16,16 +16,12 @@ import json
 import logging
 import ssl
 from collections.abc import Callable
-from importlib import metadata
 from typing import Any, Generic, TypeVar, Union
 
 import paho.mqtt.client as mqtt
 from paho.mqtt.client import MQTTMessageInfo
 from paho.mqtt.enums import CallbackAPIVersion
 from pydantic import BaseModel, ConfigDict, model_validator
-
-# Read version from the package metadata
-__version__ = metadata.version(__package__)
 
 from ha_mqtt_discoverable.utils import clean_string
 
