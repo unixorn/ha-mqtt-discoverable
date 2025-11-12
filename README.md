@@ -4,7 +4,7 @@
 
 | Name                                   |    Stmts |     Miss |   Branch |   BrPart |   Cover |   Missing |
 |--------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
-| ha\_mqtt\_discoverable/\_\_init\_\_.py |      218 |       30 |       50 |       10 |     82% |236-240, 246-250, 258-272, 276, 290, 314-315, 333-337, 373-374, 398->exit, 431, 443-452 |
+| ha\_mqtt\_discoverable/\_\_init\_\_.py |      216 |       30 |       50 |       10 |     82% |232-236, 242-246, 254-268, 272, 286, 310-311, 329-333, 369-370, 394->exit, 427, 439-448 |
 | ha\_mqtt\_discoverable/sensors.py      |      336 |        0 |       42 |        0 |    100% |           |
 | ha\_mqtt\_discoverable/utils.py        |        9 |        3 |        0 |        0 |     67% |     40-42 |
 | tests/\_\_init\_\_.py                  |        0 |        0 |        0 |        0 |    100% |           |
@@ -18,13 +18,12 @@
 | tests/test\_light.py                   |       53 |        0 |        0 |        0 |    100% |           |
 | tests/test\_lock.py                    |       35 |        0 |        0 |        0 |    100% |           |
 | tests/test\_number.py                  |       23 |        0 |        0 |        0 |    100% |           |
-| tests/test\_package.py                 |        3 |        0 |        0 |        0 |    100% |           |
 | tests/test\_select.py                  |       25 |        0 |        0 |        0 |    100% |           |
 | tests/test\_sensor.py                  |       54 |        0 |        0 |        0 |    100% |           |
 | tests/test\_subscriber.py              |       38 |        0 |        0 |        0 |    100% |           |
 | tests/test\_switch.py                  |       18 |        0 |        0 |        0 |    100% |           |
 | tests/test\_text.py                    |       28 |        0 |        0 |        0 |    100% |           |
-|                              **TOTAL** | **1205** |   **39** |  **104** |   **16** | **95%** |           |
+|                              **TOTAL** | **1200** |   **39** |  **104** |   **16** | **95%** |           |
 
 
 ## Setup coverage badge
