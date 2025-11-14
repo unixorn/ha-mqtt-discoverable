@@ -150,8 +150,6 @@ class LightInfo(EntityInfo):
     """List of supported effects. Required if effect is set"""
     retain: bool | None = True
     """If the published message should have the retain flag on or not"""
-    state_topic: str | None = None
-    """The MQTT topic subscribed to receive state updates."""
 
 
 class CoverInfo(EntityInfo):
@@ -182,8 +180,6 @@ class CoverInfo(EntityInfo):
     """Payload that represents closing state"""
     state_stopped: str = "stopped"
     """Payload that represents stopped state"""
-    state_topic: str | None = None
-    """The MQTT topic subscribed to receive state updates."""
     retain: bool | None = True
     """If the published message should have the retain flag on or not"""
 
@@ -237,8 +233,6 @@ class NumberInfo(EntityInfo):
     state_topic."""
     retain: bool | None = None
     """If the published message should have the retain flag on or not"""
-    state_topic: str | None = None
-    """The MQTT topic subscribed to receive state updates."""
     step: float | None = None
     """Step value. Smallest acceptable value is 0.001. Defaults to 1.0."""
     unit_of_measurement: str | None = None
@@ -354,8 +348,6 @@ class SelectInfo(EntityInfo):
     Default: true if no state_topic defined, else false."""
     retain: bool | None = None
     """If the published message should have the retain flag on or not"""
-    state_topic: str | None = None
-    """The MQTT topic subscribed to receive state updates."""
     options: list | None = None
     """List of options that can be selected. An empty list or a list with a single item is allowed."""
 
@@ -371,8 +363,6 @@ class LockInfo(EntityInfo):
     Default: true if no state_topic defined, else false."""
     retain: bool = True
     """If the published message should have the retain flag on or not"""
-    state_topic: str | None = None
-    """The MQTT topic subscribed to receive state updates."""
 
     payload_lock: str = "LOCK"
     """Command payload to lock the lock"""
@@ -538,7 +528,7 @@ class Light(Subscriber[LightInfo]):
             state(Dict[str, Any]): What state to set the light to
         """
         json_state = json.dumps(state)
-        self._update_state(state=json_state, topic=self.state_topic, retain=self._entity.retain)
+        self._update_state(state=json_state, retain=self._entity.retain)
 
 
 class Cover(Subscriber[CoverInfo]):
@@ -597,7 +587,7 @@ class DeviceTrigger(Discoverable[DeviceTriggerInfo]):
             payload: custom payload to send in the trigger topic
 
         """
-        return self._update_state(payload, self.state_topic, retain=False)
+        return self._update_state(payload, retain=False)
 
 
 class Text(Subscriber[TextInfo]):
