@@ -40,8 +40,7 @@ def test_generate_config(sensor: BinarySensor):
 
     assert config is not None
     # If we have defined a custom payload, check that is part of the output config
-    if sensor._entity.payload_on:
-        assert config["payload_on"] == sensor._entity.payload_on
+    assert config["payload_on"] == sensor._entity.payload_on
 
 
 def test_update_state(sensor: BinarySensor):

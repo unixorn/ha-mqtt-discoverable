@@ -309,24 +309,6 @@ pyyaml = ">=5.1"
 virtualenv = ">=20.10.0"
 
 [[package]]
-name = "pyaml"
-version = "25.7.0"
-description = "PyYAML-based module to produce a bit more pretty and readable YAML-serialized data"
-optional = false
-python-versions = ">=3.8"
-groups = ["main"]
-files = [
-    {file = "pyaml-25.7.0-py3-none-any.whl", hash = "sha256:ce5d7867cc2b455efdb9b0448324ff7b9f74d99f64650f12ca570102db6b985f"},
-    {file = "pyaml-25.7.0.tar.gz", hash = "sha256:e113a64ec16881bf2b092e2beb84b7dcf1bd98096ad17f5f14e8fb782a75d99b"},
-]
-
-[package.dependencies]
-PyYAML = "*"
-
-[package.extras]
-anchors = ["unidecode"]
-
-[[package]]
 name = "pydantic"
 version = "2.12.4"
 description = "Data validation using Python type hints"
@@ -545,7 +527,7 @@ version = "6.0.2"
 description = "YAML parser and emitter for Python"
 optional = false
 python-versions = ">=3.8"
-groups = ["main", "dev"]
+groups = ["dev"]
 files = [
     {file = "PyYAML-6.0.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:0a9a2848a5b7feac301353437eb7d5957887edbf81d56e903999a75a3d743086"},
     {file = "PyYAML-6.0.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:29717114e51c84ddfba879543fb232a6ed60086602313ca38cce623c1d62cfbf"},
@@ -726,4 +708,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10.0,<4.0"
-content-hash = "26d294478cd4059422b99e56b46bb207173f6e1c64def2ab606b003e5a45c3d6"
+content-hash = "544e4380fde1c3e72cad5941e23b563df7561a8da64fb3089450b1ac53ec965a"

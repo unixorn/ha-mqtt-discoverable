@@ -16,8 +16,6 @@
 
 import re
 
-import yaml
-
 
 def clean_string(raw: str) -> str:
     """
@@ -25,18 +23,3 @@ def clean_string(raw: str) -> str:
     """
     result = re.sub(r"[^A-Za-z0-9_-]", "-", raw)
     return result
-
-
-def read_yaml_file(path: str = None) -> dict:
-    """
-    Return the data structure contained in a yaml file
-
-    Args:
-        path (str): Path to read from
-
-    Returns:
-        Data decoded from YAML file content
-    """
-    with open(path) as yamlFile:
-        data = yaml.safe_load(yamlFile)
-        return data

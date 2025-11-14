@@ -71,20 +71,16 @@ def test_image_topic_no_content_type_set_raises_exception():
 def test_generate_config_url(image: Image):
     config = image.generate_config()
     # If url_topic is defined, check that is part of config
-    if image._entity.url_topic:
-        assert config["url_topic"] == image._entity.url_topic
+    assert config["url_topic"] == image._entity.url_topic
 
 
 @pytest.mark.parametrize("image", [(None, "image_to_publish_to", "b64", "image/png")], indirect=True)
 def test_generate_config_image(image: Image):
     config = image.generate_config()
     # Ensure attributes for image publication are part of config
-    if image._entity.image_topic:
-        assert config["image_topic"] == image._entity.image_topic
-    if image._entity.image_encoding:
-        assert config["image_encoding"] == image._entity.image_encoding
-    if image._entity.content_type:
-        assert config["content_type"] == image._entity.content_type
+    assert config["image_topic"] == image._entity.image_topic
+    assert config["image_encoding"] == image._entity.image_encoding
+    assert config["content_type"] == image._entity.content_type
 
 
 @pytest.mark.parametrize("image", [("topic_to_publish_url_to", None, None, None)], indirect=True)
