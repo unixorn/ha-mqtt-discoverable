@@ -18,7 +18,7 @@ packages = [{include = "ha_mqtt_discoverable"}]
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^4.4.0"
-ruff = "^0.14.4"
+ruff = "^0.14.5"
 
 
 [tool.poetry.group.test.dependencies]
