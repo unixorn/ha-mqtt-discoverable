@@ -51,11 +51,8 @@ jobs:
       - name: Lint Code Base
         uses: oxsecurity/megalinter/flavors/python@v9
         env:
-          DOCKERFILE_HADOLINT_DISABLE_ERRORS: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PAT: ${{secrets.PAT}}
-          REPOSITORY_GITLEAKS_PR_COMMITS_SCAN: true
-          VALIDATE_ALL_CODEBASE: false
 
       # Upload Mega-Linter artifacts.
       # They will be available on GitHub action page "Artifacts" section
