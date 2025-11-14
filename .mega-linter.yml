@@ -3,7 +3,9 @@
 # See all available variables at https://megalinter.io/configuration/ and in linters documentation
 
 VALIDATE_ALL_CODEBASE: false
+REPOSITORY_GITLEAKS_PR_COMMITS_SCAN: true
 GITHUB_COMMENT_REPORTER: false
+DOCKERFILE_HADOLINT_DISABLE_ERRORS: true
 SPELL_MISSPELL_DISABLE_ERRORS: true
 
 DISABLE_LINTERS:
