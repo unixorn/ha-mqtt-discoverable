@@ -204,12 +204,16 @@ class Discoverable(Generic[EntityType]):
             self.availability_topic = f"{self._settings.mqtt.state_prefix}/{self._entity_topic}/availability"
             logger.debug(f"availability_topic: {self.availability_topic}")
 
-        # Create the MQTT client, registering the user `on_connect` callback
-        self._setup_client(on_connect)
-        # If there is a callback function defined, the user must manually connect
-        # to the MQTT client
-        if not (on_connect or self._settings.mqtt.client is not None):
-            self._connect_client()
+        # If the user has passed in a MQTT client, use it
+        if self._settings.mqtt.client:
+            self.mqtt_client = self._settings.mqtt.client
+        else:
+            # Create the MQTT client, registering the user `on_connect` callback
+            self._setup_client(on_connect)
+            # If there is a callback function defined, the user must manually connect
+            # to the MQTT client
+            if not on_connect:
+                self._connect_client()
 
     def __str__(self) -> str:
         """
@@ -226,14 +230,6 @@ wrote_configuration: {self.wrote_configuration}
 
     def _setup_client(self, on_connect: Callable | None = None) -> None:
         """Create an MQTT client and setup some basic properties on it"""
-
-        # If the user has passed in an MQTT client, use it
-        if self._settings.mqtt.client:
-            self.mqtt_client = self._settings.mqtt.client
-            if on_connect:
-                logger.debug("Registering custom callback function")
-                self.mqtt_client.on_connect = on_connect
-            return
 
         mqtt_settings = self._settings.mqtt
         logger.debug(f"Creating mqtt client ({mqtt_settings.client_name}) for {mqtt_settings.host}:{mqtt_settings.port}")
@@ -436,16 +432,9 @@ class Subscriber(Discoverable[EntityType]):
 
         if self._settings.mqtt.client:
             # externally created MQTT client is used
-            if self.mqtt_client.is_connected():
-                # MQTT client is already connected, therefor explicitly
-                # subscribe to the command topic
-                on_client_connected(self.mqtt_client)
-            else:
-                # externally created MQTT client is not connected yet
-                # the 'on_connect' callback named 'on_client_connected'
-                # will subscribe to the command topic
-                # when the externally created MQTT client connects
-                pass
+            # which needs to be connected already
+            # therefor explicitly subscribe to the command topic
+            on_client_connected(self.mqtt_client)
         else:
             # Manually connect the MQTT client
             self._connect_client()

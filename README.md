@@ -606,6 +606,9 @@ my_text.set_text("Some awesome text")
 
 ## Availability Management
 
+> [!WARNING]
+> This features is not supported if using an [existing MQTT client](#using-an-existing-mqtt-client).
+
 If `manual_availability` is set to `True`:
 
 * `set_availability` has to be called to indicate if an entity is _available_ or _unavailable_
@@ -644,8 +647,12 @@ from paho.mqtt.client import Client
 
 # Creating the MQTT client
 client = Client()
-# Doing other stuff with the client, like connecting to the broker
+# Doing other stuff with the client
 # ...
+# Make sure the client is connected to the broker
+client.connect(host="localhost")
+# Also make sure the network communication is started
+client.loop_start()
 
 # Providing the client to the Settings object
 # In this case, no other MQTT settings are needed
