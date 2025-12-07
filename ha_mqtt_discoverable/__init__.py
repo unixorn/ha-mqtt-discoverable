@@ -93,6 +93,9 @@ class EntityInfo(BaseModel):
     unique_id: str | None = None
     """Set this to enable editing sensor from the HA ui and to integrate with a
         device"""
+    topic_id: str | None = None
+    """Topic segment for MQTT, if not set will be auto-generated from name.
+    Useful for keeping display names in other languages while using English in MQTT topics."""
 
     @model_validator(mode="before")
     @classmethod
@@ -180,8 +183,10 @@ class Discoverable(Generic[EntityType]):
         self._entity_topic = f"{self._entity.component}"
         # If present, append the device name, e.g. `binary_sensor/mydevice`
         self._entity_topic += f"/{clean_string(self._entity.device.name)}" if self._entity.device else ""
-        # Append the sensor name, e.g. `binary_sensor/mydevice/mysensor`
-        self._entity_topic += f"/{clean_string(self._entity.name)}"
+        # Append the sensor name, use topic_id if provided, otherwise use cleaned name
+        entity_topic_segment = clean_string(self._entity.topic_id) if self._entity.topic_id else clean_string(
+            self._entity.name)
+        self._entity_topic += f"/{entity_topic_segment}"
 
         # Full topic where we publish the configuration message to be picked up by HA
         # Prepend the `discovery_prefix`, default: `homeassistant`
