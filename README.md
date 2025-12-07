@@ -4,7 +4,7 @@
 
 | Name                                   |    Stmts |     Miss |   Branch |   BrPart |   Cover |   Missing |
 |--------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
-| ha\_mqtt\_discoverable/\_\_init\_\_.py |      216 |       30 |       50 |       10 |     82% |232-236, 242-246, 254-268, 272, 286, 310-311, 329-333, 369-370, 394->exit, 427, 439-448 |
+| ha\_mqtt\_discoverable/\_\_init\_\_.py |      210 |       22 |       46 |        7 |     87% |238-242, 250-264, 268, 282, 306-307, 325-329, 365-366, 423 |
 | ha\_mqtt\_discoverable/sensors.py      |      326 |        0 |       42 |        0 |    100% |           |
 | ha\_mqtt\_discoverable/utils.py        |        4 |        0 |        0 |        0 |    100% |           |
 | tests/\_\_init\_\_.py                  |        0 |        0 |        0 |        0 |    100% |           |
@@ -20,10 +20,10 @@
 | tests/test\_number.py                  |       23 |        0 |        0 |        0 |    100% |           |
 | tests/test\_select.py                  |       25 |        0 |        0 |        0 |    100% |           |
 | tests/test\_sensor.py                  |       54 |        0 |        0 |        0 |    100% |           |
-| tests/test\_subscriber.py              |       38 |        0 |        0 |        0 |    100% |           |
+| tests/test\_subscriber.py              |       60 |        0 |        0 |        0 |    100% |           |
 | tests/test\_switch.py                  |       18 |        0 |        0 |        0 |    100% |           |
 | tests/test\_text.py                    |       28 |        0 |        0 |        0 |    100% |           |
-|                              **TOTAL** | **1173** |   **30** |   **92** |   **10** | **96%** |           |
+|                              **TOTAL** | **1189** |   **22** |   **88** |    **7** | **97%** |           |
 
 
 ## Setup coverage badge
