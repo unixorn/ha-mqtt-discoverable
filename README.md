@@ -4,7 +4,7 @@
 
 | Name                                   |    Stmts |     Miss |   Branch |   BrPart |   Cover |   Missing |
 |--------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
-| ha\_mqtt\_discoverable/\_\_init\_\_.py |      210 |       22 |       46 |        7 |     87% |238-242, 250-264, 268, 282, 306-307, 325-329, 365-366, 423 |
+| ha\_mqtt\_discoverable/\_\_init\_\_.py |      206 |       18 |       40 |        6 |     90% |238-242, 250-257, 274, 298-299, 317-321, 357-358, 415 |
 | ha\_mqtt\_discoverable/sensors.py      |      326 |        0 |       42 |        0 |    100% |           |
 | ha\_mqtt\_discoverable/utils.py        |        4 |        0 |        0 |        0 |    100% |           |
 | tests/\_\_init\_\_.py                  |        0 |        0 |        0 |        0 |    100% |           |
@@ -23,7 +23,7 @@
 | tests/test\_subscriber.py              |       60 |        0 |        0 |        0 |    100% |           |
 | tests/test\_switch.py                  |       18 |        0 |        0 |        0 |    100% |           |
 | tests/test\_text.py                    |       28 |        0 |        0 |        0 |    100% |           |
-|                              **TOTAL** | **1189** |   **22** |   **88** |    **7** | **97%** |           |
+|                              **TOTAL** | **1185** |   **18** |   **82** |    **6** | **98%** |           |
 
 
 ## Setup coverage badge
