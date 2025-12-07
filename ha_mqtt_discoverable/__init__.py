@@ -101,7 +101,6 @@ class EntityInfo(BaseModel):
     If not set, will be auto-generated from name and device.
     Example: state_topic='home/pc/bluetooth/state'"""
 
-
     @model_validator(mode="before")
     @classmethod
     def device_need_unique_id(cls, values):
@@ -350,7 +349,7 @@ wrote_configuration: {self.wrote_configuration}
         config = self._entity.model_dump(exclude_none=True, by_alias=True)
         # If display_name is set, use it instead of name for HA display
         if self._entity.display_name:
-            config['name'] = self._entity.display_name
+            config["name"] = self._entity.display_name
         # Add the MQTT topics to be discovered by HA
         topics = {
             "state_topic": self.state_topic,
