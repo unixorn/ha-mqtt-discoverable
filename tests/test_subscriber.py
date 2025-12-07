@@ -103,3 +103,10 @@ def test_command_callbacks(make_subscriber, mqtt_client):
 
     assert event1.wait(1)
     assert event2.wait(1)
+
+
+def test_expect_exception_if_subscribing_the_command_topic_fails(make_subscriber):
+    mqtt_client = mqtt.Client(callback_api_version=CallbackAPIVersion.VERSION2)
+    # MQTT client is _not_ connected to the broker
+    with pytest.raises(RuntimeError, match="Error subscribing to MQTT command topic"):
+        make_subscriber(lambda _, __, ___: None, mqtt_client)

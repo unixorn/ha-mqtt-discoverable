@@ -15,13 +15,14 @@
 #
 import asyncio
 import logging
+import ssl
 from concurrent.futures import ThreadPoolExecutor
 from threading import Event
 from unittest.mock import MagicMock, patch
 
 import pytest
 from paho.mqtt import subscribe
-from paho.mqtt.client import MQTT_ERR_SUCCESS, Client, MQTTMessage, MQTTv5
+from paho.mqtt.client import MQTT_ERR_CONN_REFUSED, MQTT_ERR_SUCCESS, Client, MQTTMessage, MQTTv5
 from paho.mqtt.enums import CallbackAPIVersion
 from paho.mqtt.subscribeoptions import SubscribeOptions
 from pytest_mock import MockerFixture
@@ -46,12 +47,8 @@ def discoverable_availability() -> Discoverable[EntityInfo]:
     return Discoverable[EntityInfo](settings)
 
 
-def test_required_config():
-    mqtt_settings = Settings.MQTT(host="localhost")
-    sensor_info = EntityInfo(name="test", component="binary_sensor")
-    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
-    d = Discoverable(settings)
-    assert d is not None
+def test_required_config(discoverable):
+    assert discoverable is not None
 
 
 def test_missing_config():
@@ -320,3 +317,69 @@ def test_set_availability_wrong_config(discoverable: Discoverable):
 def test_set_attributes(discoverable: Discoverable):
     attributes = {"test attribute": "test"}
     discoverable.set_attributes(attributes)
+
+
+def test_delete_entity(discoverable: Discoverable):
+    with patch.object(discoverable.mqtt_client, "publish") as mock_publish:
+        # Write empty config to config topic
+        discoverable.delete()
+        mock_publish.assert_called_once_with(
+            "homeassistant/binary_sensor/test/config",
+            "",
+            retain=True,
+        )
+
+
+def test_write_config_does_not_publish_if_debug_is_true(discoverable: Discoverable):
+    with patch.object(discoverable.mqtt_client, "publish") as mock_publish:
+        # Enable debugging
+        discoverable._settings.debug = True
+        discoverable.write_config()
+        mock_publish.assert_not_called()
+
+
+def test_update_state_does_not_publish_if_debug_is_true(discoverable: Discoverable):
+    with patch.object(discoverable.mqtt_client, "publish") as mock_publish:
+        # Enable debugging
+        discoverable._settings.debug = True
+        discoverable._update_state("new state")
+        mock_publish.assert_not_called()
+
+
+def test_expect_exception_if_connecting_to_mqtt_broker_fails():
+    mqtt_settings = Settings.MQTT(host="localhost")
+    sensor_info = EntityInfo(name="test", component="binary_sensor")
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+
+    with patch("paho.mqtt.client.Client.connect") as mock_connect:
+        mock_connect.return_value = MQTT_ERR_CONN_REFUSED
+        with pytest.raises(RuntimeError, match="Error while connecting to MQTT broker"):
+            Discoverable[EntityInfo](settings)
+
+
+def test_tls_key_uses_tls_set():
+    mqtt_settings = Settings.MQTT(host="localhost", tls_key="tlskey")
+    sensor_info = EntityInfo(name="test", component="binary_sensor")
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+
+    with patch("paho.mqtt.client.Client.tls_set") as mock_tls_set:
+        Discoverable[EntityInfo](settings)
+        mock_tls_set.assert_called_once_with(
+            ca_certs=mqtt_settings.tls_ca_cert,
+            certfile=mqtt_settings.tls_certfile,
+            keyfile=mqtt_settings.tls_key,
+            cert_reqs=ssl.CERT_REQUIRED,
+            tls_version=ssl.PROTOCOL_TLS_CLIENT,
+        )
+
+
+def test_use_tls_uses_tls_set():
+    mqtt_settings = Settings.MQTT(host="localhost", use_tls=True)
+    sensor_info = EntityInfo(name="test", component="binary_sensor")
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+
+    with patch("paho.mqtt.client.Client.tls_set") as mock_tls_set:
+        Discoverable[EntityInfo](settings)
+        mock_tls_set.assert_called_once_with(
+            ca_certs=mqtt_settings.tls_ca_cert, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLS_CLIENT
+        )
