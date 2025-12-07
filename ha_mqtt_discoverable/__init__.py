@@ -244,7 +244,7 @@ wrote_configuration: {self.wrote_configuration}
                 certfile=mqtt_settings.tls_certfile,
                 keyfile=mqtt_settings.tls_key,
                 cert_reqs=ssl.CERT_REQUIRED,
-                tls_version=ssl.PROTOCOL_TLS,
+                tls_version=ssl.PROTOCOL_TLS_CLIENT,
             )
         elif mqtt_settings.use_tls:
             logger.info(f"Connecting to {mqtt_settings.host}:{mqtt_settings.port} with SSL and username/password authentication")
@@ -253,12 +253,12 @@ wrote_configuration: {self.wrote_configuration}
                 self.mqtt_client.tls_set(
                     ca_certs=mqtt_settings.tls_ca_cert,
                     cert_reqs=ssl.CERT_REQUIRED,
-                    tls_version=ssl.PROTOCOL_TLS,
+                    tls_version=ssl.PROTOCOL_TLS_CLIENT,
                 )
             else:
                 self.mqtt_client.tls_set(
                     cert_reqs=ssl.CERT_REQUIRED,
-                    tls_version=ssl.PROTOCOL_TLS,
+                    tls_version=ssl.PROTOCOL_TLS_CLIENT,
                 )
             if mqtt_settings.username:
                 self.mqtt_client.username_pw_set(mqtt_settings.username, password=mqtt_settings.password)
