@@ -249,23 +249,15 @@ wrote_configuration: {self.wrote_configuration}
         elif mqtt_settings.use_tls:
             logger.info(f"Connecting to {mqtt_settings.host}:{mqtt_settings.port} with SSL and username/password authentication")
             logger.debug(f"ca_certs={mqtt_settings.tls_ca_cert}")
-            if mqtt_settings.tls_ca_cert:
-                self.mqtt_client.tls_set(
-                    ca_certs=mqtt_settings.tls_ca_cert,
-                    cert_reqs=ssl.CERT_REQUIRED,
-                    tls_version=ssl.PROTOCOL_TLS_CLIENT,
-                )
-            else:
-                self.mqtt_client.tls_set(
-                    cert_reqs=ssl.CERT_REQUIRED,
-                    tls_version=ssl.PROTOCOL_TLS_CLIENT,
-                )
-            if mqtt_settings.username:
-                self.mqtt_client.username_pw_set(mqtt_settings.username, password=mqtt_settings.password)
+            self.mqtt_client.tls_set(
+                ca_certs=mqtt_settings.tls_ca_cert,
+                cert_reqs=ssl.CERT_REQUIRED,
+                tls_version=ssl.PROTOCOL_TLS_CLIENT,
+            )
+            self.mqtt_client.username_pw_set(mqtt_settings.username, password=mqtt_settings.password)
         else:
             logger.debug(f"Connecting to {mqtt_settings.host}:{mqtt_settings.port} without SSL")
-            if mqtt_settings.username:
-                self.mqtt_client.username_pw_set(mqtt_settings.username, password=mqtt_settings.password)
+            self.mqtt_client.username_pw_set(mqtt_settings.username, password=mqtt_settings.password)
         if on_connect:
             logger.debug("Registering custom callback function")
             self.mqtt_client.on_connect = on_connect
