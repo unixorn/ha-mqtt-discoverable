@@ -93,9 +93,14 @@ class EntityInfo(BaseModel):
     unique_id: str | None = None
     """Set this to enable editing sensor from the HA ui and to integrate with a
         device"""
-    topic_id: str | None = None
-    """Topic segment for MQTT, if not set will be auto-generated from name.
-    Useful for keeping display names in other languages while using English in MQTT topics."""
+    display_name: str | None = None
+    """Display name for Home Assistant UI. If not set, uses name.
+    Example: name='bluetooth_power', display_name='蓝牙'"""
+    state_topic: str | None = None
+    """Custom state topic for publishing entity state.
+    If not set, will be auto-generated from name and device.
+    Example: state_topic='home/pc/bluetooth/state'"""
+
 
     @model_validator(mode="before")
     @classmethod
@@ -183,10 +188,8 @@ class Discoverable(Generic[EntityType]):
         self._entity_topic = f"{self._entity.component}"
         # If present, append the device name, e.g. `binary_sensor/mydevice`
         self._entity_topic += f"/{clean_string(self._entity.device.name)}" if self._entity.device else ""
-        # Append the sensor name, use topic_id if provided, otherwise use cleaned name
-        entity_topic_segment = clean_string(self._entity.topic_id) if self._entity.topic_id else clean_string(
-            self._entity.name)
-        self._entity_topic += f"/{entity_topic_segment}"
+        # Append the sensor name, e.g. `binary_sensor/mydevice/mysensor`
+        self._entity_topic += f"/{clean_string(self._entity.name)}"
 
         # Full topic where we publish the configuration message to be picked up by HA
         # Prepend the `discovery_prefix`, default: `homeassistant`
@@ -195,7 +198,10 @@ class Discoverable(Generic[EntityType]):
         # Full topic where we publish our own state messages
         # Prepend the `state_prefix`, default: `hmd`
         # e.g. hmd/binary_sensor/mydevice/mysensor
-        self.state_topic = f"{self._settings.mqtt.state_prefix}/{self._entity_topic}/state"
+        if self._entity.state_topic:
+            self.state_topic = self._entity.state_topic
+        else:
+            self.state_topic = f"{self._settings.mqtt.state_prefix}/{self._entity_topic}/state"
 
         # Full topic where we publish our own attributes as JSON messages
         # Prepend the `state_prefix`, default: `hmd`
@@ -342,6 +348,9 @@ wrote_configuration: {self.wrote_configuration}
         """
         # Automatically generate a dict using pydantic
         config = self._entity.model_dump(exclude_none=True, by_alias=True)
+        # If display_name is set, use it instead of name for HA display
+        if self._entity.display_name:
+            config['name'] = self._entity.display_name
         # Add the MQTT topics to be discovered by HA
         topics = {
             "state_topic": self.state_topic,
