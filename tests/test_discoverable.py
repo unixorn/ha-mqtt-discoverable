@@ -198,6 +198,14 @@ def test_name_with_space():
     d.write_config()
 
 
+def test_custom_display_name():
+    mqtt_settings = Settings.MQTT(host="localhost")
+    sensor_info = EntityInfo(name="test", component="binary_sensor", display_name="test_测试")
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+    d = Discoverable[EntityInfo](settings)
+    d.write_config()
+
+
 def test_custom_object_id():
     mqtt_settings = Settings.MQTT(host="localhost")
     sensor_info = EntityInfo(name="Test name", component="binary_sensor", object_id="custom object id")
