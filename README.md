@@ -682,7 +682,7 @@ The _name_ field of an entity only supports ASCII characters, if you want to use
 ```py
 sensor_info = SensorInfo(
     name="Power",
-    display_name="Your-Custom-Name",
+    display_name="Power(功率传感器)",
     unit_of_measurement="W",
     device_class="power",
     state_class="measurement",
