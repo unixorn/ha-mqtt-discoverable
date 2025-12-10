@@ -677,7 +677,7 @@ Alternatively [use an existing MQTT client](#using-an-existing-mqtt-client) with
 
 ### Using UTF-8 field names in Home Assistant UI
 
-The name field of an entity only supports ASCII characters. If you want to display UTF-8 field names in the Home Assistant UI, add the display_name field. For example:
+The _name_ field of an entity only supports ASCII characters, if you want to use UTF-8 characters in the Home Assistant UI, use the _display_name_ field (_name_ is then only used under the hood, e.g. as part of the MQTT topic name). For example:
 
 ```py
 sensor_info = SensorInfo(
