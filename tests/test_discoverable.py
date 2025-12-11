@@ -47,6 +47,14 @@ def discoverable_availability() -> Discoverable[EntityInfo]:
     return Discoverable[EntityInfo](settings)
 
 
+@pytest.fixture
+def discoverable_custom_display_name() -> Discoverable[EntityInfo]:
+    mqtt_settings = Settings.MQTT(host="localhost")
+    sensor_info = EntityInfo(name="test", component="binary_sensor", display_name="test_测试")
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+    return Discoverable[EntityInfo](settings)
+
+
 def test_required_config(discoverable):
     assert discoverable is not None
 
@@ -90,11 +98,9 @@ def test_custom_on_connect_must_be_called(mocker: MockerFixture):
     mock_instance.assert_not_called()
 
 
-def test_mqtt_topics():
-    mqtt_settings = Settings.MQTT(host="localhost")
-    sensor_info = EntityInfo(name="test", component="binary_sensor")
-    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
-    d = Discoverable[EntityInfo](settings)
+@pytest.mark.parametrize("fixture", ["discoverable", "discoverable_custom_display_name"])
+def test_mqtt_topics(fixture, request):
+    d = request.getfixturevalue(fixture)
     assert d._entity_topic == "binary_sensor/test"
     assert d.config_topic == "homeassistant/binary_sensor/test/config"
     assert d.state_topic == "hmd/binary_sensor/test/state"
@@ -196,6 +202,11 @@ def test_name_with_space():
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     d = Discoverable[EntityInfo](settings)
     d.write_config()
+
+
+def test_custom_display_name(discoverable_custom_display_name: Discoverable):
+    config = discoverable_custom_display_name.generate_config()
+    assert discoverable_custom_display_name._settings.entity.display_name == config["name"]
 
 
 def test_custom_object_id():

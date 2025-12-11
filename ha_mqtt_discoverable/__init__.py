@@ -93,6 +93,8 @@ class EntityInfo(BaseModel):
     unique_id: str | None = None
     """Set this to enable editing sensor from the HA ui and to integrate with a
         device"""
+    display_name: str | None = None
+    """Display name for Home Assistant UI. If not set, uses name."""
 
     @model_validator(mode="before")
     @classmethod
@@ -329,6 +331,9 @@ wrote_configuration: {self.wrote_configuration}
         """
         # Automatically generate a dict using pydantic
         config = self._entity.model_dump(exclude_none=True, by_alias=True)
+        # If display_name is set, use it instead of name for HA display
+        if self._entity.display_name:
+            config["name"] = self._entity.display_name
         # Add the MQTT topics to be discovered by HA
         topics = {
             "state_topic": self.state_topic,

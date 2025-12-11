@@ -37,6 +37,7 @@ The [ha-mqtt-discoverable-cli](https://github.com/unixorn/ha-mqtt-discoverable-c
   - [Using an existing MQTT client](#using-an-existing-mqtt-client)
   - [I'm having problems on 32-bit ARM](#im-having-problems-on-32-bit-arm)
   - [I'm having problems running in systemd-Service](#im-having-problems-running-in-systemd-service)
+  - [Using UTF-8 field names in Home Assistant UI](#using-utf-8-field-names-in-home-assistant-ui)
 - [Contributing](#contributing)
 - [Users of ha-mqtt-discoverable](#users-of-ha-mqtt-discoverable)
 - [Contributors](#contributors)
@@ -673,6 +674,20 @@ systemd may limit the tasks to a too low number for your needs (check with `syst
 Try setting `TasksMax=` to an appropriate high number accommodating your entity count and other threads that may spawn.
 
 Alternatively [use an existing MQTT client](#using-an-existing-mqtt-client) without each entity generating their own MQTT-client-loop.
+
+### Using UTF-8 field names in Home Assistant UI
+
+The _name_ field of an entity only supports ASCII characters, if you want to use UTF-8 characters in the Home Assistant UI, use the _display_name_ field (_name_ is then only used under the hood, e.g. as part of the MQTT topic name). For example:
+
+```py
+sensor_info = SensorInfo(
+    name="Power",
+    display_name="Power(功率传感器)",
+    unit_of_measurement="W",
+    device_class="power",
+    state_class="measurement",
+)
+```
 
 ## Contributing
 
