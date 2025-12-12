@@ -707,6 +707,8 @@ If you use this module for your own project, please add a link here.
 
 - [yahac](https://github.com/dseichter/yahac) - Yet Another Home Assistant Client
 
+- [PCTools](https://github.com/1812z/PCTools) - Link your Windows computer to Home Assistant
+
 ## Contributors
 
 [![Contributors](https://contributors-img.web.app/image?repo=unixorn/ha-mqtt-discoverable)](https://github.com/unixorn/ha-mqtt-discoverable/graphs/contributors)
