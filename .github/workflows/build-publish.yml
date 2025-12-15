@@ -37,7 +37,7 @@ jobs:
           poetry build
 
       - name: Upload package
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Python package
           path: dist/
