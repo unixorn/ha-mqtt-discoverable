@@ -23,7 +23,7 @@
 | tests/test\_subscriber.py              |       64 |        0 |        0 |        0 |     100% |           |
 | tests/test\_switch.py                  |       18 |        0 |        0 |        0 |     100% |           |
 | tests/test\_text.py                    |       28 |        0 |        0 |        0 |     100% |           |
-|                              **TOTAL** | **1233** |    **0** |   **84** |    **0** | **100%** |           |
+| **TOTAL**                              | **1233** |    **0** |   **84** |    **0** | **100%** |           |
 
 
 ## Setup coverage badge
