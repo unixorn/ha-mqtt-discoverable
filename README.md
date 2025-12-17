@@ -35,7 +35,7 @@ The [ha-mqtt-discoverable-cli](https://github.com/unixorn/ha-mqtt-discoverable-c
 - [Availability Management](#availability-management)
 - [FAQ](#faq)
   - [Using an existing MQTT client](#using-an-existing-mqtt-client)
-  - [I'm having problems on 32-bit ARM](#im-having-problems-on-32-bit-arm)
+  - [I'm having problems on 32-bit ARM platforms](#im-having-problems-on-32-bit-arm-platforms)
   - [I'm having problems running in systemd-Service](#im-having-problems-running-in-systemd-service)
   - [Using UTF-8 field names in Home Assistant UI](#using-utf-8-field-names-in-home-assistant-ui)
 - [Contributing](#contributing)
@@ -333,7 +333,7 @@ with open("example.png", "rb") as example_file:
 
 ### Light
 
-The light is different from other current sensor as it needs its payload encoded/decoded as json.
+The light is different from other current sensor as it needs its payload encoded/decoded as JSON.
 It is possible to set brightness, effects and the color of the light. Similar to a _switch_ it can also receive 'commands' from HA that request a state change.
 It is possible to act upon reception of this 'command', by defining a `callback` function, as the following example shows:
 
@@ -662,10 +662,18 @@ mqtt_settings = Settings.MQTT(client=client)
 # Continue with the rest of the code as usual
 ```
 
-### I'm having problems on 32-bit ARM
+### I'm having problems on 32-bit ARM platforms
 
-Pydantic 2 has issues on 32-bit ARM. More details are on [ha-mqtt-discoverable/pull/191](https://github.com/unixorn/ha-mqtt-discoverable/pull/191).
-TL;DR: If you're on an ARM32 machine you're going to have to pin to the 0.13.1 version.
+ha-mqtt-discoverable depends on pydantic V2.  
+pydantic V2 depends on pydantic_core - the core validation logic for pydantic V2 written in Rust
+
+pydantic_core wheels might not be available for your 32-bit ARM platform:
+
+ * ARMv7 is officially supported -  https://pypi.org/project/pydantic_core/
+ * ARMv6 is not officially supported yet - https://github.com/pydantic/pydantic-core/pull/1725
+
+If you are using any of the Raspberry Pi models together with Debian, [piwheels](https://www.piwheels.org/project/pydantic-core/)
+offers pydantic_core wheels for ARMv6 and ARMv7.
 
 ### I'm having problems running in systemd-Service
 
