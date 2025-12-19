@@ -263,8 +263,8 @@ door_sensor.on()
 The following example creates a device trigger and generates a trigger event:
 
 ```py
-from ha_mqtt_discoverable import Settings
-from ha_mqtt_discoverable.sensors import DeviceInfo, DeviceTriggerInfo, DeviceTrigger
+from ha_mqtt_discoverable import DeviceInfo, Settings
+from ha_mqtt_discoverable.sensors import DeviceTriggerInfo, DeviceTrigger
 
 # Configure the required parameters for the MQTT broker
 mqtt_settings = Settings.MQTT(host="localhost")
