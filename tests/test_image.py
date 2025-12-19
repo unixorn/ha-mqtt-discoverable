@@ -59,7 +59,7 @@ def test_url_topic_content_type_set_raises_exception():
 
 def test_image_topic_invalid_encoding_set_raises_exception():
     with pytest.raises(ValidationError):
-        ImageInfo(name="test", image_encoding="invalid_encoding", image_topic="image_to_publish_to")
+        ImageInfo(name="test", image_encoding="invalid_encoding", image_topic="image_to_publish_to")  # type: ignore
 
 
 def test_image_topic_no_content_type_set_raises_exception():
