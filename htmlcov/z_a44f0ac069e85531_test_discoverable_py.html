@@ -67,7 +67,7 @@
             <a id="nextFileLink" class="nav" href="z_a44f0ac069e85531_test_image_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.0">coverage.py v7.13.0</a>,
-            created at 2025-12-19 07:14 +0000
+            created at 2025-12-19 19:55 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -242,7 +242,7 @@
     <p class="pln"><span class="n"><a id="t158" href="#t158">158</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t159" href="#t159">159</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t160" href="#t160">160</a></span><span class="t"><span class="key">def</span> <span class="nam">test_state_helper</span><span class="op">(</span><span class="nam">discoverable</span><span class="op">:</span> <span class="nam">Discoverable</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t161" href="#t161">161</a></span><span class="t">    <span class="nam">discoverable</span><span class="op">.</span><span class="nam">write_config</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">wait_for_publish</span><span class="op">(</span><span class="num">1</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t161" href="#t161">161</a></span><span class="t">    <span class="nam">discoverable</span><span class="op">.</span><span class="nam">write_config</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t162" href="#t162">162</a></span><span class="t">    <span class="key">with</span> <span class="nam">patch</span><span class="op">.</span><span class="nam">object</span><span class="op">(</span><span class="nam">discoverable</span><span class="op">.</span><span class="nam">mqtt_client</span><span class="op">,</span> <span class="str">"publish"</span><span class="op">)</span> <span class="key">as</span> <span class="nam">mock_publish</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t163" href="#t163">163</a></span><span class="t">        <span class="com"># Write a state to MQTT</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t164" href="#t164">164</a></span><span class="t">        <span class="nam">discoverable</span><span class="op">.</span><span class="nam">_update_state</span><span class="op">(</span><span class="str">"test"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -329,7 +329,7 @@
     <p class="run run2"><span class="n"><a id="t245" href="#t245">245</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t246" href="#t246">246</a></span><span class="t">    <span class="nam">mqtt_client</span><span class="op">.</span><span class="nam">loop_start</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t247" href="#t247">247</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t248" href="#t248">248</a></span><span class="t">    <span class="nam">discoverable</span><span class="op">.</span><span class="nam">write_config</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">wait_for_publish</span><span class="op">(</span><span class="num">1</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t248" href="#t248">248</a></span><span class="t">    <span class="nam">discoverable</span><span class="op">.</span><span class="nam">write_config</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t249" href="#t249">249</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t250" href="#t250">250</a></span><span class="t">    <span class="com"># Write a state to MQTT from another thread</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t251" href="#t251">251</a></span><span class="t">    <span class="key">with</span> <span class="nam">ThreadPoolExecutor</span><span class="op">(</span><span class="op">)</span> <span class="key">as</span> <span class="nam">executor</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -487,7 +487,7 @@
             <a class="nav" href="z_a44f0ac069e85531_test_image_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.0">coverage.py v7.13.0</a>,
-            created at 2025-12-19 07:14 +0000
+            created at 2025-12-19 19:55 +0000
         </p>
     </div>
 </footer>
