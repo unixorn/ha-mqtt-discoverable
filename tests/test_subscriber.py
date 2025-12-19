@@ -35,7 +35,8 @@ T = TypeVar("T")  # Used in the callback function
 @pytest.fixture
 def make_subscriber():
     def _make_subscriber(
-        callback: Callable[[mqtt.Client, T, mqtt.MQTTMessage], Any] = lambda _, __, ___: None, mqtt_client: mqtt.Client = None
+        callback: Callable[[mqtt.Client, T, mqtt.MQTTMessage], Any] = lambda _, __, ___: None,
+        mqtt_client: mqtt.Client | None = None,
     ):
         mqtt_settings = Settings.MQTT(client=mqtt_client) if mqtt_client else Settings.MQTT(host="localhost")
         sensor_info = EntityInfo(name="".join(random.choices(string.ascii_lowercase + string.digits, k=10)), component="button")

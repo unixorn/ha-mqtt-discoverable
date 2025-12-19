@@ -23,7 +23,6 @@ from typing import Annotated, Any, Literal
 from pydantic import Field, model_validator
 
 from ha_mqtt_discoverable import (
-    DeviceInfo,
     Discoverable,
     EntityInfo,
     Subscriber,
@@ -135,7 +134,7 @@ class LightInfo(EntityInfo):
     """The payload that represents on state. If specified, will be used for both
     comparing to the value in the state_topic (see value_template and state_on
     for details) and sending as on command to the command_topic."""
-    brightness: bool | None = False
+    brightness: bool = False
     """Flag that defines if the light supports setting the brightness
     """
     color_mode: bool | None = None
@@ -144,11 +143,11 @@ class LightInfo(EntityInfo):
     """List of supported color modes. See
     https://www.home-assistant.io/integrations/light.mqtt/#supported_color_modes for current list of
     supported modes. Required if color_mode is set"""
-    effect: bool | None = False
+    effect: bool = False
     """Flag that defines if the light supports effects"""
     effect_list: str | list | None = None
     """List of supported effects. Required if effect is set"""
-    retain: bool | None = True
+    retain: bool = True
     """If the published message should have the retain flag on or not"""
 
 
@@ -253,8 +252,6 @@ class DeviceTriggerInfo(EntityInfo):
     """The type of the trigger"""
     subtype: str
     """The subtype of the trigger"""
-    device: DeviceInfo
-    """Information about the device this sensor belongs to (required)"""
 
 
 class CameraInfo(EntityInfo):
@@ -348,7 +345,7 @@ class SelectInfo(EntityInfo):
     Default: true if no state_topic defined, else false."""
     retain: bool | None = None
     """If the published message should have the retain flag on or not"""
-    options: list | None = None
+    options: list = Field(default_factory=list)
     """List of options that can be selected. An empty list or a list with a single item is allowed."""
 
 
@@ -407,23 +404,20 @@ class BinarySensor(Discoverable[BinarySensorInfo]):
 
 
 class Sensor(Discoverable[SensorInfo]):
-    def set_state(self, state: str | int | float, last_reset: str = None) -> None:
+    def set_state(self, state: bytes | str | int | float, last_reset: str | None = None) -> None:
         """
         Update the sensor state
 
         Args:
-            state(str): What state to set the sensor to
-            last_reset(str): ISO 8601-formatted string when an accumulating sensor was initialized
+            state: What state to set the sensor to
+            last_reset: ISO 8601-formatted string when an accumulating sensor was initialized
         """
-        logger.info(f"Setting {self._entity.name} to {state} using {self.state_topic}")
         if last_reset:
             logger.info("Setting last_reset to " + last_reset)
         self._update_state(str(state), last_reset=last_reset)
 
 
-# Inherit the on and off methods from the BinarySensor class, changing only the
-# documentation string
-class Switch(Subscriber[SwitchInfo], BinarySensor):
+class Switch(Subscriber[SwitchInfo]):
     """Implements an MQTT switch:
     https://www.home-assistant.io/integrations/switch.mqtt
     """
@@ -432,13 +426,13 @@ class Switch(Subscriber[SwitchInfo], BinarySensor):
         """
         Set switch to off
         """
-        super().off()
+        self._update_state(state=self._entity.payload_off)
 
     def on(self):
         """
         Set switch to on
         """
-        super().on()
+        self._update_state(state=self._entity.payload_on)
 
 
 class Light(Subscriber[LightInfo]):
@@ -493,6 +487,8 @@ class Light(Subscriber[LightInfo]):
         """
         if not self._entity.color_mode:
             raise RuntimeError(f"Light {self._entity.name} does not support setting color")
+        if not self._entity.supported_color_modes:
+            raise RuntimeError("List of supported color modes cannot be empty")
         if color_mode not in self._entity.supported_color_modes:
             raise RuntimeError(f"Color is not in configured supported_color_modes {str(self._entity.supported_color_modes)}")
         # We do not check if color schema conforms to color mode formatting, it is up to the caller
@@ -512,6 +508,8 @@ class Light(Subscriber[LightInfo]):
         """
         if not self._entity.effect:
             raise RuntimeError(f"Light {self._entity.name} does not support effects")
+        if not self._entity.effect_list:
+            raise RuntimeError("List of supported effects cannot be empty")
         if effect not in self._entity.effect_list:
             raise RuntimeError(f"Effect is not within configured effect_list {str(self._entity.effect_list)}")
         state_payload = {

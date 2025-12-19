@@ -16,7 +16,7 @@ import json
 import logging
 import ssl
 from collections.abc import Callable
-from typing import Any, Generic, TypeVar, Union
+from typing import Any, Generic, TypeVar
 
 import paho.mqtt.client as mqtt
 from paho.mqtt.client import MQTTMessageInfo
@@ -117,8 +117,8 @@ class Settings(BaseModel, Generic[EntityType]):
         # To use mqtt.Client
         model_config = ConfigDict(arbitrary_types_allowed=True)
 
-        host: str | None = "homeassistant"
-        port: int | None = 1883
+        host: str = "homeassistant"
+        port: int = 1883
         username: str | None = None
         password: str | None = None
         client_name: str | None = None
@@ -280,7 +280,7 @@ wrote_configuration: {self.wrote_configuration}
         self.mqtt_client.loop_start()
 
     def _update_state(
-        self, state: Union[str, float, int] | None, topic: str | None = None, last_reset: str | None = None, retain=True
+        self, state: bytes | str | float | int | None, topic: str | None = None, last_reset: str | None = None, retain=True
     ) -> MQTTMessageInfo | None:
         """
         Write a state to the given MQTT topic, returning the result of client.publish()
@@ -292,10 +292,9 @@ wrote_configuration: {self.wrote_configuration}
             logger.debug(f"State topic unset, using default: {self.state_topic}")
             topic = self.state_topic
         if last_reset:
-            state = {"state": state, "last_reset": last_reset}
-            state = json.dumps(state)
+            state = json.dumps({"state": state, "last_reset": last_reset})
 
-        logger.info(f"Setting {self._entity.name} to {state} using {topic}")
+        logger.info(f"Setting {self._entity.name} to {state!r} using {topic}")
         if self._settings.debug:
             logger.debug("Debug mode is enabled, skipping state write.")
             return None
@@ -415,7 +414,7 @@ class Subscriber(Discoverable[EntityType]):
         # Callback invoked when the MQTT connection is established
         def on_client_connected(client: mqtt.Client, *_):
             # Subscribe to the command topic
-            result, _ = client.subscribe(self._command_topic, qos=1)
+            result, __ = client.subscribe(self._command_topic, qos=1)
             if result is not mqtt.MQTT_ERR_SUCCESS:
                 raise RuntimeError("Error subscribing to MQTT command topic")
 

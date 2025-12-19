@@ -158,7 +158,7 @@ def test_write_config(discoverable: Discoverable):
 
 
 def test_state_helper(discoverable: Discoverable):
-    discoverable.write_config().wait_for_publish(1)
+    discoverable.write_config()
     with patch.object(discoverable.mqtt_client, "publish") as mock_publish:
         # Write a state to MQTT
         discoverable._update_state("test")
@@ -245,7 +245,7 @@ def test_publish_multithread(discoverable: Discoverable):
     )
     mqtt_client.loop_start()
 
-    discoverable.write_config().wait_for_publish(1)
+    discoverable.write_config()
 
     # Write a state to MQTT from another thread
     with ThreadPoolExecutor() as executor:

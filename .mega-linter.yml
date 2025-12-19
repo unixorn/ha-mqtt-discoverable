@@ -16,7 +16,6 @@ DISABLE_LINTERS:
   - PYTHON_FLAKE8
   - PYTHON_ISORT
   - PYTHON_MYPY
-  - PYTHON_PYRIGHT
   - MAKEFILE_CHECKMAKE
 
 PYTHON_PYLINT_PRE_COMMANDS:
@@ -34,3 +33,7 @@ PYTHON_PYLINT_ARGUMENTS:
 
 # Exclude test files from linting since they make use of the `assert` statement that bandit does not like
 PYTHON_BANDIT_FILTER_REGEX_EXCLUDE: test_
+
+PYTHON_PYRIGHT_PRE_COMMANDS:
+  - command: pip install paho-mqtt pydantic pytest pytest_mock
+    continue_if_failed: false
