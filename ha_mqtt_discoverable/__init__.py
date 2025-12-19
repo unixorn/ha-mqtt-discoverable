@@ -161,6 +161,7 @@ class Discoverable(Generic[EntityType]):
     state_topic: str
     availability_topic: str
     attributes_topic: str
+    last_state: bytes | str | float | int | None = None
 
     def __init__(self, settings: Settings[EntityType], on_connect: Callable | None = None) -> None:
         """
@@ -280,7 +281,12 @@ wrote_configuration: {self.wrote_configuration}
         self.mqtt_client.loop_start()
 
     def _update_state(
-        self, state: bytes | str | float | int | None, topic: str | None = None, last_reset: str | None = None, retain=True
+        self,
+        state: bytes | str | float | int | None,
+        topic: str | None = None,
+        last_reset: str | None = None,
+        retain=True,
+        force_update=False,
     ) -> MQTTMessageInfo | None:
         """
         Write a state to the given MQTT topic, returning the result of client.publish()
@@ -299,8 +305,13 @@ wrote_configuration: {self.wrote_configuration}
             logger.debug("Debug mode is enabled, skipping state write.")
             return None
 
+        if not force_update and (self.last_state == state):
+            logger.debug("State did not change, skipping state write.")
+            return None
+
         message_info = self.mqtt_client.publish(topic, state, retain=retain)
         logger.debug(f"Publish result: {message_info}")
+        self.last_state = state
         return message_info
 
     def delete(self) -> None:

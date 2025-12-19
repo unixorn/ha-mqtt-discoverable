@@ -697,6 +697,8 @@ sensor_info = SensorInfo(
 )
 ```
 
+# force update
+
 ## Contributing
 
 Please run `ruff` on your code before submitting. There are `git` hooks already configured to run `ruff` and other checks before every commit, please run `pre-commit install` to enable them.
