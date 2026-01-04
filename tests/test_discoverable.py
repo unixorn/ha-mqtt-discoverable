@@ -394,3 +394,23 @@ def test_use_tls_uses_tls_set():
         mock_tls_set.assert_called_once_with(
             ca_certs=mqtt_settings.tls_ca_cert, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLS_CLIENT
         )
+
+
+def test_state_helper_force_update_false(discoverable: Discoverable):
+    discoverable.write_config()
+    with patch.object(discoverable.mqtt_client, "publish") as mock_publish:
+        discoverable._update_state("test")
+        mock_publish.assert_called_once_with("hmd/binary_sensor/test/state", "test", retain=True)
+        mock_publish.reset_mock()
+        discoverable._update_state("test", force_update=False)
+        mock_publish.assert_not_called()
+
+
+def test_state_helper_force_update_true(discoverable: Discoverable):
+    discoverable.write_config()
+    with patch.object(discoverable.mqtt_client, "publish") as mock_publish:
+        discoverable._update_state("test")
+        mock_publish.assert_called_once_with("hmd/binary_sensor/test/state", "test", retain=True)
+        mock_publish.reset_mock()
+        discoverable._update_state("test", force_update=True)
+        mock_publish.assert_called_once_with("hmd/binary_sensor/test/state", "test", retain=True)
