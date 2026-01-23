@@ -15,32 +15,33 @@ The [ha-mqtt-discoverable-cli](https://github.com/unixorn/ha-mqtt-discoverable-c
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ## Table of Contents
 
-- [Installing](#installing)
-  - [Python](#python)
-- [Supported entities](#supported-entities)
-  - [Binary sensor](#binary-sensor)
-  - [Button](#button)
-  - [Camera](#camera)
-  - [Cover](#cover)
-  - [Device](#device)
-  - [Device trigger](#device-trigger)
-  - [Image](#image)
-  - [Light](#light)
-  - [Lock](#lock)
-  - [Number](#number)
-  - [Select](#select)
-  - [Sensor](#sensor)
-  - [Switch](#switch)
-  - [Text](#text)
-- [Availability Management](#availability-management)
-- [FAQ](#faq)
-  - [Using an existing MQTT client](#using-an-existing-mqtt-client)
-  - [I'm having problems on 32-bit ARM platforms](#im-having-problems-on-32-bit-arm-platforms)
-  - [I'm having problems running in systemd-Service](#im-having-problems-running-in-systemd-service)
-  - [Using UTF-8 field names in Home Assistant UI](#using-utf-8-field-names-in-home-assistant-ui)
-- [Contributing](#contributing)
-- [Users of ha-mqtt-discoverable](#users-of-ha-mqtt-discoverable)
-- [Contributors](#contributors)
+  - [Installing](#installing)
+    - [Python](#python)
+  - [Supported entities](#supported-entities)
+    - [Binary sensor](#binary-sensor)
+    - [Button](#button)
+    - [Camera](#camera)
+    - [Cover](#cover)
+    - [Device](#device)
+    - [Device trigger](#device-trigger)
+    - [Image](#image)
+    - [Light](#light)
+    - [Lock](#lock)
+    - [Number](#number)
+    - [Select](#select)
+    - [Sensor](#sensor)
+    - [Switch](#switch)
+    - [Text](#text)
+  - [Availability Management](#availability-management)
+  - [FAQ](#faq)
+    - [Using an existing MQTT client](#using-an-existing-mqtt-client)
+    - [I'm having problems on 32-bit ARM platforms](#im-having-problems-on-32-bit-arm-platforms)
+    - [I'm having problems running in systemd-Service](#im-having-problems-running-in-systemd-service)
+    - [Using UTF-8 field names in Home Assistant UI](#using-utf-8-field-names-in-home-assistant-ui)
+- [force update](#force-update)
+  - [Contributing](#contributing)
+  - [Users of ha-mqtt-discoverable](#users-of-ha-mqtt-discoverable)
+  - [Contributors](#contributors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -696,6 +697,8 @@ sensor_info = SensorInfo(
     state_class="measurement",
 )
 ```
+
+# force update
 
 ## Contributing
 

@@ -379,42 +379,38 @@ class LockInfo(EntityInfo):
 
 
 class BinarySensor(Discoverable[BinarySensorInfo]):
-    def off(self):
+    def off(self, force_update: bool = True):
         """
         Set binary sensor to off
-        """
-        self.update_state(state=False)
-
-    def on(self):
-        """
-        Set binary sensor to on
-        """
-        self.update_state(state=True)
-
-    def update_state(self, state: bool) -> None:
-        """
-        Update MQTT sensor state
 
         Args:
-            state(bool): What state to set the sensor to
+            force_update(bool): If set to True, the state is only published if it has changed
         """
-        state_message = self._entity.payload_on if state else self._entity.payload_off
-        logger.info(f"Setting {self._entity.name} to {state_message} using {self.state_topic}")
-        self._update_state(state=state_message)
+        self._update_state(state=self._entity.payload_off, force_update=force_update)
+
+    def on(self, force_update: bool = True):
+        """
+        Set binary sensor to on
+
+        Args:
+            force_update(bool): If set to True, the state is only published if it has changed
+        """
+        self._update_state(state=self._entity.payload_on, force_update=force_update)
 
 
 class Sensor(Discoverable[SensorInfo]):
-    def set_state(self, state: bytes | str | int | float, last_reset: str | None = None) -> None:
+    def set_state(self, state: bytes | str | int | float, last_reset: str | None = None, force_update: bool = True) -> None:
         """
         Update the sensor state
 
         Args:
             state: What state to set the sensor to
             last_reset: ISO 8601-formatted string when an accumulating sensor was initialized
+            force_update: If set to True, the state is only published if it has changed
         """
         if last_reset:
             logger.info("Setting last_reset to " + last_reset)
-        self._update_state(str(state), last_reset=last_reset)
+        self._update_state(str(state), last_reset=last_reset, force_update=force_update)
 
 
 class Switch(Subscriber[SwitchInfo]):
