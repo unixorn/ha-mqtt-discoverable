@@ -27,7 +27,7 @@ repos:
           - --markdown-linebreak-ext=md
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: v0.14.13
+    rev: v0.14.14
     hooks:
       # Run the linter.
       - id: ruff
