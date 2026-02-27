@@ -39,28 +39,28 @@ def test_generate_config(lock: Lock):
 def test_lock_state_locked(lock: Lock):
     with patch.object(lock.mqtt_client, "publish") as mock_publish:
         lock.locked()
-        mock_publish.assert_called_with(lock.state_topic, lock._entity.state_locked, retain=True)
+        mock_publish.assert_called_with(lock.state_topic, lock._entity.state_locked, retain=False)
 
 
 def test_lock_state_locking(lock: Lock):
     with patch.object(lock.mqtt_client, "publish") as mock_publish:
         lock.locking()
-        mock_publish.assert_called_with(lock.state_topic, lock._entity.state_locking, retain=True)
+        mock_publish.assert_called_with(lock.state_topic, lock._entity.state_locking, retain=False)
 
 
 def test_lock_state_unlocked(lock: Lock):
     with patch.object(lock.mqtt_client, "publish") as mock_publish:
         lock.unlocked()
-        mock_publish.assert_called_with(lock.state_topic, lock._entity.state_unlocked, retain=True)
+        mock_publish.assert_called_with(lock.state_topic, lock._entity.state_unlocked, retain=False)
 
 
 def test_lock_state_unlocking(lock: Lock):
     with patch.object(lock.mqtt_client, "publish") as mock_publish:
         lock.unlocking()
-        mock_publish.assert_called_with(lock.state_topic, lock._entity.state_unlocking, retain=True)
+        mock_publish.assert_called_with(lock.state_topic, lock._entity.state_unlocking, retain=False)
 
 
 def test_lock_state_jammed(lock: Lock):
     with patch.object(lock.mqtt_client, "publish") as mock_publish:
         lock.jammed()
-        mock_publish.assert_called_with(lock.state_topic, lock._entity.state_jammed, retain=True)
+        mock_publish.assert_called_with(lock.state_topic, lock._entity.state_jammed, retain=False)

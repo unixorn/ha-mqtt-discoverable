@@ -280,7 +280,7 @@ wrote_configuration: {self.wrote_configuration}
         self.mqtt_client.loop_start()
 
     def _update_state(
-        self, state: bytes | str | float | int | None, topic: str | None = None, last_reset: str | None = None, retain=True
+        self, state: bytes | str | float | int | None, topic: str | None = None, last_reset: str | None = None, retain=False
     ) -> MQTTMessageInfo | None:
         """
         Write a state to the given MQTT topic, returning the result of client.publish()

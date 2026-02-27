@@ -53,7 +53,7 @@ def test_generate_config(sensor: Sensor):
 def test_update_state(sensor: Sensor):
     with patch.object(sensor.mqtt_client, "publish") as mock_publish:
         sensor.set_state(1)
-        mock_publish.assert_called_with(sensor.state_topic, "1", retain=True)
+        mock_publish.assert_called_with(sensor.state_topic, "1", retain=False)
 
 
 def test_update_state_with_last_reset(sensor: Sensor):

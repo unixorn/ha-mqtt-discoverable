@@ -162,7 +162,7 @@ def test_state_helper(discoverable: Discoverable):
     with patch.object(discoverable.mqtt_client, "publish") as mock_publish:
         # Write a state to MQTT
         discoverable._update_state("test")
-        mock_publish.assert_called_once_with("hmd/binary_sensor/test/state", "test", retain=True)
+        mock_publish.assert_called_once_with("hmd/binary_sensor/test/state", "test", retain=False)
 
 
 def test_device_info(discoverable: Discoverable[EntityInfo]):
