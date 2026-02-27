@@ -45,4 +45,4 @@ def test_set_empty_image_payload_successful(camera: Camera):
     image_payload: bytes = b"\x89\x50\x4e\x47\x0d\x0a\x1a\x0a"
     with patch.object(camera.mqtt_client, "publish") as mock_publish:
         camera.set_payload(image_payload)
-        mock_publish.assert_called_with(camera._entity.topic, image_payload, retain=True)
+        mock_publish.assert_called_with(camera._entity.topic, image_payload, retain=False)

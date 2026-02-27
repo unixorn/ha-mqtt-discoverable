@@ -89,7 +89,7 @@ def test_set_url(image: Image):
 
     with patch.object(image.mqtt_client, "publish") as mock_publish:
         image.set_url(image_url)
-        mock_publish.assert_called_with(image._entity.url_topic, image_url, retain=True)
+        mock_publish.assert_called_with(image._entity.url_topic, image_url, retain=False)
 
 
 @pytest.mark.parametrize("image", [(None, "image_to_publish_to", "b64", "image/png")], indirect=True)
@@ -107,7 +107,7 @@ def test_set_blob(image: Image):
 
     with patch.object(image.mqtt_client, "publish") as mock_publish:
         image.set_payload(image_blob)
-        mock_publish.assert_called_with(image._entity.image_topic, image_blob, retain=True)
+        mock_publish.assert_called_with(image._entity.image_topic, image_blob, retain=False)
 
 
 @pytest.mark.parametrize("image", [(None, "image_to_publish_to", "b64", "image/png")], indirect=True)

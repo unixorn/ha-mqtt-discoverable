@@ -45,7 +45,7 @@ def test_select_invalid_option(select: Select):
 def test_select_valid_option(select: Select):
     with patch.object(select.mqtt_client, "publish") as mock_publish:
         select.select_option("two")
-        mock_publish.assert_called_with(select.state_topic, "two", retain=True)
+        mock_publish.assert_called_with(select.state_topic, "two", retain=False)
 
 
 def test_raise_if_empty_str_is_selected(select: Select):

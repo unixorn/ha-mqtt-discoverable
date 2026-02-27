@@ -110,7 +110,7 @@ class SwitchInfo(EntityInfo):
     """The payload that represents on state. If specified, will be used for both
     comparing to the value in the state_topic (see value_template and state_on
     for details) and sending as on command to the command_topic."""
-    retain: bool | None = None
+    retain: bool = False
     """If the published message should have the retain flag on or not"""
     state_topic: str | None = None
     """The MQTT topic subscribed to receive state updates."""
@@ -147,7 +147,7 @@ class LightInfo(EntityInfo):
     """Flag that defines if the light supports effects"""
     effect_list: str | list | None = None
     """List of supported effects. Required if effect is set"""
-    retain: bool = True
+    retain: bool = False
     """If the published message should have the retain flag on or not"""
 
 
@@ -179,7 +179,7 @@ class CoverInfo(EntityInfo):
     """Payload that represents closing state"""
     state_stopped: str = "stopped"
     """Payload that represents stopped state"""
-    retain: bool | None = True
+    retain: bool = False
     """If the published message should have the retain flag on or not"""
 
 
@@ -190,7 +190,7 @@ class ButtonInfo(EntityInfo):
 
     payload_press: str = "PRESS"
     """The payload to send to trigger the button."""
-    retain: bool | None = None
+    retain: bool = False
     """If the published message should have the retain flag on or not"""
 
 
@@ -208,7 +208,7 @@ class TextInfo(EntityInfo):
     pattern: str | None = None
     """A valid regular expression the text being set or received must match with."""
 
-    retain: bool | None = None
+    retain: bool = False
     """If the published message should have the retain flag on or not"""
 
 
@@ -230,7 +230,7 @@ class NumberInfo(EntityInfo):
     payload_reset: str | None = None
     """A special payload that resets the state to None when received on the
     state_topic."""
-    retain: bool | None = None
+    retain: bool = False
     """If the published message should have the retain flag on or not"""
     step: float | None = None
     """Step value. Smallest acceptable value is 0.001. Defaults to 1.0."""
@@ -305,8 +305,6 @@ class ImageInfo(EntityInfo):
     Content type to use when sending image payloads.
     Cannot be used together with url_topic.
     """
-    retain: bool | None = None
-    """If the published message should have the retain flag on or not."""
 
     @model_validator(mode="after")
     def image_info_entity_model_validator(self) -> ImageInfo:
@@ -343,7 +341,7 @@ class SelectInfo(EntityInfo):
     optimistic: bool | None = None
     """Flag that defines if switch works in optimistic mode.
     Default: true if no state_topic defined, else false."""
-    retain: bool | None = None
+    retain: bool = False
     """If the published message should have the retain flag on or not"""
     options: list = Field(default_factory=list)
     """List of options that can be selected. An empty list or a list with a single item is allowed."""
@@ -358,7 +356,7 @@ class LockInfo(EntityInfo):
     optimistic: bool | None = None
     """Flag that defines if lock works in optimistic mode.
     Default: true if no state_topic defined, else false."""
-    retain: bool = True
+    retain: bool = False
     """If the published message should have the retain flag on or not"""
 
     payload_lock: str = "LOCK"
@@ -426,13 +424,13 @@ class Switch(Subscriber[SwitchInfo]):
         """
         Set switch to off
         """
-        self._update_state(state=self._entity.payload_off)
+        self._update_state(state=self._entity.payload_off, retain=self._entity.retain)
 
     def on(self):
         """
         Set switch to on
         """
-        self._update_state(state=self._entity.payload_on)
+        self._update_state(state=self._entity.payload_on, retain=self._entity.retain)
 
 
 class Light(Subscriber[LightInfo]):
@@ -536,23 +534,23 @@ class Cover(Subscriber[CoverInfo]):
 
     def open(self) -> None:
         """Set cover state to open"""
-        self._update_state(self._entity.state_open)
+        self._update_state(self._entity.state_open, retain=self._entity.retain)
 
     def closed(self) -> None:
         """Set cover state to closed"""
-        self._update_state(self._entity.state_closed)
+        self._update_state(self._entity.state_closed, retain=self._entity.retain)
 
     def closing(self) -> None:
         """Set cover state to closing"""
-        self._update_state(self._entity.state_closing)
+        self._update_state(self._entity.state_closing, retain=self._entity.retain)
 
     def opening(self) -> None:
         """Set cover state to opening"""
-        self._update_state(self._entity.state_opening)
+        self._update_state(self._entity.state_opening, retain=self._entity.retain)
 
     def stopped(self) -> None:
         """Set cover state to stopped"""
-        self._update_state(self._entity.state_stopped)
+        self._update_state(self._entity.state_stopped, retain=self._entity.retain)
 
 
 class Button(Subscriber[ButtonInfo]):
@@ -605,7 +603,7 @@ class Text(Subscriber[TextInfo]):
             raise RuntimeError(f"Text is not within configured length boundaries {bound}")
 
         logger.info(f"Setting {self._entity.name} to {text} using {self.state_topic}")
-        self._update_state(str(text))
+        self._update_state(str(text), retain=self._entity.retain)
 
 
 class Number(Subscriber[NumberInfo]):
@@ -625,7 +623,7 @@ class Number(Subscriber[NumberInfo]):
             raise RuntimeError(f"Value is not within configured boundaries {bound}")
 
         logger.info(f"Setting {self._entity.name} to {value} using {self.state_topic}")
-        self._update_state(value)
+        self._update_state(value, retain=self._entity.retain)
 
 
 class Camera(Discoverable[CameraInfo]):
@@ -701,7 +699,7 @@ class Select(Subscriber[SelectInfo]):
             raise RuntimeError(f"Invalid option: {option} (Valid option(s): {self._entity.options})")
 
         logger.info(f"Changing selection of {self._entity.name} to {option} using {self.state_topic}")
-        self._update_state(option)
+        self._update_state(option, retain=self._entity.retain)
 
 
 class Lock(Subscriber[LockInfo]):
@@ -712,20 +710,20 @@ class Lock(Subscriber[LockInfo]):
 
     def locking(self) -> None:
         """Set lock state to locking"""
-        self._update_state(self._entity.state_locking)
+        self._update_state(self._entity.state_locking, retain=self._entity.retain)
 
     def locked(self) -> None:
         """Set lock state to locked"""
-        self._update_state(self._entity.state_locked)
+        self._update_state(self._entity.state_locked, retain=self._entity.retain)
 
     def unlocking(self) -> None:
         """Set lock state to unlocking"""
-        self._update_state(self._entity.state_unlocking)
+        self._update_state(self._entity.state_unlocking, retain=self._entity.retain)
 
     def unlocked(self) -> None:
         """Set lock state to unlocked"""
-        self._update_state(self._entity.state_unlocked)
+        self._update_state(self._entity.state_unlocked, retain=self._entity.retain)
 
     def jammed(self) -> None:
         """Set lock state to jammed"""
-        self._update_state(self._entity.state_jammed)
+        self._update_state(self._entity.state_jammed, retain=self._entity.retain)
