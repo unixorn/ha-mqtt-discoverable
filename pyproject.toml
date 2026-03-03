@@ -18,9 +18,6 @@ dependencies = [
     "pydantic==2.12.5",
 ]
 
-[tool.poetry]
-packages = [{include = "ha_mqtt_discoverable"}]
-
 [dependency-groups]
 dev = [
     "pre-commit>=4.5.1,<5",
