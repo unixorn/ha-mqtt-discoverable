@@ -33,6 +33,7 @@ The [ha-mqtt-discoverable-cli](https://github.com/unixorn/ha-mqtt-discoverable-c
   - [Switch](#switch)
   - [Text](#text)
 - [Availability Management](#availability-management)
+- [Limited state changes publications](#limited-state-changes-publications)
 - [FAQ](#faq)
   - [Using an existing MQTT client](#using-an-existing-mqtt-client)
   - [I'm having problems on 32-bit ARM platforms](#im-having-problems-on-32-bit-arm-platforms)
@@ -634,6 +635,41 @@ sensor = Sensor(settings)
 sensor.set_availability(True)
 sensor.set_state(1337)
 
+```
+
+## Limited state changes publications
+
+By default, the state of an entity is only published if it changed compared to its previous state.
+
+If the entity is supposed to publish its state in any case, use the `force_update` property of the respective method indicating a state update
+and set it to `True`.
+
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Sensor, SensorInfo
+
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the sensor
+sensor_info = SensorInfo(
+    name="MyTemperatureSensor",
+    device_class="temperature",
+    unit_of_measurement="°C",
+)
+
+settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+
+# Instantiate the sensor
+mysensor = Sensor(settings)
+
+# Change the state of the sensor, publishing an MQTT message that gets picked up by HA
+mysensor.set_state(20.5)
+# State will not be published as it is the same as before
+mysensor.set_state(20.5)
+# State will be published - it is the same as before but the update is forced
+mysensor.set_state(20.5, force_update=True)
 ```
 
 ## FAQ
