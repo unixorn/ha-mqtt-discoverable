@@ -1,6 +1,7 @@
 # ha-mqtt-discoverable
 
 [![License](https://img.shields.io/github/license/unixorn/ha-mqtt-discoverable.svg)](https://opensource.org/license/apache-2-0/)
+[![PyPI - Version](https://img.shields.io/pypi/v/ha-mqtt-discoverable?pypi)](https://pypi.org/project/ha-mqtt-discoverable/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![GitHub last commit (branch)](https://img.shields.io/github/last-commit/unixorn/ha-mqtt-discoverable/main.svg)](https://github.com/unixorn/ha-mqtt-discoverable)
 [![Downloads](https://static.pepy.tech/badge/ha-mqtt-discoverable)](https://pepy.tech/project/ha-mqtt-discoverable)
@@ -9,7 +10,6 @@
 A Python 3 module that takes advantage of Home Assistant's [MQTT discovery protocol](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery) to create sensors without having to define anything on the HA side.
 
 Using MQTT discoverable devices lets us add new sensors and devices to HA without having to restart HA.
-The [ha-mqtt-discoverable-cli](https://github.com/unixorn/ha-mqtt-discoverable-cli/) module includes scripts to make it easy to create discoverable devices from the command line if you don't want to bother writing Python.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -51,8 +51,7 @@ The [ha-mqtt-discoverable-cli](https://github.com/unixorn/ha-mqtt-discoverable-c
 
 ha-mqtt-discoverable runs on Python 3.10 or later.
 
-`pip install ha-mqtt-discoverable` if you want to use it in your own python scripts.
-`pip install ha-mqtt-discoverable-cli` to install the `hmd` utility scripts.
+`pip install ha-mqtt-discoverable` if you want to use it in your own Python scripts.
 
 <!-- Please keep the entities in alphabetical order -->
 ## Supported entities
