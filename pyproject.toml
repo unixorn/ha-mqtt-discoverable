@@ -31,7 +31,7 @@ GitHub = "https://github.com/unixorn/ha-mqtt-discoverable"
 [dependency-groups]
 dev = [
     "pre-commit>=4.5.1,<5",
-    "ruff>=0.15.7,<0.16",
+    "ruff>=0.15.8,<0.16",
 ]
 test = [
     "coverage>=7.13.5,<8",
