@@ -6,7 +6,7 @@ authors = [{ name = "Joe Block", email = "jpb@unixorn.net" }]
 readme = "README.md"
 license = 'Apache-2.0'
 license-files = ['LICENSE']
-requires-python = ">=3.10.0,<4.0"
+requires-python = ">=3.10.0"
 classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
@@ -21,8 +21,8 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "paho-mqtt==2.1.0",
-    "pydantic==2.12.5",
+    "paho-mqtt>=2.1.0",
+    "pydantic>=2.12.5",
 ]
 
 [project.urls]
@@ -30,15 +30,15 @@ GitHub = "https://github.com/unixorn/ha-mqtt-discoverable"
 
 [dependency-groups]
 dev = [
-    "pre-commit>=4.5.1,<5",
-    "ruff>=0.15.8,<0.16",
+    "pre-commit>=4.5.1",
+    "ruff>=0.15.9",
 ]
 test = [
-    "coverage>=7.13.5,<8",
-    "pytest>=9.0.2,<10",
-    "pytest-mock>=3.15.1,<4",
+    "coverage>=7.13.5",
+    "pytest>=9.0.2",
+    "pytest-mock>=3.15.1",
 ]
 
 [build-system]
-requires = ["poetry-core>=2.3.2,<3.0.0"]
+requires = ["poetry-core>=2.3.2"]
 build-backend = "poetry.core.masonry.api"
