@@ -42,7 +42,7 @@ repos:
   - repo: https://github.com/python-poetry/poetry
     # Careful - pre-commit autoupdate might downgrade 'rev'
     # https://python-poetry.org/docs/pre-commit-hooks/#why-does-pre-commit-autoupdate-not-update-to-the-latest-version
-    rev: 2.3.4
+    rev: 2.3.2
     hooks:
       - id: poetry-check
       - id: poetry-lock
