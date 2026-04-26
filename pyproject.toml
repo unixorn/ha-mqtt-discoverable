@@ -22,7 +22,7 @@ classifiers = [
 ]
 dependencies = [
     "paho-mqtt>=2.1.0",
-    "pydantic>=2.13.1",
+    "pydantic>=2.13.3",
 ]
 
 [project.urls]
