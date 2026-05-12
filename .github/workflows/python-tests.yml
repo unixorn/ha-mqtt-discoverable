@@ -28,7 +28,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          persist-credentials: false
+          # Defaults to true.
+          # The git operations in python-coverage-comment-action utilize
+          # the persisted credentials by actions/checkout.
+          # see https://github.com/py-cov-action/python-coverage-comment-action/issues/610
+          persist-credentials: true
       - name: Install poetry
         run: pipx install poetry
       - name: Set up Python 3.10
