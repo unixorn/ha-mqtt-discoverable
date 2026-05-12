@@ -1,7 +1,7 @@
 FROM python:3.10-slim
 
 LABEL maintainer="Joe Block <jpb@unixorn.net>"
-LABEL description="Test image for ha-mqtt-discoverable module"
+LABEL description="ha-mqtt-discoverable test image"
 
 RUN mkdir /data && \
   mkdir /config
