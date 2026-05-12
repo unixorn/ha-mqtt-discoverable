@@ -5,8 +5,8 @@ LABEL description="ha-mqtt-discoverable test image"
 
 RUN mkdir /config /data
 
+# hadolint ignore=DL3008
 RUN apt-get update && \
-    # hadolint ignore=DL3008
     apt-get install --no-install-recommends -y apt-utils ca-certificates && \
     update-ca-certificates && \
     rm -fr /tmp/* /var/lib/apt/lists/* && \
