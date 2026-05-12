@@ -21,6 +21,8 @@ on: # yamllint disable-line rule:truthy
   pull_request:
     branches: [main]
 
+permissions: {}
+
 ###############
 # Set the Job #
 ###############
@@ -44,6 +46,7 @@ jobs:
           # Full git history is needed to get a proper list of changed files
           # within `mega-linter`
           fetch-depth: 0
+          persist-credentials: false
 
       ################################
       # Run Linter against code base #

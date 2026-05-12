@@ -1,0 +1,13 @@
+# see https://docs.zizmor.sh/audits/
+
+rules:
+  dependabot-cooldown:
+    disable: true
+  unpinned-uses:
+    disable: true
+  use-trusted-publishing:
+    ignore:
+      - build-publish.yml
+  dangerous-triggers:
+    ignore:
+      - coverage.yml
