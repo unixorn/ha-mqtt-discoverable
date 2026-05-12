@@ -24,7 +24,7 @@ Their configuration is managed in [.pre-commit-config.yaml](https://github.com/u
 ## Contribution Guidelines
 
 - PRs should include readme updates with code examples for any added/changed/removed functionality.
-- The current state of tests in the repo is frankly terrible. [issues/20](https://github.com/unixorn/ha-mqtt-discovery/issues/20) to backfill tests is already going to be a lot of work, so please add pytest tests for any new functions you add to keep from piling on more.
+- Please add pytest tests for any new functions you add.
 - Please use `pydantic` to validate input settings and provide default values.
 - Please use Google-style docstrings - see their [style guide](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings) for details.
 
