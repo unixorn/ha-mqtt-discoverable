@@ -183,6 +183,57 @@ class CoverInfo(EntityInfo):
     """If the published message should have the retain flag on or not"""
 
 
+class ValveInfo(EntityInfo):
+    """Information about the MQTT valve entity"""
+
+    component: str = "valve"
+    """The MQTT component type for this entity."""
+
+    optimistic: bool | None = None
+    """Flag that defines if the valve works in optimistic mode.
+    Default: true if no state_topic defined, else false."""
+    payload_open: str | None = "OPEN"
+    """The payload that represents the open command."""
+    payload_close: str | None = "CLOSE"
+    """The payload that represents the close command."""
+    payload_stop: str | None = "STOP"
+    """The payload that represents the stop command."""
+    position_open: int = 100
+    """Number which represents fully open position."""
+    position_closed: int = 0
+    """Number which represents fully closed position."""
+    reports_position: bool = False
+    """Set to true if the valve reports or supports setting a position."""
+    state_open: str = "open"
+    """Payload that represents the open state."""
+    state_opening: str = "opening"
+    """Payload that represents the opening state."""
+    state_closed: str = "closed"
+    """Payload that represents the closed state."""
+    state_closing: str = "closing"
+    """Payload that represents the closing state."""
+    retain: bool = False
+    """If the published message should have the retain flag on or not"""
+
+    @model_validator(mode="after")
+    def valve_info_entity_model_validator(self) -> ValveInfo:
+        """
+        Determine correct usage of configuration variables.
+        """
+        # Don't set reports_position and payload_close or payload_open at the same time.
+        if self.reports_position:
+            self.payload_close = None
+            self.payload_open = None
+            self.state_closed = None
+            self.state_open = None
+        #         if  not self.payload_open is None or not self.payload_close is None:
+        #             raise ValueError(
+        #                 "payload_open and payload_close must be None when reports_position is True"
+        #             )
+
+        return self
+
+
 class ButtonInfo(EntityInfo):
     """Button specific information"""
 
@@ -547,6 +598,49 @@ class Cover(Subscriber[CoverInfo]):
     def stopped(self) -> None:
         """Set cover state to stopped"""
         self._update_state(self._entity.state_stopped, retain=self._entity.retain)
+
+
+class Valve(Subscriber[ValveInfo]):
+    """Implements an MQTT valve.
+    https://www.home-assistant.io/integrations/valve.mqtt
+    """
+
+    def open(self) -> None:
+        """Set valve state to open."""
+        if self._entity.reports_position:
+            self.set_position(100)
+        else:
+            self._update_state(self._entity.state_open, retain=self._entity.retain)
+
+    def closed(self) -> None:
+        """Set valve state to closed."""
+        if self._entity.reports_position:
+            self.set_position(0)
+        else:
+            self._update_state(self._entity.state_closed, retain=self._entity.retain)
+
+    def closing(self) -> None:
+        """Set valve state to closing."""
+        self._update_state(self._entity.state_closing, retain=self._entity.retain)
+
+    def opening(self) -> None:
+        """Set cover state to opening"""
+        self._update_state(self._entity.state_opening, retain=self._entity.retain)
+
+    def position(self, position: int, state: str | None = None) -> None:
+        """Set the valve to a desired position between 0 and 100."""
+        if not self._entity.reports_position:
+            raise RuntimeError(f"Valve {self._entity.name} does not support position reporting")
+        if not isinstance(position, int):
+            raise ValueError(f"Position should be an int not {type(position)}")
+        if position < 0 or position > 100:
+            raise RuntimeError(f"Position for valve {self._entity.name} is out of range")
+
+        if state is not None:
+            json_state = json.dumps({"state": state, "position": position})
+            self._update_state(json_state, retain=self._entity.retain)
+        else:
+            self._update_state(position, retain=self._entity.retain)
 
 
 class Button(Subscriber[ButtonInfo]):
