@@ -7,8 +7,8 @@ RUN mkdir /config /data
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y apt-utils ca-certificates && \
-		update-ca-certificates && \
-		rm -fr /tmp/* /var/lib/apt/lists/* && \
+    update-ca-certificates && \
+    rm -fr /tmp/* /var/lib/apt/lists/* && \
     pip cache purge
 
 # Keep from having to reinstall all the dependencies every time we
