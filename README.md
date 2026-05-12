@@ -704,8 +704,8 @@ pydantic V2 depends on pydantic_core - the core validation logic for pydantic V2
 
 pydantic_core wheels might not be available for your 32-bit ARM platform:
 
- * ARMv7 is officially supported -  https://pypi.org/project/pydantic_core/
- * ARMv6 is not officially supported yet - https://github.com/pydantic/pydantic-core/pull/1725
+* ARMv7 is officially supported -  <https://pypi.org/project/pydantic_core/>
+* ARMv6 is not officially supported yet - <https://github.com/pydantic/pydantic-core/pull/1725>
 
 If you are using any of the Raspberry Pi models together with Debian, [piwheels](https://www.piwheels.org/project/pydantic-core/)
 offers pydantic_core wheels for ARMv6 and ARMv7.
