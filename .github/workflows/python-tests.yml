@@ -27,6 +27,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: Install poetry
         run: pipx install poetry
       - name: Set up Python 3.10
