@@ -19,6 +19,8 @@ DISABLE_LINTERS:
 
 DOCKERFILE_HADOLINT_FILE_NAMES_REGEX: ["Dockerfile.*"]
 
+FORMATTERS_DISABLE_ERRORS: false
+
 PYTHON_PYLINT_PRE_COMMANDS:
   # Help pylint understand pydantic models
   - command: pip install pylint-pydantic
