@@ -204,11 +204,11 @@ class ValveInfo(EntityInfo):
     """Number which represents fully closed position."""
     reports_position: bool = False
     """Set to true if the valve reports or supports setting a position."""
-    state_open: str = "open"
+    state_open: str | None = "open"
     """Payload that represents the open state."""
     state_opening: str = "opening"
     """Payload that represents the opening state."""
-    state_closed: str = "closed"
+    state_closed: str | None = "closed"
     """Payload that represents the closed state."""
     state_closing: str = "closing"
     """Payload that represents the closing state."""
@@ -613,14 +613,14 @@ class Valve(Subscriber[ValveInfo]):
     def open(self) -> None:
         """Set valve state to open."""
         if self._entity.reports_position:
-            self.set_position(100)
+            self.position(100)
         else:
             self._update_state(self._entity.state_open, retain=self._entity.retain)
 
     def closed(self) -> None:
         """Set valve state to closed."""
         if self._entity.reports_position:
-            self.set_position(0)
+            self.position(0)
         else:
             self._update_state(self._entity.state_closed, retain=self._entity.retain)
 
