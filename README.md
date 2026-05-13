@@ -47,6 +47,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
+
 ## Installing
 
 ### Python
@@ -230,7 +231,6 @@ A `callback` function is needed in order to parse the commands sent from HA, as 
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Valve, ValveInfo
 from paho.mqtt.client import Client, MQTTMessage
-
 
 # Configure the required parameters for the MQTT broker
 mqtt_settings = Settings.MQTT(host="localhost")
