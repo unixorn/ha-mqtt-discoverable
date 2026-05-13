@@ -103,7 +103,7 @@ def test_set_position_out_of_range(position_valve: Valve, position: int):
 
 def test_set_position_as_non_int(position_valve: Valve):
     with pytest.raises(ValueError, match="Position should be an int not"):
-        position_valve.position("50")
+        position_valve.position("50")  # type: ignore[arg-type]
 
 
 def test_set_position_not_supported(valve: Valve):
