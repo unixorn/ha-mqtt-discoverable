@@ -44,24 +44,28 @@ def test_required_config():
     assert valve is not None
 
 
-def test_open(valve: Valve):
+def test_open(valve: Valve, position_valve: Valve):
     """Test to set a valve to open"""
     valve.open()
+    position_valve.open()
 
 
-def test_closed(valve: Valve):
+def test_closed(valve: Valve, position_valve: Valve):
     """Test to set a valve to closed"""
     valve.closed()
+    position_valve.closed()
 
 
-def test_closing(valve: Valve):
+def test_closing(valve: Valve, position_valve: Valve):
     """Test to set a valve to closing"""
     valve.closing()
+    position_valve.closing()
 
 
-def test_opening(valve: Valve):
+def test_opening(valve: Valve, position_valve: Valve):
     """Test to set a valve to opening"""
     valve.opening()
+    position_valve.opening()
 
 
 def test_position(position_valve: Valve):
@@ -74,10 +78,32 @@ def test_position_and_state(position_valve: Valve):
     position_valve.position(state="opening", position=42)
 
 
+def test_reports_position_true_disables_payload_and_state_fields():
+    """When reports_position=True, payload_* and state_* must be None (HA restriction)."""
+    valve_info = ValveInfo(
+        name="test",
+        reports_position=True,
+        payload_open="OPEN",
+        payload_close="CLOSE",
+        state_open="open",
+        state_closed="closed",
+    )
+
+    assert valve_info.payload_open is None
+    assert valve_info.payload_close is None
+    assert valve_info.state_open is None
+    assert valve_info.state_closed is None
+
+
 @pytest.mark.parametrize("position", [-1, 101])
 def test_set_position_out_of_range(position_valve: Valve, position: int):
     with pytest.raises(RuntimeError, match="out of range"):
         position_valve.position(position)
+
+
+def test_set_position_as_non_int(position_valve: Valve):
+    with pytest.raises(ValueError, match="Position should be an int not"):
+        position_valve.position("50")
 
 
 def test_set_position_not_supported(valve: Valve):

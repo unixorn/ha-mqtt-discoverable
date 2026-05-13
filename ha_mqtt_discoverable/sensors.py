@@ -229,13 +229,6 @@ class ValveInfo(EntityInfo):
             logger.warning(
                 "payload_open, payload_close, state_open and state_closed should not be set when using reports_position."
             )
-            # if (not self.payload_open is None or
-            #     not self.payload_close is None or
-            #     not self.state_open is None or
-            #     not self.state_closed is None):
-            #     raise ValueError(
-            #         "payload_open, payload_close, state_open and state_closed should not be set when using reports_position."
-            #     )
         return self
 
 
