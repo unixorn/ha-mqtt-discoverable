@@ -49,8 +49,6 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 
 
 
-
-
 ## Installing
 
 ### Python
