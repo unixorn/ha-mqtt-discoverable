@@ -18,21 +18,40 @@ from ha_mqtt_discoverable.sensors import Valve, ValveInfo
 
 
 @pytest.fixture
-def valve() -> Valve:
-    """Return a valve instance"""
-    mqtt_settings = Settings.MQTT(host="localhost")
-    valve_info = ValveInfo(name="test")
-    settings = Settings(mqtt=mqtt_settings, entity=valve_info)
-    return Valve(settings, lambda _, __, ___: None)
+def make_valve():
+    def _make_valve(
+        reports_position: bool = False,
+        payload_open: str | None = "OPEN",
+        payload_close: str | None = "CLOSE",
+        state_open: str | None = "open",
+        state_closed: str | None = "closed",
+    ):
+        """Return a valve instance"""
+        mqtt_settings = Settings.MQTT(host="localhost")
+        sensor_info = ValveInfo(
+            name="test",
+            reports_position=reports_position,
+            payload_open=payload_open,
+            payload_close=payload_close,
+            state_open=state_open,
+            state_closed=state_closed,
+        )
+        settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+        return Valve(settings, lambda _, __, ___: None)
+
+    return _make_valve
 
 
 @pytest.fixture
-def position_valve() -> Valve:
+def valve(make_valve) -> Valve:
+    """Return a valve instance"""
+    return make_valve()
+
+
+@pytest.fixture
+def position_valve(make_valve) -> Valve:
     """Return a valve instance that is position controlled"""
-    mqtt_settings = Settings.MQTT(host="localhost")
-    valve_info = ValveInfo(name="test", reports_position=True)
-    settings = Settings(mqtt=mqtt_settings, entity=valve_info)
-    return Valve(settings, lambda _, __, ___: None)
+    return make_valve(reports_position=True, payload_open=None, payload_close=None, state_open=None, state_closed=None)
 
 
 def test_required_config():
@@ -80,19 +99,17 @@ def test_position_and_state(position_valve: Valve):
 
 def test_reports_position_true_disables_payload_and_state_fields():
     """When reports_position=True, payload_* and state_* must be None (HA restriction)."""
-    valve_info = ValveInfo(
-        name="test",
-        reports_position=True,
-        payload_open="OPEN",
-        payload_close="CLOSE",
-        state_open="open",
-        state_closed="closed",
-    )
-
-    assert valve_info.payload_open is None
-    assert valve_info.payload_close is None
-    assert valve_info.state_open is None
-    assert valve_info.state_closed is None
+    with pytest.raises(
+        ValueError, match="payload_open, payload_close, state_open and state_closed should not be set when using reports_position."
+    ):
+        ValveInfo(
+            name="test",
+            reports_position=True,
+            payload_open="OPEN",
+            payload_close="CLOSE",
+            state_open="open",
+            state_closed="closed",
+        )
 
 
 @pytest.mark.parametrize("position", [-1, 101])

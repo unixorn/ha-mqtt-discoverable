@@ -220,13 +220,14 @@ class ValveInfo(EntityInfo):
         """
         Determine correct usage of configuration variables.
         """
-        # Don't set reports_position and payload_close or payload_open at the same time.
-        if self.reports_position:
-            self.payload_close = None
-            self.payload_open = None
-            self.state_closed = None
-            self.state_open = None
-            logger.warning(
+        # Don't set reports_position and payload_close, payload_open, state_open, state_closed at the same time.
+        if self.reports_position and (
+            self.payload_open is not None
+            or self.payload_close is not None
+            or self.state_open is not None
+            or self.state_closed is not None
+        ):
+            raise ValueError(
                 "payload_open, payload_close, state_open and state_closed should not be set when using reports_position."
             )
         return self
