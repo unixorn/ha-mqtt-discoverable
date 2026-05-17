@@ -50,6 +50,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 
 
 
+
 ## Installing
 
 ### Python
@@ -666,7 +667,11 @@ my_valve = Valve(settings, my_callback)
 my_valve.closed()
 ```
 #### Position command valve
-This mode is active when `reports_position = True`. The mode is different from other sensors as it can send a payload encoded/decoded as JSON, like the light device can. The valve can report two possible states `opening` and `closing`, a position (0-100) or a combination in JSON format, for example: `'{"state": "opening", "position": 42}'`. The command payload can be either `STOP` or a position (0-100). Note that in this mode payload_open, payload_close, state_open and state_closed must be set to None.
+This mode is active when `reports_position = True`. The mode is different from other sensors as it can send a payload encoded/decoded as JSON, like the light device can.
+
+The valve can report two possible states `opening` and `closing`, a position (0-100) or a combination in JSON format, for example: `'{"state": "opening", "position": 42}'`. The command payload can be either `STOP` or a position (0-100).
+
+Note that in this position mode, payload_open, payload_close, state_open and state_closed must be set to None.
 
 A `callback` function is needed in order to parse the commands sent from HA, as the following example shows:
 
