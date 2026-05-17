@@ -631,7 +631,7 @@ class Valve(Subscriber[ValveInfo]):
         if not self._entity.reports_position:
             raise RuntimeError(f"Valve {self._entity.name} does not support position reporting")
         if not isinstance(position, int):
-            raise ValueError(f"Position should be an int not {type(position)}")
+            raise ValueError(f"Position for valve should be an int not {type(position)}")
         if position < 0 or position > 100:
             raise RuntimeError(f"Position for valve {self._entity.name} is out of range")
 
