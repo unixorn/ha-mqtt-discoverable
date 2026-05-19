@@ -119,7 +119,7 @@ def test_position_and_state(position_valve: Valve):
         mock_publish.assert_called_with(position_valve.state_topic, '{"state": "opening", "position": 42}', retain=False)
 
 
-def test_reports_position_true_disables_payload_and_state_fields():
+def test_reports_position_true_disable_payload_and_state_fields():
     """When reports_position=True, payload_* and state_* must be None (HA restriction)."""
     with pytest.raises(
         ValueError, match="payload_open, payload_close, state_open and state_closed should not be set when using reports_position."
@@ -131,6 +131,21 @@ def test_reports_position_true_disables_payload_and_state_fields():
             payload_close="CLOSE",
             state_open="open",
             state_closed="closed",
+        )
+
+
+def test_reports_position_false_enable_payload_and_state_fields():
+    """When reports_position=False, payload_* and state_* must be set for convenient use."""
+    with pytest.raises(
+        ValueError, match="payload_open, payload_close, state_open and state_closed should be set when not using reports_position."
+    ):
+        ValveInfo(
+            name="test",
+            reports_position=False,
+            payload_open=None,
+            payload_close=None,
+            state_open=None,
+            state_closed=None,
         )
 
 
