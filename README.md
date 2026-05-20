@@ -715,7 +715,7 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
     move_my_custom_valve(payload)
     # Let HA know that the valve reached the desired position.
     # In HA the positions 0 or 100 automatically show as closed
-    # or open respectivly, other positions should return to
+    # or open respectively, other positions should return to
     # open, though this does not happen yet ([reported bug with pending fix](https://github.com/home-assistant/core/pull/165176).  
     my_valve.position(payload)
 
