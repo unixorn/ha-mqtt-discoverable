@@ -22,6 +22,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
   - [Button](#button)
   - [Camera](#camera)
   - [Cover](#cover)
+  - [Device](#device)
   - [Device trigger](#device-trigger)
   - [Image](#image)
   - [Light](#light)
@@ -46,6 +47,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 - [Contributors](#contributors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 
 
@@ -216,6 +218,7 @@ my_cover = Cover(settings, my_callback)
 
 # Set the initial state of the cover, which also makes it discoverable
 my_cover.closed()
+```
 
 ### Device
 
