@@ -640,12 +640,19 @@ class Valve(Subscriber[ValveInfo]):
             raise ValueError(f"Position for valve should be an int not {type(position)}")
         if position < 0 or position > 100:
             raise RuntimeError(f"Position for valve {self._entity.name} is out of range")
+        if state and state not in [
+            self._entity.state_closed,
+            self._entity.state_closing,
+            self._entity.state_open,
+            self._entity.state_opening,
+        ]:
+            raise RuntimeError(f"State {state} does not match any of the configured states")
 
-        if state is not None:
+        if state is None:
+            self._update_state(position, retain=self._entity.retain)
+        else:
             json_state = json.dumps({"state": state, "position": position})
             self._update_state(json_state, retain=self._entity.retain)
-        else:
-            self._update_state(position, retain=self._entity.retain)
 
 
 class Button(Subscriber[ButtonInfo]):

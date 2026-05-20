@@ -119,6 +119,11 @@ def test_position_and_state(position_valve: Valve):
         mock_publish.assert_called_with(position_valve.state_topic, '{"state": "opening", "position": 42}', retain=False)
 
 
+def test_position_and_wrong_state(position_valve: Valve):
+    with pytest.raises(RuntimeError, match="does not match any of the configured states"):
+        position_valve.position(42, "wrong_state")  # type: ignore[arg-type]
+
+
 def test_reports_position_true_disable_payload_and_state_fields():
     """When reports_position=True, payload_* and state_* must be None (HA restriction)."""
     with pytest.raises(
