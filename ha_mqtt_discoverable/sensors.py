@@ -631,7 +631,7 @@ class Valve(Subscriber[ValveInfo]):
         self._update_state(self._entity.state_closing, retain=self._entity.retain)
 
     def opening(self) -> None:
-        """Set cover state to opening"""
+        """Set valve state to opening"""
         self._update_state(self._entity.state_opening, retain=self._entity.retain)
 
     def position(self, position: int, state: str | None = None) -> None:
