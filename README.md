@@ -665,7 +665,7 @@ my_valve = Valve(settings, my_callback)
 my_valve.closed()
 ```
 #### Position command valve
-This mode is active when `reports_position = True`. The mode is different from other sensors as it can send a payload encoded/decoded as JSON, like the light device can.
+This mode is active when `reports_position = True`. The mode is different from other sensors as it can send a payload encoded/decoded as JSON, like the light entity can.
 
 The valve can report two possible states `opening` and `closing`, a position (0-100) or a combination in JSON format, for example: `'{"state": "opening", "position": 42}'`. The command payload can be either `STOP` or a position (0-100).
 
