@@ -641,9 +641,7 @@ class Valve(Subscriber[ValveInfo]):
         if position < 0 or position > 100:
             raise RuntimeError(f"Position for valve {self._entity.name} is out of range")
         if state and state not in [
-            self._entity.state_closed,
             self._entity.state_closing,
-            self._entity.state_open,
             self._entity.state_opening,
         ]:
             raise RuntimeError(f"State {state} does not match any of the configured states")
