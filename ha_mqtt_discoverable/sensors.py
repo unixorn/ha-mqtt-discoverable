@@ -233,7 +233,7 @@ class ValveInfo(EntityInfo):
 
         # Don't unset reports_position and payload_close, payload_open, state_open, state_closed at the same time.
         if not self.reports_position and (
-            self.payload_open is None or self.payload_close is None or self.state_open is None or self.state_closed is None
+            self.state_open is None or self.state_closed is None
         ):
             raise ValueError(
                 "payload_open, payload_close, state_open and state_closed should be set when not using reports_position."
