@@ -189,9 +189,8 @@ class ValveInfo(EntityInfo):
     component: str = "valve"
     """The MQTT component type for this entity."""
 
-    optimistic: bool | None = None
-    """Flag that defines if the valve works in optimistic mode.
-    Default: true if no state_topic defined, else false."""
+    optimistic: bool = False
+    """Flag that defines if the valve works in optimistic mode."""
     payload_open: str | None = "OPEN"
     """The payload that represents the open command."""
     payload_close: str | None = "CLOSE"
