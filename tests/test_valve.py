@@ -65,41 +65,59 @@ def test_required_config():
     assert valve is not None
 
 
-def test_open(valve: Valve, position_valve: Valve):
+# Test state command valve
+def test_open_state_valve(valve: Valve):
     """Test to set a valve to open"""
     with patch.object(valve.mqtt_client, "publish") as mock_publish:
         valve.open()
         mock_publish.assert_called_with(valve.state_topic, valve._entity.state_open, retain=False)
+
+
+def test_closed_state_valve(valve: Valve):
+    """Test to set a valve to closed"""
+    with patch.object(valve.mqtt_client, "publish") as mock_publish:
+        valve.closed()
+        mock_publish.assert_called_with(valve.state_topic, valve._entity.state_closed, retain=False)
+
+
+def test_closing_state_valve(valve: Valve):
+    """Test to set a valve to closing"""
+    with patch.object(valve.mqtt_client, "publish") as mock_publish:
+        valve.closing()
+        mock_publish.assert_called_with(valve.state_topic, valve._entity.state_closing, retain=False)
+
+
+def test_opening_state_valve(valve: Valve):
+    """Test to set a valve to opening"""
+    with patch.object(valve.mqtt_client, "publish") as mock_publish:
+        valve.opening()
+        mock_publish.assert_called_with(valve.state_topic, valve._entity.state_opening, retain=False)
+
+
+# Test position command valve
+def test_open_position_valve(position_valve: Valve):
+    """Test to set a valve to open"""
     with patch.object(position_valve.mqtt_client, "publish") as mock_publish:
         position_valve.open()
         mock_publish.assert_called_with(position_valve.state_topic, position_valve._entity.position_open, retain=False)
 
 
-def test_closed(valve: Valve, position_valve: Valve):
+def test_closed_position_valve(position_valve: Valve):
     """Test to set a valve to closed"""
-    with patch.object(valve.mqtt_client, "publish") as mock_publish:
-        valve.closed()
-        mock_publish.assert_called_with(valve.state_topic, valve._entity.state_closed, retain=False)
     with patch.object(position_valve.mqtt_client, "publish") as mock_publish:
         position_valve.closed()
         mock_publish.assert_called_with(position_valve.state_topic, position_valve._entity.position_closed, retain=False)
 
 
-def test_closing(valve: Valve, position_valve: Valve):
+def test_closing_position_valve(position_valve: Valve):
     """Test to set a valve to closing"""
-    with patch.object(valve.mqtt_client, "publish") as mock_publish:
-        valve.closing()
-        mock_publish.assert_called_with(valve.state_topic, valve._entity.state_closing, retain=False)
     with patch.object(position_valve.mqtt_client, "publish") as mock_publish:
         position_valve.closing()
         mock_publish.assert_called_with(position_valve.state_topic, position_valve._entity.state_closing, retain=False)
 
 
-def test_opening(valve: Valve, position_valve: Valve):
+def test_opening_position_valve(position_valve: Valve):
     """Test to set a valve to opening"""
-    with patch.object(valve.mqtt_client, "publish") as mock_publish:
-        valve.opening()
-        mock_publish.assert_called_with(valve.state_topic, valve._entity.state_opening, retain=False)
     with patch.object(position_valve.mqtt_client, "publish") as mock_publish:
         position_valve.opening()
         mock_publish.assert_called_with(position_valve.state_topic, position_valve._entity.state_opening, retain=False)
