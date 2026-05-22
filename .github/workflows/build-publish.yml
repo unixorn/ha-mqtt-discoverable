@@ -78,7 +78,7 @@ jobs:
         with:
           context: .
           build-args: |
-            application_version: ${{ github.ref_name }}
+            application_version=${{ github.ref_name }}
           push: true
           platforms: linux/arm64,linux/amd64,linux/arm/v7
           tags: unixorn/ha-mqtt-discoverable:${{ github.ref_name }}
