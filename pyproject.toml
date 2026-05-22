@@ -1,6 +1,6 @@
 [project]
 name = "ha-mqtt-discoverable"
-version = "0.24.2"
+version = "0.25.0"
 description = "Python library for creating MQTT entities compatible with Home Assistant"
 authors = [{ name = "Joe Block", email = "jpb@unixorn.net" }]
 readme = "README.md"
@@ -27,11 +27,13 @@ dependencies = [
 
 [project.urls]
 GitHub = "https://github.com/unixorn/ha-mqtt-discoverable"
+Issues = "https://github.com/unixorn/ha-mqtt-discoverable/issues"
+Documentation = "https://github.com/unixorn/ha-mqtt-discoverable#readme"
 
 [dependency-groups]
 dev = [
     "pre-commit>=4.6.0",
-    "ruff>=0.15.13",
+    "ruff>=0.15.14",
 ]
 test = [
     "coverage>=7.14.0",
