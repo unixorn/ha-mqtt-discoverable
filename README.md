@@ -32,6 +32,9 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
   - [Sensor](#sensor)
   - [Switch](#switch)
   - [Text](#text)
+  - [Valve](#valve)
+    - [Action command valve](#action-command-valve)
+    - [Position command valve](#position-command-valve)
 - [Availability Management](#availability-management)
 - [Limited state changes publications](#limited-state-changes-publications)
 - [FAQ](#faq)
@@ -44,6 +47,9 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 - [Contributors](#contributors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
+
 
 ## Installing
 
@@ -603,6 +609,125 @@ my_text = Text(settings, my_callback)
 
 # Set the initial text displayed in HA UI, publishing an MQTT message that gets picked up by HA
 my_text.set_text("Some awesome text")
+```
+
+### Valve
+
+The valve has two control modes: action command and position command. The first, most simple way is explained first.
+
+#### Action command valve
+This mode is active when `reports_position = False`. A valve in this mode can report five possible states `open`, `closed`, `opening`, `closing` and `stopped`. The command payload can be either `OPEN`, `CLOSE` or `STOP`, where `STOP` is optional.
+
+A `callback` function is needed in order to parse the commands sent from HA, as the example shows:
+
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Valve, ValveInfo
+from paho.mqtt.client import Client, MQTTMessage
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the valve
+valve_info = ValveInfo(name="test")
+
+settings = Settings(mqtt=mqtt_settings, entity=valve_info)
+
+# To receive state commands from HA, define a callback function:
+def my_callback(client: Client, user_data, message: MQTTMessage):
+    payload = message.payload.decode()
+    if payload == my_valve._entity.payload_open:
+        # let HA know that the valve is opening
+        my_valve.opening()
+        # call function to open valve
+        open_my_custom_valve()
+        # Let HA know that the valve was opened
+        my_valve.open()
+    elif payload == my_valve._entity.payload_close:
+        # let HA know that the valve is closing
+        my_valve.closing()
+        # call function to close valve
+        close_my_custom_valve()
+        # Let HA know that the valve was closed
+        my_valve.closed()
+    # if payload_stop is defined, stop a valve in motion
+    elif payload == my_valve._entity.payload_stop:
+        # call function to stop the valve.  
+        stop_my_custom_valve()
+        # There is no my_valve.stopped(). This means
+        # the function should call my_valve.open() or
+        # my_valve.closed() depending on the valve
+        # state. Otherwise the former state remains
+        # active, this could thus be opening or
+        # closing.
+
+# Instantiate the valve
+my_valve = Valve(settings, my_callback)
+
+# Set the initial state of the valve, which also makes it discoverable
+my_valve.closed()
+```
+#### Position command valve
+This mode is active when `reports_position = True`. The mode is different from other sensors as it can send a payload encoded/decoded as JSON, like the light entity can.
+
+The valve can report two possible states `opening` and `closing`, a position (0-100) or a combination in JSON format, for example: `'{"state": "opening", "position": 42}'`. The command payload can be either `STOP` or a position (0-100).
+
+Note that in this position mode, payload_open, payload_close, state_open and state_closed must be set to None.
+
+A `callback` function is needed in order to parse the commands sent from HA, as the following example shows:
+
+```py
+from ha_mqtt_discoverable import Settings
+from ha_mqtt_discoverable.sensors import Valve, ValveInfo
+from paho.mqtt.client import Client, MQTTMessage
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Information about the valve
+valve_info = ValveInfo(
+                name="test-position",
+                reports_position=True,
+                payload_open=None,
+                payload_close=None,
+                state_open=None,
+                state_closed=None,
+                )
+
+settings = Settings(mqtt=mqtt_settings, entity=valve_info)
+
+current_position = 0
+
+# To receive state commands from HA, define a callback function:
+def my_callback(client: Client, user_data, message: MQTTMessage):
+    payload = message.payload.decode()
+    # convert the payload of type str to int
+    try:
+        payload = int(payload)
+    except:
+        logger.error("Wrong payload")
+        return
+
+    if payload < my_valve.last_state:
+        # let HA know that the valve is closing
+        my_valve.position(my_valve.last_state, my_valve._entity.state_closing)
+    else:
+        # let HA know that the valve is closing
+        my_valve.position(my_valve.last_state, my_valve._entity.state_opening)
+    # call function to move the valve to the desired position
+    move_my_custom_valve(payload)
+    # Let HA know that the valve reached the desired position.
+    # In HA the positions 0 or 100 automatically show as closed
+    # or open respectively, other positions should return to
+    # open, though this does not happen yet ([reported bug with pending fix](https://github.com/home-assistant/core/pull/165176).  
+    my_valve.position(payload)
+
+# Instantiate the valve
+my_valve = Valve(settings, my_callback)
+
+# Set the initial position of the valve, which also makes it discoverable
+my_valve.position(0)
+
 ```
 
 ## Availability Management
