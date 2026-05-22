@@ -139,7 +139,7 @@ def test_position_and_state(position_valve: Valve):
 
 def test_position_and_wrong_state(position_valve: Valve):
     with pytest.raises(RuntimeError, match="does not match any of the configured states"):
-        position_valve.position(42, "wrong_state")  # type: ignore[arg-type]
+        position_valve.position(42, "wrong_state")
 
 
 def test_reports_position_true_disable_payload_and_state_fields():
