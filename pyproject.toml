@@ -27,6 +27,8 @@ dependencies = [
 
 [project.urls]
 GitHub = "https://github.com/unixorn/ha-mqtt-discoverable"
+Issues = "https://github.com/unixorn/ha-mqtt-discoverable/issues"
+Documentation = "https://github.com/unixorn/ha-mqtt-discoverable#readme"
 
 [dependency-groups]
 dev = [
