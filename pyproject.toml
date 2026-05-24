@@ -42,5 +42,5 @@ test = [
 ]
 
 [build-system]
-requires = ["poetry-core>=2.4.0"]
+requires = ["poetry-core>=2.4.1"]
 build-backend = "poetry.core.masonry.api"
