@@ -40,3 +40,6 @@ PYTHON_BANDIT_FILTER_REGEX_EXCLUDE: test_
 PYTHON_PYRIGHT_PRE_COMMANDS:
   - command: pip install paho-mqtt pydantic pytest pytest_mock
     continue_if_failed: false
+
+ACTION_ZIZMOR_UNSECURED_ENV_VARIABLES:
+  - GITHUB_TOKEN
