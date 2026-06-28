@@ -101,6 +101,7 @@ class SwitchInfo(EntityInfo):
     component: str = "switch"
     optimistic: bool | None = None
     """Flag that defines if switch works in optimistic mode.
+    # jscpd:ignore-start
     Default: true if no state_topic defined, else false."""
     payload_off: str = "OFF"
     """The payload that represents off state. If specified, will be used for
@@ -110,6 +111,7 @@ class SwitchInfo(EntityInfo):
     """The payload that represents on state. If specified, will be used for both
     comparing to the value in the state_topic (see value_template and state_on
     for details) and sending as on command to the command_topic."""
+    # jscpd:ignore-end
     retain: bool = False
     """If the published message should have the retain flag on or not"""
     state_topic: str | None = None
@@ -125,6 +127,7 @@ class LightInfo(EntityInfo):
     """Sets the schema of the state topic, ie the 'schema' field in the configuration"""
     optimistic: bool | None = None
     """Flag that defines if light works in optimistic mode.
+    # jscpd:ignore-start
     Default: true if no state_topic defined, else false."""
     payload_off: str = "OFF"
     """The payload that represents off state. If specified, will be used for
@@ -134,6 +137,7 @@ class LightInfo(EntityInfo):
     """The payload that represents on state. If specified, will be used for both
     comparing to the value in the state_topic (see value_template and state_on
     for details) and sending as on command to the command_topic."""
+    # jscpd:ignore-end
     brightness: bool = False
     """Flag that defines if the light supports setting the brightness
     """
