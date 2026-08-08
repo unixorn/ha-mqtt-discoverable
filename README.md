@@ -92,6 +92,8 @@ from ha_mqtt_discoverable.sensors import BinarySensor, BinarySensorInfo
 
 # Configure the required parameters for the MQTT broker
 mqtt_settings = Settings.MQTT(host="localhost")
+# or use authentication
+mqtt_settings = Settings.MQTT(host="some.server", username="someuser", password="somepassword")
 
 # Information about the sensor
 sensor_info = BinarySensorInfo(name="MySensor", device_class="motion")
