@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 find . -iname '*.pyc' -delete
 find . -iname '*.pyo' -delete
