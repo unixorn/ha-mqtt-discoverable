@@ -43,3 +43,7 @@ PYTHON_PYRIGHT_PRE_COMMANDS:
 
 ACTION_ZIZMOR_UNSECURED_ENV_VARIABLES:
   - GITHUB_TOKEN
+
+# Python functions prefixed with 'test_' are falsely detected as Lob test API keys
+# see also https://github.com/trufflesecurity/trufflehog/issues/5184
+REPOSITORY_TRUFFLEHOG_ARGUMENTS: "--exclude-detectors=lob"
