@@ -310,14 +310,14 @@ testing = ["coverage", "pytest", "pytest-benchmark"]
 
 [[package]]
 name = "pre-commit"
-version = "4.6.1"
+version = "4.6.2"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
 optional = false
 python-versions = ">=3.10"
 groups = ["dev"]
 files = [
-    {file = "pre_commit-4.6.1-py2.py3-none-any.whl", hash = "sha256:0e3b2942510d1fb34eec167a3ec57331bf8442122f1153a9fb8b58f5c49b2717"},
-    {file = "pre_commit-4.6.1.tar.gz", hash = "sha256:03e809865c7d178b9979d06c761fcbfe6808fdaded8581a745bb110e52050421"},
+    {file = "pre_commit-4.6.2-py2.py3-none-any.whl", hash = "sha256:e2dde9a75d3bce11bd3831c26d134df00a2803c1d818be6a0383c3dcda25dc4e"},
+    {file = "pre_commit-4.6.2.tar.gz", hash = "sha256:8f5d7bfb021ecdbcd9d49d89847082dd24172ccde534390081a679ad046e2441"},
 ]
 
 [package.dependencies]
@@ -541,14 +541,14 @@ dev = ["pre-commit", "pytest-asyncio", "tox"]
 
 [[package]]
 name = "python-discovery"
-version = "1.5.1"
+version = "1.5.2"
 description = "Python interpreter discovery"
 optional = false
 python-versions = ">=3.8"
 groups = ["dev"]
 files = [
-    {file = "python_discovery-1.5.1-py3-none-any.whl", hash = "sha256:ac07f44cade589d954e9d6a1e1468539fdddd2cf676beb51da73e0f156b7c932"},
-    {file = "python_discovery-1.5.1.tar.gz", hash = "sha256:e2ea8b884cd1701f386eda8cf327b87743f1dc21b7f784470799537d95635384"},
+    {file = "python_discovery-1.5.2-py3-none-any.whl", hash = "sha256:3e338c2d0f15dfaeea57493f4c2c6caebe0e998ea815c30ae8bf8ee21f1112d3"},
+    {file = "python_discovery-1.5.2.tar.gz", hash = "sha256:45fd4f20a4e3f9b7bf2e0817870bc8e3b320a19658da177af800768c82dbf354"},
 ]
 
 [package.dependencies]
@@ -738,14 +738,14 @@ markers = {dev = "python_version < \"3.11\"", test = "python_version < \"3.11\""
 
 [[package]]
 name = "typing-inspection"
-version = "0.4.3"
+version = "0.4.4"
 description = "Runtime typing introspection tools"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "typing_inspection-0.4.3-py3-none-any.whl", hash = "sha256:5f42b23858a91e0b4ef521f5418f03a0da3c9216fd2995ef5e73463100e676cd"},
-    {file = "typing_inspection-0.4.3.tar.gz", hash = "sha256:c5f9ec1530b5c1e2c9bc34a84d9a3466ed1b2f3f2fa9f901368d9c5596210e4d"},
+    {file = "typing_inspection-0.4.4-py3-none-any.whl", hash = "sha256:65b8397ba37ccbce054456aaccddfc91e6e3083c92824df348d96ca832f3f147"},
+    {file = "typing_inspection-0.4.4.tar.gz", hash = "sha256:547274fa6b0a561ccf549cc9524b999a578e737d015d8709d021f9d0d13bea47"},
 ]
 
 [package.dependencies]
@@ -753,14 +753,14 @@ typing-extensions = ">=4.15.0"
 
 [[package]]
 name = "virtualenv"
-version = "21.7.3"
+version = "21.7.4"
 description = "Virtual Python Environment builder"
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "virtualenv-21.7.3-py3-none-any.whl", hash = "sha256:26dfda3c34f29bf1a3ca167426a67658d59979b9954e705aef60a5f724ce1773"},
-    {file = "virtualenv-21.7.3.tar.gz", hash = "sha256:5e9e287f5c808070eea3b40403d3368248e64b24f1b60bd9a36e85ac841d2c3e"},
+    {file = "virtualenv-21.7.4-py3-none-any.whl", hash = "sha256:376ec93cd6aab3044fa395d7db226db38043b7b5748948044b2a87168525e843"},
+    {file = "virtualenv-21.7.4.tar.gz", hash = "sha256:c9d960c95fa458171e58222a5ccab7465298e4b6559977865e627c4719f1e825"},
 ]
 
 [package.dependencies]
