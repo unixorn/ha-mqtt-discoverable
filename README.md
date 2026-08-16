@@ -74,7 +74,7 @@ mqtt_settings = Settings.MQTT(host="localhost")
 mqtt_settings = Settings.MQTT(host="some.server", username="someuser", password="somepassword")
 ```
 
-The connection is automatically established when an action is taken by an 
+The connection is automatically established when an action is taken by an
 Settings that provide authentication can be used as a drop-in replacement for any of the examples below.
 
 
