@@ -17,6 +17,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 
 - [Installing](#installing)
   - [Python](#python)
+- [Connecting](#connecting)
 - [Supported entities](#supported-entities)
   - [Binary sensor](#binary-sensor)
   - [Button](#button)
