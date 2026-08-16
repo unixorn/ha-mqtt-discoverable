@@ -60,6 +60,20 @@ ha-mqtt-discoverable runs on Python 3.10 or later.
 `pip install ha-mqtt-discoverable` if you want to use it in your own Python scripts.
 
 <!-- Please keep the entities in alphabetical order -->
+
+## Connecting
+Configuring a connection is straightforward, with or without authentication.
+
+```py
+from ha_mqtt_discoverable import Settings
+
+# Configure the required parameters for the MQTT broker (without authentication)
+mqtt_settings = Settings.MQTT(host="localhost")
+# ..or configure the required parameters for the MQTT broker (with authentication)
+mqtt_settings = Settings.MQTT(host="some.server", username="someuser", password="somepassword")
+```
+Settings that provide authentication can be used as a drop-in replacement for any of the examples below.
+
 ## Supported entities
 
 The following Home Assistant entities are currently implemented:
