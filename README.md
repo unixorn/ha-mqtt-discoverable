@@ -138,6 +138,7 @@ The following Home Assistant entities are currently implemented:
 - Sensor
 - Switch
 - Text
+- Valve
 
 Each entity can be associated to a device. See below for details.
 
@@ -231,7 +232,7 @@ with open("example.png", "rb") as example_file:
 ### Cover
 
 A cover has five possible states `open`, `closed`, `opening`, `closing` and `stopped`.
-Most other entities use the states as command payload, but covers differentiate on this. The HA user can either open, close or stop it in the covers current position.
+Most other entities use the states as command payload, but covers differentiate on this. The HA user can either open, close or stop it in the cover's current position.
 
 Covers do not currently support tilt.
 
@@ -287,7 +288,7 @@ From the [Home Assistant documentation](https://developers.home-assistant.io/doc
 A device is automatically created when an entity defines its `device` property.
 A device will be matched up with an existing device via supplied identifiers or connections, like serial numbers or MAC addresses.
 
-The following example create a device, by associating multiple sensors to the same `DeviceInfo` instance.
+The following example creates a device, by associating multiple sensors to the same `DeviceInfo` instance.
 
 ```py
 from ha_mqtt_discoverable import Settings, DeviceInfo
@@ -399,7 +400,7 @@ with open("example.png", "rb") as example_file:
 
 ### Light
 
-The light is different from other current sensor as it needs its payload encoded/decoded as JSON.
+The light is different from the other entities as it needs its payload encoded/decoded as JSON.
 It is possible to set brightness, effects and the color of the light. Similar to a _switch_ it can also receive 'commands' from HA that request a state change.
 It is possible to act upon reception of this 'command', by defining a `callback` function, as the following example shows:
 
@@ -430,7 +431,7 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
     try:
         payload = json.loads(message.payload.decode())
     except ValueError:
-        print("Ony JSON schema is supported for light entities!")
+        print("Only JSON schema is supported for light entities!")
         return
 
     # Parse received dictionary
@@ -552,7 +553,7 @@ from paho.mqtt.client import Client, MQTTMessage
 # Configure the required parameters for the MQTT broker
 mqtt_settings = Settings.MQTT(host="localhost")
 
-# Information about the switch
+# Information about the select entity
 select_info = SelectInfo(name="test", options=["option1", "option2", "option3"])
 
 settings = Settings(mqtt=mqtt_settings, entity=select_info)
@@ -639,7 +640,7 @@ my_switch.off()
 
 ### Text
 
-The text is an `helper entity`, showing an input field in the HA UI that the user can interact with.
+The text is a `helper entity`, showing an input field in the HA UI that the user can interact with.
 It is possible to act upon reception of the inputted text by defining a `callback` function, as the following example shows:
 
 ```py
@@ -673,7 +674,7 @@ my_text.set_text("Some awesome text")
 
 ### Valve
 
-The valve has two control modes: action command and position command. The first, most simple way is explained first.
+The valve has two control modes: action command and position command.
 
 #### Action command valve
 This mode is active when `reports_position = False`. A valve in this mode can report five possible states `open`, `closed`, `opening`, `closing` and `stopped`. The command payload can be either `OPEN`, `CLOSE` or `STOP`, where `STOP` is optional.
@@ -772,14 +773,15 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
         # let HA know that the valve is closing
         my_valve.position(my_valve.last_state, my_valve._entity.state_closing)
     else:
-        # let HA know that the valve is closing
+        # let HA know that the valve is opening
         my_valve.position(my_valve.last_state, my_valve._entity.state_opening)
     # call function to move the valve to the desired position
     move_my_custom_valve(payload)
     # Let HA know that the valve reached the desired position.
     # In HA the positions 0 or 100 automatically show as closed
-    # or open respectively, other positions should return to
-    # open, though this does not happen yet ([reported bug with pending fix](https://github.com/home-assistant/core/pull/165176).  
+    # or open respectively.
+    # Intermediate positions return open with Home Assistant 2026.6 and newer
+    # (fixed in https://github.com/home-assistant/core/pull/165176).
     my_valve.position(payload)
 
 # Instantiate the valve
@@ -793,7 +795,7 @@ my_valve.position(0)
 ## Availability Management
 
 > [!WARNING]
-> This features is not supported if using an [existing MQTT client](#using-an-existing-mqtt-client).
+> This feature is not supported if using an [existing MQTT client](#using-an-existing-mqtt-client).
 
 If `manual_availability` is set to `True`:
 
@@ -895,7 +897,7 @@ sensor_info = SensorInfo(
 
 ## Contributing
 
-Please run `ruff` on your code before submitting. There are `git` hooks already configured to run `ruff` and other checks before every commit, please run `pre-commit install` to enable them.
+Please run `ruff` on your code before submitting. There are `git` hooks already configured to run `ruff` and other checks before every commit. Please run `pre-commit install` to enable them.
 
 ## Users of ha-mqtt-discoverable
 
