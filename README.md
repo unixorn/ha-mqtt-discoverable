@@ -138,6 +138,7 @@ The following Home Assistant entities are currently implemented:
 - Sensor
 - Switch
 - Text
+- Valve
 
 Each entity can be associated to a device. See below for details.
 
@@ -772,14 +773,15 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
         # let HA know that the valve is closing
         my_valve.position(my_valve.last_state, my_valve._entity.state_closing)
     else:
-        # let HA know that the valve is closing
+        # let HA know that the valve is opening
         my_valve.position(my_valve.last_state, my_valve._entity.state_opening)
     # call function to move the valve to the desired position
     move_my_custom_valve(payload)
     # Let HA know that the valve reached the desired position.
     # In HA the positions 0 or 100 automatically show as closed
-    # or open respectively, other positions should return to
-    # open, though this does not happen yet ([reported bug with pending fix](https://github.com/home-assistant/core/pull/165176).  
+    # or open respectively.
+    # Intermediate positions return open with Home Assistant 2026.6 and newer
+    # (fixed in https://github.com/home-assistant/core/pull/165176).
     my_valve.position(payload)
 
 # Instantiate the valve
