@@ -17,6 +17,10 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 
 - [Installing](#installing)
   - [Python](#python)
+- [MQTT settings](#mqtt-settings)
+  - [Without authentication](#without-authentication)
+  - [With username/password authentication](#with-usernamepassword-authentication)
+  - [Using an existing MQTT client](#using-an-existing-mqtt-client)
 - [Supported entities](#supported-entities)
   - [Binary sensor](#binary-sensor)
   - [Button](#button)
@@ -38,7 +42,6 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 - [Availability Management](#availability-management)
 - [Limited state changes publications](#limited-state-changes-publications)
 - [FAQ](#faq)
-  - [Using an existing MQTT client](#using-an-existing-mqtt-client)
   - [I'm having problems on 32-bit ARM platforms](#im-having-problems-on-32-bit-arm-platforms)
   - [I'm having problems running in systemd-Service](#im-having-problems-running-in-systemd-service)
   - [Using UTF-8 field names in Home Assistant UI](#using-utf-8-field-names-in-home-assistant-ui)
@@ -58,6 +61,63 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 ha-mqtt-discoverable runs on Python 3.10 or later.
 
 `pip install ha-mqtt-discoverable` if you want to use it in your own Python scripts.
+
+## MQTT settings
+
+MQTT broker settings are configured with `Settings.MQTT`.
+
+### Without authentication
+
+For an MQTT broker that does not require authentication, you can specify the `host` (default: `homeassistant`).
+The default MQTT port is `1883` and does not need to be specified but can be overridden when needed:
+
+```py
+from ha_mqtt_discoverable import Settings
+
+mqtt_settings = Settings.MQTT(
+    host="localhost",
+    port=1337,
+)
+```
+
+### With username/password authentication
+
+If the MQTT broker requires authentication, provide `username` and `password`:
+
+```py
+from ha_mqtt_discoverable import Settings
+
+mqtt_settings = Settings.MQTT(
+    host="localhost",
+    username="mqtt-user",
+    password="mqtt-password",
+)
+```
+
+### Using an existing MQTT client
+
+If you already have a configured MQTT client and want to use it, you can pass it directly to `Settings.MQTT`:
+
+```py
+from ha_mqtt_discoverable import Settings
+from paho.mqtt.client import Client
+
+# Create and configure the MQTT client
+client = Client()
+
+# Do any additional client configuration here
+# ...
+
+# Make sure the client is connected to the broker
+client.connect(host="localhost")
+
+# Make sure MQTT network communication is running
+client.loop_start()
+
+# Pass the existing client to ha-mqtt-discoverable.
+# Other MQTT connection settings are not needed.
+mqtt_settings = Settings.MQTT(client=client)
+```
 
 <!-- Please keep the entities in alphabetical order -->
 ## Supported entities
@@ -797,30 +857,6 @@ mysensor.set_state(20.5, force_update=True)
 ```
 
 ## FAQ
-
-### Using an existing MQTT client
-
-If you want to use an existing MQTT client for the connection, you can pass it to the `Settings` object:
-
-```py
-from ha_mqtt_discoverable import Settings
-from paho.mqtt.client import Client
-
-# Creating the MQTT client
-client = Client()
-# Doing other stuff with the client
-# ...
-# Make sure the client is connected to the broker
-client.connect(host="localhost")
-# Also make sure the network communication is started
-client.loop_start()
-
-# Providing the client to the Settings object
-# In this case, no other MQTT settings are needed
-mqtt_settings = Settings.MQTT(client=client)
-
-# Continue with the rest of the code as usual
-```
 
 ### I'm having problems on 32-bit ARM platforms
 
