@@ -193,9 +193,11 @@ button_info = ButtonInfo(name="test")
 
 settings = Settings(mqtt=mqtt_settings, entity=button_info)
 
+
 # To receive button commands from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
     perform_my_custom_action()
+
 
 # Instantiate the button
 my_button = Button(settings, my_callback)
@@ -251,6 +253,7 @@ cover_info = CoverInfo(name="test")
 
 settings = Settings(mqtt=mqtt_settings, entity=cover_info)
 
+
 # To receive state commands from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
     payload = message.payload.decode()
@@ -273,6 +276,7 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
         stop_my_custom_cover()
         # Let HA know that the cover was stopped
         my_cover.stopped()
+
 
 # Instantiate the cover
 my_cover = Cover(settings, my_callback)
@@ -302,7 +306,9 @@ device_info = DeviceInfo(name="My device", identifiers="device_id")
 
 # Associate the sensor with the device via the `device` parameter
 # `unique_id` must also be set, otherwise Home Assistant will not display the device in the UI
-motion_sensor_info = BinarySensorInfo(name="My motion sensor", device_class="motion", unique_id="my_motion_sensor", device=device_info)
+motion_sensor_info = BinarySensorInfo(
+    name="My motion sensor", device_class="motion", unique_id="my_motion_sensor", device=device_info
+)
 
 motion_settings = Settings(mqtt=mqtt_settings, entity=motion_sensor_info)
 
@@ -340,7 +346,9 @@ mqtt_settings = Settings.MQTT(host="localhost")
 device_info = DeviceInfo(name="My device", identifiers="device_id")
 
 # Associate the sensor with the device via the `device` parameter
-trigger_info = DeviceTriggerInfo(name="MyTrigger", type="button_press", subtype="button_1", unique_id="my_device_trigger", device=device_info)
+trigger_info = DeviceTriggerInfo(
+    name="MyTrigger", type="button_press", subtype="button_1", unique_id="my_device_trigger", device=device_info
+)
 
 settings = Settings(mqtt=mqtt_settings, entity=trigger_info)
 
@@ -385,8 +393,7 @@ from base64 import b64encode
 mqtt_settings = Settings.MQTT(host="localhost")
 
 # Information about the image
-image_info = ImageInfo(name="test", image_topic="topic_to_publish_image_payload_to",
-                       image_encoding="b64", content_type="image/png")
+image_info = ImageInfo(name="test", image_topic="topic_to_publish_image_payload_to", image_encoding="b64", content_type="image/png")
 settings = Settings(mqtt=mqtt_settings, entity=image_info)
 
 # Instantiate the image
@@ -420,9 +427,11 @@ light_info = LightInfo(
     color_mode=True,
     supported_color_modes=["rgb"],
     effect=True,
-    effect_list=["blink", "my_custom_effect"])
+    effect_list=["blink", "my_custom_effect"],
+)
 
 settings = Settings(mqtt=mqtt_settings, entity=light_info)
+
 
 # To receive state commands from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
@@ -454,6 +463,7 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
     else:
         print("Unknown payload")
 
+
 # Instantiate the light
 my_light = Light(settings, my_callback)
 
@@ -480,6 +490,7 @@ lock_info = LockInfo(name="test")
 
 settings = Settings(mqtt=mqtt_settings, entity=lock_info)
 
+
 # To receive state commands from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
     payload = message.payload.decode()
@@ -497,6 +508,7 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
         unlock_my_custom_lock()
         # Let HA know that the lock is unlocked now
         my_lock.unlocked()
+
 
 # Instantiate the lock
 my_lock = Lock(settings, my_callback)
@@ -523,6 +535,7 @@ mqtt_settings = Settings.MQTT(host="localhost")
 number_info = NumberInfo(name="test", min=0, max=50, mode="slider", step=5)
 
 settings = Settings(mqtt=mqtt_settings, entity=number_info)
+
 
 # To receive number updates from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
@@ -558,10 +571,12 @@ select_info = SelectInfo(name="test", options=["option1", "option2", "option3"])
 
 settings = Settings(mqtt=mqtt_settings, entity=select_info)
 
+
 # To receive state commands from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
     payload = message.payload.decode()
     do_something()
+
 
 # Instantiate the selection
 my_selection = Select(settings, my_callback)
@@ -619,6 +634,7 @@ switch_info = SwitchInfo(name="test")
 
 settings = Settings(mqtt=mqtt_settings, entity=switch_info)
 
+
 # To receive state commands from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
     payload = message.payload.decode()
@@ -630,6 +646,7 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
         turn_my_custom_thing_off()
         # Let HA know that the switch was successfully deactivated
         my_switch.off()
+
 
 # Instantiate the switch
 my_switch = Switch(settings, my_callback)
@@ -657,6 +674,7 @@ text_info = TextInfo(name="test")
 
 settings = Settings(mqtt=mqtt_settings, entity=text_info)
 
+
 # To receive text updates from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
     text = message.payload.decode()
@@ -664,6 +682,7 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
     do_some_custom_thing(text)
     # Send an MQTT message to confirm to HA that the text was changed
     my_text.set_text(text)
+
 
 # Instantiate the text
 my_text = Text(settings, my_callback)
@@ -694,6 +713,7 @@ valve_info = ValveInfo(name="test")
 
 settings = Settings(mqtt=mqtt_settings, entity=valve_info)
 
+
 # To receive state commands from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
     payload = message.payload.decode()
@@ -713,7 +733,7 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
         my_valve.closed()
     # if payload_stop is defined, stop a valve in motion
     elif payload == my_valve._entity.payload_stop:
-        # call function to stop the valve.  
+        # call function to stop the valve.
         stop_my_custom_valve()
         # There is no my_valve.stopped(). This means
         # the function should call my_valve.open() or
@@ -721,6 +741,7 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
         # state. Otherwise the former state remains
         # active, this could thus be opening or
         # closing.
+
 
 # Instantiate the valve
 my_valve = Valve(settings, my_callback)
@@ -747,17 +768,18 @@ mqtt_settings = Settings.MQTT(host="localhost")
 
 # Information about the valve
 valve_info = ValveInfo(
-                name="test-position",
-                reports_position=True,
-                payload_open=None,
-                payload_close=None,
-                state_open=None,
-                state_closed=None,
-                )
+    name="test-position",
+    reports_position=True,
+    payload_open=None,
+    payload_close=None,
+    state_open=None,
+    state_closed=None,
+)
 
 settings = Settings(mqtt=mqtt_settings, entity=valve_info)
 
 current_position = 0
+
 
 # To receive state commands from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
@@ -784,12 +806,12 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
     # (fixed in https://github.com/home-assistant/core/pull/165176).
     my_valve.position(payload)
 
+
 # Instantiate the valve
 my_valve = Valve(settings, my_callback)
 
 # Set the initial position of the valve, which also makes it discoverable
 my_valve.position(0)
-
 ```
 
 ## Availability Management
@@ -820,7 +842,6 @@ sensor = Sensor(settings)
 # When the entity is ready, set availability to 'True'
 sensor.set_availability(True)
 sensor.set_state(1337)
-
 ```
 
 ## Limited state changes publications
