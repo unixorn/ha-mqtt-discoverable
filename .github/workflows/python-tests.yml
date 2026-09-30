@@ -34,7 +34,7 @@ jobs:
           # see https://github.com/py-cov-action/python-coverage-comment-action/issues/610
           persist-credentials: true
       - name: Install poetry
-        run: pipx install poetry
+        run: pipx install poetry==2.5.1
       - name: Set up Python 3.10
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
@@ -42,10 +42,10 @@ jobs:
           cache: "poetry"
       - name: Install dependencies
         run: poetry install
-      # Setup mosquitto broker for running tests
-      - name: Setup mosquitto
+      # Setup Mosquitto broker for running tests
+      - name: Setup Mosquitto
         run: |
-          docker run -d -v "${GITHUB_WORKSPACE}/tests/mosquitto.conf:/mosquitto/config/mosquitto.conf" -p 1883:1883 eclipse-mosquitto
+          docker run -d -v "${GITHUB_WORKSPACE}/tests/mosquitto.conf:/mosquitto/config/mosquitto.conf" -p 1883:1883 eclipse-mosquitto@sha256:6f8d8a947c506f8a2290ec65cd4bd2bc7cb4d43fb5f6271f861cb013e2ef9797 # 2.1.2-alpine
       - name: Run tests
         run: poetry run coverage run -m pytest tests
       - name: Coverage comment
