@@ -23,6 +23,10 @@ on: # yamllint disable-line rule:truthy
 
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 ###############
 # Set the Job #
 ###############

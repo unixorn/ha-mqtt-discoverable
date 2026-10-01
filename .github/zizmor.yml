@@ -6,6 +6,3 @@ rules:
   use-trusted-publishing:
     ignore:
       - build-publish.yml
-  dangerous-triggers:
-    ignore:
-      - coverage.yml

@@ -1,11 +1,20 @@
 # .github/workflows/coverage.yml
 name: Post coverage comment
 
-on:
+on: # zizmor: ignore[dangerous-triggers]
+  # We're using workflow_run to post a coverage comment on external PRs.
+  # This is safe because we don't check out the external code or interact with the external code in any way
+  # but extracting an artifact containing the comment to post, and post it.
   workflow_run:
     workflows: ["Python tests"]
     types:
       - completed
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -15,14 +24,14 @@ jobs:
     permissions:
       # Gives the action the necessary permissions for publishing new
       # comments in pull requests.
-      pull-requests: write
+      pull-requests: write # Required to publish the coverage comment.
       # Gives the action the necessary permissions for editing existing
       # comments (to avoid publishing multiple comments in the same PR)
-      contents: write
+      contents: write # Required to update the coverage comment branch.
       # Gives the action the necessary permissions for looking up the
       # workflow that launched this workflow, and download the related
       # artifact that contains the comment to be published
-      actions: read
+      actions: read # Required to retrieve the coverage artifact.
     steps:
       # DO NOT run actions/checkout here, for security reasons
       # For details, refer to https://securitylab.github.com/research/github-actions-preventing-pwn-requests/

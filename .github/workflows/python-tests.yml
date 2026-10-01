@@ -11,20 +11,26 @@ on: # yamllint disable-line rule:truthy
     branches: [main]
 
 permissions:
+  # Allow the workflow to check out the repository and install the project under test.
   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   # Inspired by https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md#caching-packages
   test:
+    name: Tests
     runs-on: ubuntu-latest
     permissions:
       # Gives the action the necessary permissions for publishing new
       # comments in pull requests.
-      pull-requests: write
+      pull-requests: write # Required to publish the coverage comment.
       # Gives the action the necessary permissions for pushing data to the
       # python-coverage-comment-action branch, and for editing existing
       # comments (to avoid publishing multiple comments in the same PR)
-      contents: write
+      contents: write # Required to update the coverage comment branch.
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
