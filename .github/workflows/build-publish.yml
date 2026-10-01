@@ -10,7 +10,12 @@ on: # yamllint disable-line rule:truthy
       - "v*"
 
 permissions:
+  # Allow the workflow to check out the tagged source before building artifacts.
   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build-wheel:
@@ -46,7 +51,9 @@ jobs:
 
       - name: Publish wheel
         run: |
-          poetry publish --username __token__ --password ${{ secrets.PYPI_PASSWORD }}
+          poetry publish --username __token__ --password "$PYPI_PASSWORD"
+        env:
+          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
 
   docker-image:
     needs: build-wheel
