@@ -324,8 +324,6 @@ class CameraInfo(EntityInfo):
     """
     The MQTT topic to subscribe to receive the image payloads.
     """
-    retain: bool | None = None
-    """If the published message should have the retain flag on or not."""
     image_encoding: Literal["b64"] | None = None
     """
     The encoding of the image payloads received.
@@ -479,13 +477,13 @@ class Switch(Subscriber[SwitchInfo]):
         """
         Set switch to off
         """
-        self._update_state(state=self._entity.payload_off, retain=self._entity.retain)
+        self._update_state(state=self._entity.payload_off)
 
     def on(self):
         """
         Set switch to on
         """
-        self._update_state(state=self._entity.payload_on, retain=self._entity.retain)
+        self._update_state(state=self._entity.payload_on)
 
 
 class Light(Subscriber[LightInfo]):
@@ -579,7 +577,7 @@ class Light(Subscriber[LightInfo]):
             state(Dict[str, Any]): What state to set the light to
         """
         json_state = json.dumps(state)
-        self._update_state(state=json_state, retain=self._entity.retain)
+        self._update_state(state=json_state)
 
 
 class Cover(Subscriber[CoverInfo]):
@@ -589,23 +587,23 @@ class Cover(Subscriber[CoverInfo]):
 
     def open(self) -> None:
         """Set cover state to open"""
-        self._update_state(self._entity.state_open, retain=self._entity.retain)
+        self._update_state(self._entity.state_open)
 
     def closed(self) -> None:
         """Set cover state to closed"""
-        self._update_state(self._entity.state_closed, retain=self._entity.retain)
+        self._update_state(self._entity.state_closed)
 
     def closing(self) -> None:
         """Set cover state to closing"""
-        self._update_state(self._entity.state_closing, retain=self._entity.retain)
+        self._update_state(self._entity.state_closing)
 
     def opening(self) -> None:
         """Set cover state to opening"""
-        self._update_state(self._entity.state_opening, retain=self._entity.retain)
+        self._update_state(self._entity.state_opening)
 
     def stopped(self) -> None:
         """Set cover state to stopped"""
-        self._update_state(self._entity.state_stopped, retain=self._entity.retain)
+        self._update_state(self._entity.state_stopped)
 
 
 class Valve(Subscriber[ValveInfo]):
@@ -618,22 +616,22 @@ class Valve(Subscriber[ValveInfo]):
         if self._entity.reports_position:
             self.position(100)
         else:
-            self._update_state(self._entity.state_open, retain=self._entity.retain)
+            self._update_state(self._entity.state_open)
 
     def closed(self) -> None:
         """Set valve state to closed."""
         if self._entity.reports_position:
             self.position(0)
         else:
-            self._update_state(self._entity.state_closed, retain=self._entity.retain)
+            self._update_state(self._entity.state_closed)
 
     def closing(self) -> None:
         """Set valve state to closing."""
-        self._update_state(self._entity.state_closing, retain=self._entity.retain)
+        self._update_state(self._entity.state_closing)
 
     def opening(self) -> None:
         """Set valve state to opening"""
-        self._update_state(self._entity.state_opening, retain=self._entity.retain)
+        self._update_state(self._entity.state_opening)
 
     def position(self, position: int, state: str | None = None) -> None:
         """Set the valve to a desired position between 0 and 100."""
@@ -650,10 +648,10 @@ class Valve(Subscriber[ValveInfo]):
             raise RuntimeError(f"State {state} does not match any of the configured states")
 
         if state is None:
-            self._update_state(position, retain=self._entity.retain)
+            self._update_state(position)
         else:
             json_state = json.dumps({"state": state, "position": position})
-            self._update_state(json_state, retain=self._entity.retain)
+            self._update_state(json_state)
 
 
 class Button(Subscriber[ButtonInfo]):
@@ -686,7 +684,7 @@ class DeviceTrigger(Discoverable[DeviceTriggerInfo]):
             payload: custom payload to send in the trigger topic
 
         """
-        return self._update_state(payload, retain=False)
+        return self._update_state(payload)
 
 
 class Text(Subscriber[TextInfo]):
@@ -706,7 +704,7 @@ class Text(Subscriber[TextInfo]):
             raise RuntimeError(f"Text is not within configured length boundaries {bound}")
 
         logger.info(f"Setting {self._entity.name} to {text} using {self.state_topic}")
-        self._update_state(str(text), retain=self._entity.retain)
+        self._update_state(str(text))
 
 
 class Number(Subscriber[NumberInfo]):
@@ -726,7 +724,7 @@ class Number(Subscriber[NumberInfo]):
             raise RuntimeError(f"Value is not within configured boundaries {bound}")
 
         logger.info(f"Setting {self._entity.name} to {value} using {self.state_topic}")
-        self._update_state(value, retain=self._entity.retain)
+        self._update_state(value)
 
 
 class Camera(Discoverable[CameraInfo]):
@@ -802,7 +800,7 @@ class Select(Subscriber[SelectInfo]):
             raise RuntimeError(f"Invalid option: {option} (Valid option(s): {self._entity.options})")
 
         logger.info(f"Changing selection of {self._entity.name} to {option} using {self.state_topic}")
-        self._update_state(option, retain=self._entity.retain)
+        self._update_state(option)
 
 
 class Lock(Subscriber[LockInfo]):
@@ -813,20 +811,20 @@ class Lock(Subscriber[LockInfo]):
 
     def locking(self) -> None:
         """Set lock state to locking"""
-        self._update_state(self._entity.state_locking, retain=self._entity.retain)
+        self._update_state(self._entity.state_locking)
 
     def locked(self) -> None:
         """Set lock state to locked"""
-        self._update_state(self._entity.state_locked, retain=self._entity.retain)
+        self._update_state(self._entity.state_locked)
 
     def unlocking(self) -> None:
         """Set lock state to unlocking"""
-        self._update_state(self._entity.state_unlocking, retain=self._entity.retain)
+        self._update_state(self._entity.state_unlocking)
 
     def unlocked(self) -> None:
         """Set lock state to unlocked"""
-        self._update_state(self._entity.state_unlocked, retain=self._entity.retain)
+        self._update_state(self._entity.state_unlocked)
 
     def jammed(self) -> None:
         """Set lock state to jammed"""
-        self._update_state(self._entity.state_jammed, retain=self._entity.retain)
+        self._update_state(self._entity.state_jammed)
