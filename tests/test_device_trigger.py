@@ -13,6 +13,8 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 #
+from unittest.mock import patch
+
 import pytest
 
 from ha_mqtt_discoverable import DeviceInfo, Settings
@@ -55,4 +57,9 @@ def test_config_topic(device_trigger: DeviceTrigger):
 
 
 def test_trigger(device_trigger: DeviceTrigger):
-    device_trigger.trigger("my_payload")
+    device_trigger.retain = True
+    device_trigger.wrote_configuration = True
+    with patch.object(device_trigger.mqtt_client, "publish") as mock_publish:
+        device_trigger.trigger("my_payload")
+
+        mock_publish.assert_called_once_with(device_trigger.state_topic, "my_payload", retain=False)

@@ -165,6 +165,21 @@ def test_state_helper(discoverable: Discoverable):
         mock_publish.assert_called_once_with("hmd/binary_sensor/test/state", "test", retain=False)
 
 
+@pytest.mark.parametrize("retain", [False, True])
+def test_state_helper_uses_discoverable_retain(mocker: MockerFixture, retain: bool):
+    mqtt_client = mocker.create_autospec(Client, instance=True)
+    mqtt_settings = Settings.MQTT(client=mqtt_client)
+    sensor_info = EntityInfo(name="test", component="binary_sensor")
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+    discoverable = Discoverable(settings, retain=retain)
+    discoverable.write_config()
+
+    mqtt_client.publish.reset_mock()
+    discoverable._update_state("test")
+
+    mqtt_client.publish.assert_called_once_with(discoverable.state_topic, "test", retain=retain)
+
+
 def test_device_info(discoverable: Discoverable[EntityInfo]):
     device_info = DeviceInfo(name="Test device", identifiers="test_device_id")
     # Assign the sensor to a device
