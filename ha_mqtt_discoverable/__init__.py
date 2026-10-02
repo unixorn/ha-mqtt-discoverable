@@ -163,7 +163,12 @@ class Discoverable(Generic[EntityType]):
     attributes_topic: str
     last_state: bytes | str | float | int | None = None
 
-    def __init__(self, settings: Settings[EntityType], on_connect: Callable | None = None) -> None:
+    def __init__(
+        self,
+        settings: Settings[EntityType],
+        on_connect: Callable | None = None,
+        retain: bool = False,
+    ) -> None:
         """
         Creates a basic discoverable object.
 
@@ -173,10 +178,12 @@ class Discoverable(Generic[EntityType]):
             on_connect: Optional callback function invoked when the MQTT client \
                 successfully connects to the broker.
             If defined, you need to call `_connect_client()` to establish the \
-                connection manually.
+            connection manually.
+            retain: Whether messages published by this entity should be retained by the MQTT broker.
         """
         self._settings = settings
         self._entity = settings.entity
+        self.retain = retain
 
         # Build the topic string: start from the type of component
         # e.g. `binary_sensor`
@@ -285,7 +292,7 @@ wrote_configuration: {self.wrote_configuration}
         state: bytes | str | float | int | None,
         topic: str | None = None,
         last_reset: str | None = None,
-        retain=False,
+        retain: bool | None = None,
         force_update=False,
     ) -> MQTTMessageInfo | None:
         """
@@ -297,6 +304,8 @@ wrote_configuration: {self.wrote_configuration}
         if not topic:
             logger.debug(f"State topic unset, using default: {self.state_topic}")
             topic = self.state_topic
+        if retain is None:
+            retain = self.retain
         if last_reset:
             state = json.dumps({"state": state, "last_reset": last_reset})
 
@@ -390,7 +399,7 @@ wrote_configuration: {self.wrote_configuration}
         if not hasattr(self, "availability_topic"):
             raise RuntimeError("Manual availability is not configured for this entity!")
         message = "online" if availability else "offline"
-        self._update_state(message, topic=self.availability_topic)
+        self._update_state(message, topic=self.availability_topic, retain=True)
 
     def __del__(self):
         """Cleanly shutdown the internal MQTT client if it wasn't provided by user"""
@@ -411,6 +420,7 @@ class Subscriber(Discoverable[EntityType]):
         self,
         settings: Settings[EntityType],
         command_callback: Callable[[mqtt.Client, T, mqtt.MQTTMessage], Any],
+        retain: bool = False,
     ) -> None:
         """
         Entity that listens to commands from an MQTT topic.
@@ -430,7 +440,7 @@ class Subscriber(Discoverable[EntityType]):
                 raise RuntimeError("Error subscribing to MQTT command topic")
 
         # Invoke the parent init
-        super().__init__(settings, on_client_connected)
+        super().__init__(settings, on_client_connected, retain=retain)
         # Define the command topic to receive commands from HA, using `hmd` topic prefix
         self._command_topic = f"{self._settings.mqtt.state_prefix}/{self._entity_topic}/command"
 
