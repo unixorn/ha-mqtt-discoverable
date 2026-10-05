@@ -21,7 +21,6 @@ from threading import Event
 from unittest.mock import MagicMock, patch
 
 import pytest
-from paho.mqtt import subscribe
 from paho.mqtt.client import MQTT_ERR_CONN_REFUSED, MQTT_ERR_SUCCESS, Client, MQTTMessage, MQTTv5
 from paho.mqtt.enums import CallbackAPIVersion
 from paho.mqtt.subscribeoptions import SubscribeOptions
@@ -321,16 +320,43 @@ def test_config_availability_topic(discoverable_availability: Discoverable):
     assert config.get("availability_topic") is not None
 
 
-def test_set_availability(discoverable_availability: Discoverable):
-    # Send availability message
-    discoverable_availability.set_availability(True)
+@pytest.mark.parametrize(
+    ("availability", "expected_payload"),
+    [(True, "online"), (False, "offline")],
+)
+def test_set_availability(discoverable_availability: Discoverable, availability: bool, expected_payload: str):
+    received_message = Event()
+    subscription_ready = Event()
+    received_payload = None
+    mqtt_client = Client(callback_api_version=CallbackAPIVersion.VERSION2, protocol=MQTTv5)
 
-    # Receive a single message, ignoring retained messages
-    availability_message = subscribe.simple(discoverable_availability.availability_topic, msg_count=1, retained=False)
-    assert isinstance(availability_message, MQTTMessage)
-    assert availability_message.payload.decode("utf-8") == "online"
+    def on_message(_: Client, __, message: MQTTMessage):
+        nonlocal received_payload
+        received_payload = message.payload.decode("utf-8")
+        received_message.set()
 
-    discoverable_availability.set_availability(False)
+    def on_subscribe(*_args):
+        subscription_ready.set()
+
+    mqtt_client.on_message = on_message
+    mqtt_client.on_subscribe = on_subscribe
+    mqtt_client.connect(host="localhost")
+    mqtt_client.subscribe(
+        (
+            discoverable_availability.availability_topic,
+            SubscribeOptions(retainHandling=SubscribeOptions.RETAIN_DO_NOT_SEND),
+        )
+    )
+    mqtt_client.loop_start()
+
+    try:
+        assert subscription_ready.wait(1)
+        discoverable_availability.set_availability(availability)
+        assert received_message.wait(1)
+        assert received_payload == expected_payload
+    finally:
+        mqtt_client.disconnect()
+        mqtt_client.loop_stop()
 
 
 def test_set_availability_wrong_config(discoverable: Discoverable):
