@@ -384,7 +384,7 @@ def test_expect_exception_if_connecting_to_mqtt_broker_fails():
 
 
 def test_tls_key_uses_tls_set():
-    mqtt_settings = Settings.MQTT(host="localhost", tls_key="tlskey")
+    mqtt_settings = Settings.MQTT(host="localhost", tls_key="tls_key")
     sensor_info = EntityInfo(name="test", component="binary_sensor")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
 
