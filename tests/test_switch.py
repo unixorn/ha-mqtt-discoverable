@@ -13,6 +13,8 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 #
+from unittest.mock import patch
+
 import pytest
 
 from ha_mqtt_discoverable import Settings
@@ -28,15 +30,19 @@ def switch() -> Switch:
     return Switch(settings, lambda _, __, ___: None)
 
 
-def test_required_config():
-    mqtt_settings = Settings.MQTT(host="localhost")
-    sensor_info = SwitchInfo(name="test")
-    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
-    # Define empty callback
-    sensor = Switch(settings, lambda _, __, ___: None)
-    assert sensor is not None
+def test_generate_config(switch: Switch):
+    config = switch.generate_config()
+    assert config["command_topic"] == switch._command_topic
+    assert config["state_topic"] == switch.state_topic
 
 
-def test_change_state(switch: Switch):
-    switch.on()
-    switch.off()
+@pytest.mark.parametrize(
+    ("action", "payload"),
+    [("on", "payload_on"), ("off", "payload_off")],
+)
+def test_change_state(switch: Switch, action: str, payload: str):
+    switch.wrote_configuration = True
+    with patch.object(switch.mqtt_client, "publish") as mock_publish:
+        getattr(switch, action)()
+
+    mock_publish.assert_called_once_with(switch.state_topic, getattr(switch._entity, payload), retain=False)

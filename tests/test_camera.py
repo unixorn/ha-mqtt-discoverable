@@ -27,7 +27,7 @@ def camera() -> Camera:
 
 
 def test_required_config(camera: Camera):
-    """Test to make sure a lock instance can be created"""
+    """Test to make sure a camera instance can be created"""
     assert camera is not None
 
 
