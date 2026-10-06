@@ -26,6 +26,7 @@ import pytest
 from paho.mqtt import publish
 from paho.mqtt.client import MQTTMessage
 from paho.mqtt.enums import CallbackAPIVersion
+from pytest_mock import MockerFixture
 
 from ha_mqtt_discoverable import EntityInfo, Settings, Subscriber
 
@@ -61,6 +62,22 @@ def test_generate_config(subscriber: Subscriber):
     assert config is not None
     # Check that command topic is part of the output config
     assert config["command_topic"] == subscriber._command_topic
+
+
+@pytest.mark.parametrize("retain", [False, True])
+def test_state_helper_uses_subscriber_retain(mocker: MockerFixture, retain: bool):
+    mqtt_client = mocker.create_autospec(mqtt.Client, instance=True)
+    mqtt_client.subscribe.return_value = (mqtt.MQTT_ERR_SUCCESS, 1)
+    mqtt_settings = Settings.MQTT(client=mqtt_client)
+    sensor_info = EntityInfo(name="test", component="button")
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+    subscriber = Subscriber(settings, lambda _, __, ___: None, retain=retain)
+    subscriber.write_config()
+
+    mqtt_client.publish.reset_mock()
+    subscriber._update_state("test")
+
+    mqtt_client.publish.assert_called_once_with(subscriber.state_topic, "test", retain=retain)
 
 
 def create_callback(event: Event, expected_payload: str) -> Callable:

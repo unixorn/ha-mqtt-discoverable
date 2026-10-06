@@ -6,7 +6,7 @@ name: Python tests
 
 on: # yamllint disable-line rule:truthy
   push:
-    branches: ["*"]
+    branches: [main]
   pull_request:
     branches: [main]
 
