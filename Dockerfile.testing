@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.11-slim
 
 LABEL maintainer="Joe Block <jpb@unixorn.net>"
 LABEL description="ha-mqtt-discoverable test image"
@@ -20,6 +20,7 @@ RUN pip install --no-cache-dir -r /data/requirements.txt
 COPY dist/*.whl /data
 RUN pip install --no-cache-dir /data/*.whl
 
-USER nobody
+# UID/GID 65534 are the standard nobody/nogroup IDs in Debian-based images.
+USER 65534:65534
 
 CMD ["bash", "-l"]
