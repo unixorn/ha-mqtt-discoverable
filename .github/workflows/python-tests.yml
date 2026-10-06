@@ -21,8 +21,12 @@ concurrency:
 jobs:
   # Inspired by https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md#caching-packages
   test:
-    name: Tests
+    name: Tests (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
     permissions:
       # Gives the action the necessary permissions for publishing new
       # comments in pull requests.
@@ -41,10 +45,11 @@ jobs:
           persist-credentials: true
       - name: Install poetry
         run: pipx install poetry==2.5.1
-      - name: Set up Python 3.11
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
+          allow-prereleases: true
           cache: "poetry"
       - name: Install dependencies
         run: poetry install
@@ -56,6 +61,7 @@ jobs:
         run: poetry run coverage run -m pytest tests
       - name: Coverage comment
         id: coverage_comment
+        if: matrix.python-version == '3.11'
         uses: py-cov-action/python-coverage-comment-action@e5fb2218463c3377f3504b0c5b5646ed53da7a2f # v4.5
         with:
           GITHUB_TOKEN: ${{ github.token }}
