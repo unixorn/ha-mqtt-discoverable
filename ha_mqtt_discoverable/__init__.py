@@ -409,7 +409,7 @@ wrote_configuration: {self.wrote_configuration}
 
 class Subscriber(Discoverable[EntityType]):
     """
-    Specialized sub-lass that listens to commands coming from an MQTT topic
+    Specialized subclass that listens to commands coming from an MQTT topic
     """
 
     T = TypeVar("T")  # Used in the callback function
@@ -448,7 +448,7 @@ class Subscriber(Discoverable[EntityType]):
         if self._settings.mqtt.client:
             # externally created MQTT client is used
             # which needs to be connected already
-            # therefor explicitly subscribe to the command topic
+            # therefore explicitly subscribe to the command topic
             on_client_connected(self.mqtt_client)
         else:
             # Manually connect the MQTT client

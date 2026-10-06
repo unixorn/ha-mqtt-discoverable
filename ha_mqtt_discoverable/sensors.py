@@ -263,7 +263,7 @@ class TextInfo(EntityInfo):
     min: int = 0
     """The minimum size of a text being set or received."""
     mode: str | None = "text"
-    """The mode off the text entity. Must be either text or password."""
+    """The mode of the text entity. Must be either text or password."""
     pattern: str | None = None
     """A valid regular expression the text being set or received must match with."""
 
