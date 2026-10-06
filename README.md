@@ -4,27 +4,28 @@
 
 | Name                                   |    Stmts |     Miss |   Branch |   BrPart |    Cover |   Missing |
 |--------------------------------------- | -------: | -------: | -------: | -------: | -------: | --------: |
-| ha\_mqtt\_discoverable/\_\_init\_\_.py |      214 |        0 |       44 |        0 |     100% |           |
-| ha\_mqtt\_discoverable/sensors.py      |      381 |        0 |       64 |        0 |     100% |           |
+| ha\_mqtt\_discoverable/\_\_init\_\_.py |      217 |        0 |       46 |        0 |     100% |           |
+| ha\_mqtt\_discoverable/sensors.py      |      379 |        0 |       64 |        0 |     100% |           |
 | ha\_mqtt\_discoverable/utils.py        |        4 |        0 |        0 |        0 |     100% |           |
 | tests/\_\_init\_\_.py                  |        0 |        0 |        0 |        0 |     100% |           |
 | tests/test\_binary\_sensor.py          |       22 |        0 |        0 |        0 |     100% |           |
 | tests/test\_button.py                  |       11 |        0 |        0 |        0 |     100% |           |
 | tests/test\_camera.py                  |       23 |        0 |        0 |        0 |     100% |           |
 | tests/test\_cover.py                   |       25 |        0 |        0 |        0 |     100% |           |
-| tests/test\_device\_trigger.py         |       22 |        0 |        0 |        0 |     100% |           |
-| tests/test\_discoverable.py            |      240 |        0 |        0 |        0 |     100% |           |
+| tests/test\_device\_trigger.py         |       27 |        0 |        0 |        0 |     100% |           |
+| tests/test\_discoverable.py            |      267 |        0 |        0 |        0 |     100% |           |
 | tests/test\_image.py                   |       63 |        0 |        0 |        0 |     100% |           |
 | tests/test\_light.py                   |       61 |        0 |        0 |        0 |     100% |           |
 | tests/test\_lock.py                    |       35 |        0 |        0 |        0 |     100% |           |
 | tests/test\_number.py                  |       23 |        0 |        0 |        0 |     100% |           |
+| tests/test\_retain.py                  |       14 |        0 |        0 |        0 |     100% |           |
 | tests/test\_select.py                  |       25 |        0 |        0 |        0 |     100% |           |
 | tests/test\_sensor.py                  |       54 |        0 |        0 |        0 |     100% |           |
-| tests/test\_subscriber.py              |       64 |        0 |        0 |        0 |     100% |           |
+| tests/test\_subscriber.py              |       77 |        0 |        0 |        0 |     100% |           |
 | tests/test\_switch.py                  |       18 |        0 |        0 |        0 |     100% |           |
 | tests/test\_text.py                    |       28 |        0 |        0 |        0 |     100% |           |
 | tests/test\_valve.py                   |       83 |        0 |        0 |        0 |     100% |           |
-| **TOTAL**                              | **1396** |    **0** |  **108** |    **0** | **100%** |           |
+| **TOTAL**                              | **1456** |    **0** |  **110** |    **0** | **100%** |           |
 
 
 ## Setup coverage badge
