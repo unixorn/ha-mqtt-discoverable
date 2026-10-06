@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.11-slim
 
 ARG application_version
 LABEL maintainer="Joe Block <jpb@unixorn.net>"

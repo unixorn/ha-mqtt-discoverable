@@ -58,7 +58,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
 
 ### Python
 
-ha-mqtt-discoverable runs on Python 3.10 or later.
+ha-mqtt-discoverable runs on Python 3.11 or later.
 
 `pip install ha-mqtt-discoverable` if you want to use it in your own Python scripts.
 
