@@ -28,5 +28,8 @@ def button() -> Button:
     return Button(settings, lambda _, __, ___: None)
 
 
-def test_required_config(button):
-    assert button is not None
+def test_generate_config(button: Button):
+    config = button.generate_config()
+
+    assert config["command_topic"] == button._command_topic
+    assert "state_topic" not in config

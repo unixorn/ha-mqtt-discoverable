@@ -194,7 +194,7 @@ button_info = ButtonInfo(name="test")
 settings = Settings(mqtt=mqtt_settings, entity=button_info)
 
 
-# To receive button commands from HA, define a callback function:
+# To receive commands from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
     perform_my_custom_action()
 
@@ -635,7 +635,7 @@ switch_info = SwitchInfo(name="test")
 settings = Settings(mqtt=mqtt_settings, entity=switch_info)
 
 
-# To receive state commands from HA, define a callback function:
+# To receive commands from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
     payload = message.payload.decode()
     if payload == "ON":

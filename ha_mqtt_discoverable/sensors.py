@@ -114,8 +114,6 @@ class SwitchInfo(EntityInfo):
     # jscpd:ignore-end
     retain: bool = False
     """If the published message should have the retain flag on or not"""
-    state_topic: str | None = None
-    """The MQTT topic subscribed to receive state updates."""
 
 
 class LightInfo(EntityInfo):
@@ -658,6 +656,12 @@ class Button(Subscriber[ButtonInfo]):
     """Implements an MQTT button:
     https://www.home-assistant.io/integrations/button.mqtt
     """
+
+    def generate_config(self) -> dict[str, Any]:
+        """Remove unused state_topic"""
+        config = super().generate_config()
+        config.pop("state_topic", None)
+        return config
 
 
 class DeviceTrigger(Discoverable[DeviceTriggerInfo]):
