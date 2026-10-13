@@ -432,7 +432,7 @@ class Subscriber(Discoverable[EntityType]):
         def on_client_connected(client: mqtt.Client, *_):
             # Subscribe to the command topic
             result, __ = client.subscribe(self._command_topic, qos=1)
-            if result is not mqtt.MQTT_ERR_SUCCESS:
+            if result != mqtt.MQTT_ERR_SUCCESS:
                 raise RuntimeError("Error subscribing to MQTT command topic")
 
         # Invoke the parent init
