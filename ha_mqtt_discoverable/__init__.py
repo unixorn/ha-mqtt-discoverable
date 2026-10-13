@@ -313,13 +313,14 @@ wrote_configuration: {self.wrote_configuration}
             logger.debug("Debug mode is enabled, skipping state write.")
             return None
 
-        if not force_update and (self.last_state == state):
+        if topic == self.state_topic and not force_update and self.last_state == state:
             logger.debug("State did not change, skipping state write.")
             return None
 
         message_info = self.mqtt_client.publish(topic, state, retain=retain)
         logger.debug(f"Publish result: {message_info}")
-        self.last_state = state
+        if topic == self.state_topic:
+            self.last_state = state
         return message_info
 
     def delete(self) -> None:

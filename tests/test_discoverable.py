@@ -18,7 +18,7 @@ import logging
 import ssl
 from concurrent.futures import ThreadPoolExecutor
 from threading import Event
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
 import pytest
 from paho.mqtt.client import MQTT_ERR_CONN_REFUSED, MQTT_ERR_SUCCESS, Client, MQTTMessage, MQTTv5
@@ -455,3 +455,16 @@ def test_state_helper_force_update_true(discoverable: Discoverable):
         mock_publish.reset_mock()
         discoverable._update_state("test", force_update=True)
         mock_publish.assert_called_once_with("hmd/binary_sensor/test/state", "test", retain=False)
+
+
+def test_state_helper_last_state_for_state_topic_only(discoverable: Discoverable):
+    discoverable.write_config()
+    with patch.object(discoverable.mqtt_client, "publish") as mock_publish:
+        discoverable._update_state("test")
+        discoverable._update_state("test", topic=discoverable.attributes_topic)
+
+        assert discoverable.last_state == "test"
+        assert mock_publish.call_args_list == [
+            call(discoverable.state_topic, "test", retain=False),
+            call(discoverable.attributes_topic, "test", retain=False),
+        ]
