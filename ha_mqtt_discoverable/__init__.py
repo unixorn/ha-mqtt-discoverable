@@ -187,7 +187,8 @@ class Discoverable(Generic[EntityType]):
         # e.g. `binary_sensor`
         self._entity_topic = f"{self._entity.component}"
         # If present, append the device name, e.g. `binary_sensor/mydevice`
-        self._entity_topic += f"/{clean_string(self._entity.device.name)}" if self._entity.device else ""
+        if self._entity.device:
+            self._entity_topic += f"/{clean_string(self._entity.device.name)}"
         # Append the sensor name, e.g. `binary_sensor/mydevice/mysensor`
         self._entity_topic += f"/{clean_string(self._entity.name)}"
 
