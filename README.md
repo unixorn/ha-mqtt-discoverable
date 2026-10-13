@@ -778,8 +778,6 @@ valve_info = ValveInfo(
 
 settings = Settings(mqtt=mqtt_settings, entity=valve_info)
 
-current_position = 0
-
 
 # To receive state commands from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
