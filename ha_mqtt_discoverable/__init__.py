@@ -329,8 +329,7 @@ wrote_configuration: {self.wrote_configuration}
 
         mosquitto_pub -r -h 127.0.0.1 -p 1883 \
             -t "homeassistant/binary_sensor/garden/config" \
-            -m '{"name": "garden", "device_class": "motion", \
-            "state_topic": "homeassistant/binary_sensor/garden/state"}'
+            -m '{"name": "garden", "device_class": "motion", "state_topic": "homeassistant/binary_sensor/garden/state"}'
         """
 
         config_message = ""
@@ -365,8 +364,7 @@ wrote_configuration: {self.wrote_configuration}
         """
         mosquitto_pub -r -h 127.0.0.1 -p 1883 \
             -t "homeassistant/binary_sensor/garden/config" \
-            -m '{"name": "garden", "device_class": "motion", \
-                "state_topic": "homeassistant/binary_sensor/garden/state"}'
+            -m '{"name": "garden", "device_class": "motion", "state_topic": "homeassistant/binary_sensor/garden/state"}'
         """
         config_message = json.dumps(self.generate_config())
 
