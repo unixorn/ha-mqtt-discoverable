@@ -4,7 +4,7 @@
 
 | Name                                   |    Stmts |     Miss |   Branch |   BrPart |    Cover |   Missing |
 |--------------------------------------- | -------: | -------: | -------: | -------: | -------: | --------: |
-| ha\_mqtt\_discoverable/\_\_init\_\_.py |      217 |        0 |       46 |        0 |     100% |           |
+| ha\_mqtt\_discoverable/\_\_init\_\_.py |      219 |        0 |       50 |        0 |     100% |           |
 | ha\_mqtt\_discoverable/sensors.py      |      381 |        0 |       64 |        0 |     100% |           |
 | ha\_mqtt\_discoverable/utils.py        |        4 |        0 |        0 |        0 |     100% |           |
 | tests/\_\_init\_\_.py                  |        0 |        0 |        0 |        0 |     100% |           |
@@ -13,7 +13,7 @@
 | tests/test\_camera.py                  |       23 |        0 |        0 |        0 |     100% |           |
 | tests/test\_cover.py                   |       25 |        0 |        0 |        0 |     100% |           |
 | tests/test\_device\_trigger.py         |       27 |        0 |        0 |        0 |     100% |           |
-| tests/test\_discoverable.py            |      267 |        0 |        0 |        0 |     100% |           |
+| tests/test\_discoverable.py            |      285 |        0 |        0 |        0 |     100% |           |
 | tests/test\_image.py                   |       63 |        0 |        0 |        0 |     100% |           |
 | tests/test\_light.py                   |       61 |        0 |        0 |        0 |     100% |           |
 | tests/test\_lock.py                    |       35 |        0 |        0 |        0 |     100% |           |
@@ -25,7 +25,7 @@
 | tests/test\_switch.py                  |       20 |        0 |        0 |        0 |     100% |           |
 | tests/test\_text.py                    |       28 |        0 |        0 |        0 |     100% |           |
 | tests/test\_valve.py                   |       83 |        0 |        0 |        0 |     100% |           |
-| **TOTAL**                              | **1462** |    **0** |  **110** |    **0** | **100%** |           |
+| **TOTAL**                              | **1482** |    **0** |  **114** |    **0** | **100%** |           |
 
 
 ## Setup coverage badge
