@@ -319,7 +319,7 @@ wrote_configuration: {self.wrote_configuration}
 
         message_info = self.mqtt_client.publish(topic, state, retain=retain)
         logger.debug(f"Publish result: {message_info}")
-        if topic == self.state_topic:
+        if topic == self.state_topic and message_info.rc == mqtt.MQTT_ERR_SUCCESS:
             self.last_state = state
         return message_info
 

@@ -440,6 +440,7 @@ def test_use_tls_uses_tls_set():
 def test_state_helper_force_update_false(discoverable: Discoverable):
     discoverable.write_config()
     with patch.object(discoverable.mqtt_client, "publish") as mock_publish:
+        mock_publish.return_value.rc = MQTT_ERR_SUCCESS
         discoverable._update_state("test")
         mock_publish.assert_called_once_with("hmd/binary_sensor/test/state", "test", retain=False)
         mock_publish.reset_mock()
@@ -450,6 +451,7 @@ def test_state_helper_force_update_false(discoverable: Discoverable):
 def test_state_helper_force_update_true(discoverable: Discoverable):
     discoverable.write_config()
     with patch.object(discoverable.mqtt_client, "publish") as mock_publish:
+        mock_publish.return_value.rc = MQTT_ERR_SUCCESS
         discoverable._update_state("test")
         mock_publish.assert_called_once_with("hmd/binary_sensor/test/state", "test", retain=False)
         mock_publish.reset_mock()
@@ -460,6 +462,7 @@ def test_state_helper_force_update_true(discoverable: Discoverable):
 def test_state_helper_last_state_for_state_topic_only(discoverable: Discoverable):
     discoverable.write_config()
     with patch.object(discoverable.mqtt_client, "publish") as mock_publish:
+        mock_publish.return_value.rc = MQTT_ERR_SUCCESS
         discoverable._update_state("test")
         discoverable._update_state("test", topic=discoverable.attributes_topic)
 
@@ -468,3 +471,14 @@ def test_state_helper_last_state_for_state_topic_only(discoverable: Discoverable
             call(discoverable.state_topic, "test", retain=False),
             call(discoverable.attributes_topic, "test", retain=False),
         ]
+
+
+def test_state_helper_last_state_not_updated_on_publish_failure(discoverable: Discoverable):
+    discoverable.write_config()
+    with patch.object(discoverable.mqtt_client, "publish") as mock_publish:
+        mock_publish.return_value.rc = MQTT_ERR_CONN_REFUSED
+        discoverable._update_state("test")
+        discoverable._update_state("test")
+
+        assert discoverable.last_state is None
+        assert mock_publish.call_count == 2
