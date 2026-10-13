@@ -187,7 +187,8 @@ class Discoverable(Generic[EntityType]):
         # e.g. `binary_sensor`
         self._entity_topic = f"{self._entity.component}"
         # If present, append the device name, e.g. `binary_sensor/mydevice`
-        self._entity_topic += f"/{clean_string(self._entity.device.name)}" if self._entity.device else ""
+        if self._entity.device:
+            self._entity_topic += f"/{clean_string(self._entity.device.name)}"
         # Append the sensor name, e.g. `binary_sensor/mydevice/mysensor`
         self._entity_topic += f"/{clean_string(self._entity.name)}"
 
@@ -312,13 +313,14 @@ wrote_configuration: {self.wrote_configuration}
             logger.debug("Debug mode is enabled, skipping state write.")
             return None
 
-        if not force_update and (self.last_state == state):
+        if topic == self.state_topic and not force_update and self.last_state == state:
             logger.debug("State did not change, skipping state write.")
             return None
 
         message_info = self.mqtt_client.publish(topic, state, retain=retain)
         logger.debug(f"Publish result: {message_info}")
-        self.last_state = state
+        if topic == self.state_topic and message_info.rc == mqtt.MQTT_ERR_SUCCESS:
+            self.last_state = state
         return message_info
 
     def delete(self) -> None:
@@ -329,8 +331,7 @@ wrote_configuration: {self.wrote_configuration}
 
         mosquitto_pub -r -h 127.0.0.1 -p 1883 \
             -t "homeassistant/binary_sensor/garden/config" \
-            -m '{"name": "garden", "device_class": "motion", \
-            "state_topic": "homeassistant/binary_sensor/garden/state"}'
+            -m '{"name": "garden", "device_class": "motion", "state_topic": "homeassistant/binary_sensor/garden/state"}'
         """
 
         config_message = ""
@@ -365,8 +366,7 @@ wrote_configuration: {self.wrote_configuration}
         """
         mosquitto_pub -r -h 127.0.0.1 -p 1883 \
             -t "homeassistant/binary_sensor/garden/config" \
-            -m '{"name": "garden", "device_class": "motion", \
-                "state_topic": "homeassistant/binary_sensor/garden/state"}'
+            -m '{"name": "garden", "device_class": "motion", "state_topic": "homeassistant/binary_sensor/garden/state"}'
         """
         config_message = json.dumps(self.generate_config())
 
@@ -434,7 +434,7 @@ class Subscriber(Discoverable[EntityType]):
         def on_client_connected(client: mqtt.Client, *_):
             # Subscribe to the command topic
             result, __ = client.subscribe(self._command_topic, qos=1)
-            if result is not mqtt.MQTT_ERR_SUCCESS:
+            if result != mqtt.MQTT_ERR_SUCCESS:
                 raise RuntimeError("Error subscribing to MQTT command topic")
 
         # Invoke the parent init
