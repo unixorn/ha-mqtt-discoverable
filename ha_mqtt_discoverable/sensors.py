@@ -16,6 +16,7 @@
 # Required to define a class itself as type https://stackoverflow.com/a/33533514
 import json
 import logging
+import re
 from typing import Annotated, Any, Literal, Self
 
 from pydantic import Field, model_validator
@@ -718,6 +719,8 @@ class Text(Subscriber[TextInfo]):
         if not self._entity.min <= len(text) <= self._entity.max:
             bound = f"[{self._entity.min}, {self._entity.max}]"
             raise RuntimeError(f"Text is not within configured length boundaries {bound}")
+        if self._entity.pattern is not None and re.fullmatch(self._entity.pattern, text) is None:
+            raise RuntimeError(f"Text does not match configured pattern {self._entity.pattern!r}")
 
         logger.info(f"Setting {self._entity.name} to {text} using {self.state_topic}")
         self._update_state(str(text))

@@ -61,3 +61,14 @@ def test_too_long_string(text: Text):
     random_string = "".join(random.choice(letters) for _ in range(length))
     with pytest.raises(RuntimeError):
         text.set_text(random_string)
+
+
+def test_pattern_match(text: Text):
+    text._entity.pattern = r"[a-z]+"
+    text.set_text("valid")
+
+
+def test_pattern_mismatch(text: Text):
+    text._entity.pattern = r"[a-z]+"
+    with pytest.raises(RuntimeError, match="does not match configured pattern"):
+        text.set_text("invalid123")
