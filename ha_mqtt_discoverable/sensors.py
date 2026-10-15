@@ -31,6 +31,13 @@ from ha_mqtt_discoverable import (
 logger = logging.getLogger(__name__)
 
 
+def validate_min_max(info: Any) -> Any:
+    """Ensure a valid min/max range."""
+    if info.min > info.max:
+        raise ValueError("min must be less than or equal to max")
+    return info
+
+
 class BinarySensorInfo(EntityInfo):
     """Binary sensor specific information"""
 
@@ -268,6 +275,8 @@ class TextInfo(EntityInfo):
     retain: bool = False
     """If the published message should have the retain flag on or not"""
 
+    _validate_min_max = model_validator(mode="after")(validate_min_max)
+
 
 class NumberInfo(EntityInfo):
     """Information about the 'number' entity"""
@@ -294,6 +303,8 @@ class NumberInfo(EntityInfo):
     unit_of_measurement: str | None = None
     """Defines the unit of measurement of the sensor, if any. The
     unit_of_measurement can be null."""
+
+    _validate_min_max = model_validator(mode="after")(validate_min_max)
 
 
 class DeviceTriggerInfo(EntityInfo):

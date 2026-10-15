@@ -17,9 +17,15 @@ import random
 import string
 
 import pytest
+from pydantic import ValidationError
 
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Text, TextInfo
+
+
+def test_text_rejects_invalid_range():
+    with pytest.raises(ValidationError, match="min must be less than or equal to max"):
+        TextInfo(name="test", min=10, max=5)
 
 
 @pytest.fixture
