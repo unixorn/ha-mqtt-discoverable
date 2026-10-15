@@ -14,11 +14,9 @@
 #    limitations under the License.
 #
 # Required to define a class itself as type https://stackoverflow.com/a/33533514
-from __future__ import annotations
-
 import json
 import logging
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Literal, Self
 
 from pydantic import Field, model_validator
 
@@ -88,7 +86,7 @@ class SensorInfo(EntityInfo):
     """
 
     @model_validator(mode="after")
-    def sensor_info_entity_model_validator(self) -> SensorInfo:
+    def sensor_info_entity_model_validator(self) -> Self:
         """
         Determine correct usage of configuration variables.
         """
@@ -224,7 +222,7 @@ class ValveInfo(EntityInfo):
     """If the published message should have the retain flag on or not"""
 
     @model_validator(mode="after")
-    def valve_info_entity_model_validator(self) -> ValveInfo:
+    def valve_info_entity_model_validator(self) -> Self:
         """
         Determine correct usage of configuration variables.
         """
@@ -373,7 +371,7 @@ class ImageInfo(EntityInfo):
     """
 
     @model_validator(mode="after")
-    def image_info_entity_model_validator(self) -> ImageInfo:
+    def image_info_entity_model_validator(self) -> Self:
         """
         Determine correct usage of configuration variables.
         """
