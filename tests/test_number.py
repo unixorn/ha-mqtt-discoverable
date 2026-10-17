@@ -15,9 +15,15 @@
 #
 
 import pytest
+from pydantic import ValidationError
 
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Number, NumberInfo
+
+
+def test_number_rejects_invalid_range():
+    with pytest.raises(ValidationError, match="min must be less than or equal to max"):
+        NumberInfo(name="test", min=10, max=5)
 
 
 @pytest.fixture

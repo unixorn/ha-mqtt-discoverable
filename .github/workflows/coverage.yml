@@ -1,11 +1,11 @@
 # .github/workflows/coverage.yml
 name: Post coverage comment
 
-on: # zizmor: ignore[dangerous-triggers]
+on: # yamllint disable-line rule:truthy
   # We're using workflow_run to post a coverage comment on external PRs.
   # This is safe because we don't check out the external code or interact with the external code in any way
   # but extracting an artifact containing the comment to post, and post it.
-  workflow_run:
+  workflow_run: # zizmor: ignore[dangerous-triggers]
     workflows: ["Python tests"]
     types:
       - completed

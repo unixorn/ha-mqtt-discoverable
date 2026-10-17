@@ -14,11 +14,10 @@
 #    limitations under the License.
 #
 # Required to define a class itself as type https://stackoverflow.com/a/33533514
-from __future__ import annotations
-
 import json
 import logging
-from typing import Annotated, Any, Literal
+import re
+from typing import Annotated, Any, Literal, Self
 
 from pydantic import Field, model_validator
 
@@ -29,6 +28,13 @@ from ha_mqtt_discoverable import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def validate_min_max(info: Any) -> Any:
+    """Ensure a valid min/max range."""
+    if info.min > info.max:
+        raise ValueError("min must be less than or equal to max")
+    return info
 
 
 class BinarySensorInfo(EntityInfo):
@@ -81,7 +87,7 @@ class SensorInfo(EntityInfo):
     """
 
     @model_validator(mode="after")
-    def sensor_info_entity_model_validator(self) -> SensorInfo:
+    def sensor_info_entity_model_validator(self) -> Self:
         """
         Determine correct usage of configuration variables.
         """
@@ -217,7 +223,7 @@ class ValveInfo(EntityInfo):
     """If the published message should have the retain flag on or not"""
 
     @model_validator(mode="after")
-    def valve_info_entity_model_validator(self) -> ValveInfo:
+    def valve_info_entity_model_validator(self) -> Self:
         """
         Determine correct usage of configuration variables.
         """
@@ -268,6 +274,8 @@ class TextInfo(EntityInfo):
     retain: bool = False
     """If the published message should have the retain flag on or not"""
 
+    _validate_min_max = model_validator(mode="after")(validate_min_max)
+
 
 class NumberInfo(EntityInfo):
     """Information about the 'number' entity"""
@@ -294,6 +302,8 @@ class NumberInfo(EntityInfo):
     unit_of_measurement: str | None = None
     """Defines the unit of measurement of the sensor, if any. The
     unit_of_measurement can be null."""
+
+    _validate_min_max = model_validator(mode="after")(validate_min_max)
 
 
 class DeviceTriggerInfo(EntityInfo):
@@ -362,7 +372,7 @@ class ImageInfo(EntityInfo):
     """
 
     @model_validator(mode="after")
-    def image_info_entity_model_validator(self) -> ImageInfo:
+    def image_info_entity_model_validator(self) -> Self:
         """
         Determine correct usage of configuration variables.
         """
@@ -709,6 +719,8 @@ class Text(Subscriber[TextInfo]):
         if not self._entity.min <= len(text) <= self._entity.max:
             bound = f"[{self._entity.min}, {self._entity.max}]"
             raise RuntimeError(f"Text is not within configured length boundaries {bound}")
+        if self._entity.pattern is not None and re.fullmatch(self._entity.pattern, text) is None:
+            raise RuntimeError(f"Text does not match configured pattern {self._entity.pattern!r}")
 
         logger.info(f"Setting {self._entity.name} to {text} using {self.state_topic}")
         self._update_state(str(text))

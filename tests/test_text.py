@@ -17,9 +17,15 @@ import random
 import string
 
 import pytest
+from pydantic import ValidationError
 
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import Text, TextInfo
+
+
+def test_text_rejects_invalid_range():
+    with pytest.raises(ValidationError, match="min must be less than or equal to max"):
+        TextInfo(name="test", min=10, max=5)
 
 
 @pytest.fixture
@@ -55,3 +61,14 @@ def test_too_long_string(text: Text):
     random_string = "".join(random.choice(letters) for _ in range(length))
     with pytest.raises(RuntimeError):
         text.set_text(random_string)
+
+
+def test_pattern_match(text: Text):
+    text._entity.pattern = r"[a-z]+"
+    text.set_text("valid")
+
+
+def test_pattern_mismatch(text: Text):
+    text._entity.pattern = r"[a-z]+"
+    with pytest.raises(RuntimeError, match="does not match configured pattern"):
+        text.set_text("invalid123")
