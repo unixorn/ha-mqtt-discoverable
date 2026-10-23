@@ -33,10 +33,10 @@ Documentation = "https://github.com/unixorn/ha-mqtt-discoverable#readme"
 [dependency-groups]
 dev = [
     "pre-commit>=4.7.0",
-    "ruff>=0.17.1",
+    "ruff>=0.17.2",
 ]
 test = [
-    "coverage>=7.16.2",
+    "coverage>=7.17.0",
     "pytest>=9.1.1",
     "pytest-mock>=3.17.0",
 ]
