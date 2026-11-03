@@ -26,9 +26,9 @@ dependencies = [
 ]
 
 [project.urls]
-GitHub = "https://github.com/unixorn/ha-mqtt-discoverable"
-Issues = "https://github.com/unixorn/ha-mqtt-discoverable/issues"
-Documentation = "https://github.com/unixorn/ha-mqtt-discoverable#readme"
+GitHub = "https://github.com/Home-Assistant-Tooling/ha-mqtt-discoverable"
+Issues = "https://github.com/Home-Assistant-Tooling/ha-mqtt-discoverable/issues"
+Documentation = "https://github.com/Home-Assistant-Tooling/ha-mqtt-discoverable#readme"
 
 [dependency-groups]
 dev = [

@@ -1,11 +1,11 @@
 # ha-mqtt-discoverable
 
-[![License](https://img.shields.io/github/license/unixorn/ha-mqtt-discoverable.svg)](https://opensource.org/license/apache-2-0/)
+[![License](https://img.shields.io/github/license/Home-Assistant-Tooling/ha-mqtt-discoverable.svg)](https://opensource.org/license/apache-2-0/)
 [![PyPI - Version](https://img.shields.io/pypi/v/ha-mqtt-discoverable?pypi)](https://pypi.org/project/ha-mqtt-discoverable/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![GitHub last commit (branch)](https://img.shields.io/github/last-commit/unixorn/ha-mqtt-discoverable/main.svg)](https://github.com/unixorn/ha-mqtt-discoverable)
+[![GitHub last commit (branch)](https://img.shields.io/github/last-commit/Home-Assistant-Tooling/ha-mqtt-discoverable/main.svg)](https://github.com/Home-Assistant-Tooling/ha-mqtt-discoverable)
 [![Downloads](https://static.pepy.tech/badge/ha-mqtt-discoverable)](https://pepy.tech/project/ha-mqtt-discoverable)
-[![Coverage badge](https://raw.githubusercontent.com/unixorn/ha-mqtt-discoverable/python-coverage-comment-action-data/badge.svg)](https://htmlpreview.github.io/?https://github.com/unixorn/ha-mqtt-discoverable/blob/python-coverage-comment-action-data/htmlcov/index.html)
+[![Coverage badge](https://raw.githubusercontent.com/Home-Assistant-Tooling/ha-mqtt-discoverable/python-coverage-comment-action-data/badge.svg)](https://htmlpreview.github.io/?https://github.com/Home-Assistant-Tooling/ha-mqtt-discoverable/blob/python-coverage-comment-action-data/htmlcov/index.html)
 
 A Python 3 module that takes advantage of Home Assistant's [MQTT discovery protocol](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery) to create sensors without having to define anything on the HA side.
 
@@ -922,7 +922,7 @@ Please run `ruff` on your code before submitting. There are `git` hooks already 
 
 If you use this module for your own project, please add a link here.
 
-- [ha-mqtt-discoverable-cli](https://github.com/unixorn/ha-mqtt-discoverable-cli) - Command line tools that allow using this module from shell scripts
+- [ha-mqtt-discoverable-cli](https://github.com/Home-Assistant-Tooling/ha-mqtt-discoverable-cli) - Command line tools that allow using this module from shell scripts
 
 - [plejd-mqtt-ha](https://github.com/ha-enthus1ast/plejd-mqtt-ha) - A containerized Python application that bridges Plejd devices to Home Assistant
 
@@ -936,6 +936,6 @@ If you use this module for your own project, please add a link here.
 
 ## Contributors
 
-[![Contributors](https://contributors-img.web.app/image?repo=unixorn/ha-mqtt-discoverable)](https://github.com/unixorn/ha-mqtt-discoverable/graphs/contributors)
+[![Contributors](https://contributors-img.web.app/image?repo=Home-Assistant-Tooling/ha-mqtt-discoverable)](https://github.com/Home-Assistant-Tooling/ha-mqtt-discoverable/graphs/contributors)
 
 Made with [contributors-img](https://contributors-img.web.app).

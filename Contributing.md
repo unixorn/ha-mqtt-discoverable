@@ -19,7 +19,7 @@ We use [pre-commit](https://pre-commit.com/) to run our pre-commit/postcheckout 
 Please run `pre-commit install` at the root of the repository to enable automatic handling of the `git` pre-commit scripts.
 This won't affect any of your other repositories, just this one.
 The pre-commit scripts run `ruff` on the `.py` files that you are committing along with some other checks (preventing accidental large file additions, merge conflict checks, whitespace trimming, etc).
-Their configuration is managed in [.pre-commit-config.yaml](https://github.com/unixorn/ha-mqtt-discovery/blob/main/.pre-commit-config.yaml).
+Their configuration is managed in [.pre-commit-config.yaml](https://github.com/Home-Assistant-Tooling/ha-mqtt-discoverable/blob/main/.pre-commit-config.yaml).
 
 ## Contribution Guidelines
 
@@ -34,7 +34,7 @@ This project uses [Megalinter](https://megalinter.io/latest/) to check the codeb
 It is also possible to run the linter locally to better understand the problems and check the code before a commit.
 You can use the [mega-linter-runner](https://megalinter.io/latest/mega-linter-runner/#installation), if you have `Node` and `Docker` locally available.
 
-To run all the linters as configured in the [.mega-linter.yml](https://github.com/unixorn/ha-mqtt-discovery/blob/main/.mega-linter.yml). file, use:
+To run all the linters as configured in the [.mega-linter.yml](https://github.com/Home-Assistant-Tooling/ha-mqtt-discoverable/blob/main/.mega-linter.yml). file, use:
 
 ```bash
 npx mega-linter-runner --flavor python
