@@ -3,6 +3,3 @@
 rules:
   dependabot-cooldown:
     disable: true
-  use-trusted-publishing:
-    ignore:
-      - build-publish.yml
