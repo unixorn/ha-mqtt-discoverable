@@ -12,7 +12,7 @@
 
 ## Setup
 
-`ha-mqtt-discovery` uses [poetry](https://python-poetry.org/) to manage module dependencies and make packaging the module easier.
+`ha-mqtt-discoverable` uses [poetry](https://python-poetry.org/) to manage module dependencies and make packaging the module easier.
 Once you install `poetry`, run `poetry install` to have it create a venv for you to use during development.
 
 We use [pre-commit](https://pre-commit.com/) to run our pre-commit/postcheckout etc `git` hooks.
