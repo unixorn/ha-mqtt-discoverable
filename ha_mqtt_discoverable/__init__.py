@@ -143,6 +143,8 @@ class Settings(BaseModel, Generic[EntityType]):
     manual_availability: bool = False
     """If true, the entity `availability` inside HA must be manually managed
     using the `set_availability()` method"""
+    node_id: str | None = None
+    """The node ID used in the MQTT topics. If not set, the device name is used instead."""
 
 
 class Discoverable(Generic[EntityType]):
@@ -186,8 +188,10 @@ class Discoverable(Generic[EntityType]):
         # Build the topic string: start from the type of component
         # e.g. `binary_sensor`
         self._entity_topic = f"{self._entity.component}"
-        # If present, append the device name, e.g. `binary_sensor/mydevice`
-        if self._entity.device:
+        # If present, append the node ID or the device name, e.g. `binary_sensor/mydevice`
+        if self._settings.node_id:
+            self._entity_topic += f"/{clean_string(self._settings.node_id)}"
+        elif self._entity.device:
             self._entity_topic += f"/{clean_string(self._entity.device.name)}"
         # Append the sensor name, e.g. `binary_sensor/mydevice/mysensor`
         self._entity_topic += f"/{clean_string(self._entity.name)}"

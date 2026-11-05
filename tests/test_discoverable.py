@@ -223,6 +223,17 @@ def test_custom_display_name(discoverable_custom_display_name: Discoverable):
     assert discoverable_custom_display_name._settings.entity.display_name == config["name"]
 
 
+def test_custom_node_id():
+    mqtt_settings = Settings.MQTT(host="localhost")
+    device_info = DeviceInfo(name="Thermostat", identifiers="kitchen_thermostat")
+    sensor_info = EntityInfo(name="test", component="binary_sensor", device=device_info, unique_id="unique_id")
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info, node_id="kitchen_thermostat")
+    d = Discoverable[EntityInfo](settings)
+    assert d.config_topic == "homeassistant/binary_sensor/kitchen_thermostat/test/config"
+    assert d.state_topic == "hmd/binary_sensor/kitchen_thermostat/test/state"
+    assert d.generate_config()["device"]["name"] == "Thermostat"
+
+
 def test_custom_object_id():
     mqtt_settings = Settings.MQTT(host="localhost")
     sensor_info = EntityInfo(name="Test name", component="binary_sensor", object_id="custom object id")

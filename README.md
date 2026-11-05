@@ -45,6 +45,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
   - [I'm having problems on 32-bit ARM platforms](#im-having-problems-on-32-bit-arm-platforms)
   - [I'm having problems running in systemd-Service](#im-having-problems-running-in-systemd-service)
   - [Using UTF-8 field names in Home Assistant UI](#using-utf-8-field-names-in-home-assistant-ui)
+  - [Using the same name for several devices](#using-the-same-name-for-several-devices)
 - [Contributing](#contributing)
 - [Users of ha-mqtt-discoverable](#users-of-ha-mqtt-discoverable)
 - [Contributors](#contributors)
@@ -912,6 +913,16 @@ sensor_info = SensorInfo(
     device_class="power",
     state_class="measurement",
 )
+```
+
+### Using the same name for several devices
+
+The device name is part of the MQTT topics, so devices sharing a name (e.g. a "Thermostat" in each room) would also share their topics. Set _node_id_ in the settings to use something else in the topics instead:
+
+```py
+device_info = DeviceInfo(name="Thermostat", identifiers="kitchen_thermostat")
+sensor_info = SensorInfo(name="Temperature", device=device_info, unique_id="kitchen_thermostat_temperature")
+settings = Settings(mqtt=mqtt_settings, entity=sensor_info, node_id="kitchen_thermostat")
 ```
 
 ## Contributing
