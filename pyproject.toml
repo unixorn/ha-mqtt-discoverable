@@ -21,14 +21,14 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "paho-mqtt>=2.1.0",
-    "pydantic>=2.14.2",
+    "paho-mqtt>=2.2.0",
+    "pydantic>=2.14.3",
 ]
 
 [project.urls]
-GitHub = "https://github.com/unixorn/ha-mqtt-discoverable"
-Issues = "https://github.com/unixorn/ha-mqtt-discoverable/issues"
-Documentation = "https://github.com/unixorn/ha-mqtt-discoverable#readme"
+GitHub = "https://github.com/Home-Assistant-Tooling/ha-mqtt-discoverable"
+Issues = "https://github.com/Home-Assistant-Tooling/ha-mqtt-discoverable/issues"
+Documentation = "https://github.com/Home-Assistant-Tooling/ha-mqtt-discoverable#readme"
 
 [dependency-groups]
 dev = [
@@ -36,7 +36,7 @@ dev = [
     "ruff>=0.17.3",
 ]
 test = [
-    "coverage>=7.17.0",
+    "coverage>=7.17.2",
     "pytest>=9.2.0",
     "pytest-mock>=3.17.0",
 ]
