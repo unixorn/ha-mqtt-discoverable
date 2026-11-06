@@ -118,8 +118,6 @@ def test_mqtt_topics_with_device(node_id):
     assert d.config_topic == f"homeassistant/binary_sensor/{topic_node}/test/config"
     assert d.state_topic == f"hmd/binary_sensor/{topic_node}/test/state"
     assert d.attributes_topic == f"hmd/binary_sensor/{topic_node}/test/attributes"
-    # The node ID is not part of the device config sent to Home Assistant
-    assert d.generate_config()["device"] == {"name": "test_device", "identifiers": "id"}
 
 
 def test_generate_config(discoverable: Discoverable):
@@ -183,16 +181,17 @@ def test_state_helper_uses_discoverable_retain(mocker: MockerFixture, retain: bo
     mqtt_client.publish.assert_called_once_with(discoverable.state_topic, "test", retain=retain)
 
 
-def test_device_info(discoverable: Discoverable[EntityInfo]):
-    device_info = DeviceInfo(name="Test device", identifiers="test_device_id")
+@pytest.mark.parametrize("node_id", [None, "test_node"])
+def test_device_info(discoverable: Discoverable[EntityInfo], node_id):
+    device_info = DeviceInfo(name="Test device", identifiers="test_device_id", node_id=node_id)
     # Assign the sensor to a device
     discoverable._entity.device = device_info
     discoverable._entity.unique_id = "test_sensor"
     config = discoverable.generate_config()
 
-    # Check that the device info is put in the output config
-    assert config["device"] is not None
-    assert config["device"]["name"] == "Test device"
+    # Check that the device info is put in the output config,
+    # and the node ID is not sent to Home Assistant
+    assert config["device"] == {"name": "Test device", "identifiers": "test_device_id"}
 
     discoverable.write_config()
 
