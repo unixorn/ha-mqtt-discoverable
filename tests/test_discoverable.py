@@ -106,16 +106,20 @@ def test_mqtt_topics(fixture, request):
     assert d.attributes_topic == "hmd/binary_sensor/test/attributes"
 
 
-def test_mqtt_topics_with_device():
+@pytest.mark.parametrize("node_id", [None, "test_node"])
+def test_mqtt_topics_with_device(node_id):
     mqtt_settings = Settings.MQTT(host="localhost")
-    device = DeviceInfo(name="test_device", identifiers="id")
+    device = DeviceInfo(name="test_device", identifiers="id", node_id=node_id)
     sensor_info = EntityInfo(name="test", component="binary_sensor", device=device, unique_id="unique_id")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     d = Discoverable[EntityInfo](settings)
-    assert d._entity_topic == "binary_sensor/test_device/test"
-    assert d.config_topic == "homeassistant/binary_sensor/test_device/test/config"
-    assert d.state_topic == "hmd/binary_sensor/test_device/test/state"
-    assert d.attributes_topic == "hmd/binary_sensor/test_device/test/attributes"
+    topic_node = node_id or "test_device"
+    assert d._entity_topic == f"binary_sensor/{topic_node}/test"
+    assert d.config_topic == f"homeassistant/binary_sensor/{topic_node}/test/config"
+    assert d.state_topic == f"hmd/binary_sensor/{topic_node}/test/state"
+    assert d.attributes_topic == f"hmd/binary_sensor/{topic_node}/test/attributes"
+    # The node ID is not part of the device config sent to Home Assistant
+    assert d.generate_config()["device"] == {"name": "test_device", "identifiers": "id"}
 
 
 def test_generate_config(discoverable: Discoverable):
@@ -221,17 +225,6 @@ def test_name_with_space():
 def test_custom_display_name(discoverable_custom_display_name: Discoverable):
     config = discoverable_custom_display_name.generate_config()
     assert discoverable_custom_display_name._settings.entity.display_name == config["name"]
-
-
-def test_custom_node_id():
-    mqtt_settings = Settings.MQTT(host="localhost")
-    device_info = DeviceInfo(name="Thermostat", identifiers="kitchen_thermostat")
-    sensor_info = EntityInfo(name="test", component="binary_sensor", device=device_info, unique_id="unique_id")
-    settings = Settings(mqtt=mqtt_settings, entity=sensor_info, node_id="kitchen_thermostat")
-    d = Discoverable[EntityInfo](settings)
-    assert d.config_topic == "homeassistant/binary_sensor/kitchen_thermostat/test/config"
-    assert d.state_topic == "hmd/binary_sensor/kitchen_thermostat/test/state"
-    assert d.generate_config()["device"]["name"] == "Thermostat"
 
 
 def test_custom_object_id():

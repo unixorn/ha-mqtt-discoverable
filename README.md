@@ -917,12 +917,42 @@ sensor_info = SensorInfo(
 
 ### Using the same name for several devices
 
-The device name is part of the MQTT topics, so devices sharing a name (e.g. a "Thermostat" in each room) would also share their topics. Set _node_id_ in the settings to use something else in the topics instead:
+By default, the device name is part of the MQTT topics, so devices sharing a name (e.g. a "Thermostat" in each room) would also share their topics. Set _node_id_ on the device to use something else in the topics instead:
 
 ```py
-device_info = DeviceInfo(name="Thermostat", identifiers="kitchen_thermostat")
-sensor_info = SensorInfo(name="Temperature", device=device_info, unique_id="kitchen_thermostat_temperature")
-settings = Settings(mqtt=mqtt_settings, entity=sensor_info, node_id="kitchen_thermostat")
+from ha_mqtt_discoverable import Settings, DeviceInfo
+from ha_mqtt_discoverable.sensors import Sensor, SensorInfo
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Both devices are called "Thermostat" in Home Assistant, the node ID keeps their MQTT topics apart
+kitchen_info = DeviceInfo(name="Thermostat", identifiers="kitchen_thermostat", node_id="kitchen_thermostat")
+bedroom_info = DeviceInfo(name="Thermostat", identifiers="bedroom_thermostat", node_id="bedroom_thermostat")
+
+kitchen_sensor_info = SensorInfo(
+    name="Temperature",
+    device_class="temperature",
+    unit_of_measurement="°C",
+    unique_id="kitchen_thermostat_temperature",
+    device=kitchen_info,
+)
+bedroom_sensor_info = SensorInfo(
+    name="Temperature",
+    device_class="temperature",
+    unit_of_measurement="°C",
+    unique_id="bedroom_thermostat_temperature",
+    device=bedroom_info,
+)
+
+# Instantiate the sensors
+kitchen_sensor = Sensor(Settings(mqtt=mqtt_settings, entity=kitchen_sensor_info))
+bedroom_sensor = Sensor(Settings(mqtt=mqtt_settings, entity=bedroom_sensor_info))
+
+# Publishes to `hmd/sensor/kitchen_thermostat/Temperature/state`
+kitchen_sensor.set_state(20.5)
+# Publishes to `hmd/sensor/bedroom_thermostat/Temperature/state`
+bedroom_sensor.set_state(18.0)
 ```
 
 ## Contributing
