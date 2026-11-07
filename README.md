@@ -934,6 +934,8 @@ If you use this module for your own project, please add a link here.
 
 - [PCTools](https://github.com/1812z/PCTools) - Link your Windows computer to Home Assistant
 
+- [HMD-DGB](https://github.com/jvanoosterhout/HMD-DGB) - A Python service for Raspberry Pi that connects GPIO pins to Home Assistant devices via MQTT discovery and configurable rule-based bindings.
+
 ## Contributors
 
 [![Contributors](https://contributors-img.web.app/image?repo=Home-Assistant-Tooling/ha-mqtt-discoverable)](https://github.com/Home-Assistant-Tooling/ha-mqtt-discoverable/graphs/contributors)
