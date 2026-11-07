@@ -21,7 +21,7 @@ from typing import Any, Generic, TypeVar
 import paho.mqtt.client as mqtt
 from paho.mqtt.client import MQTTMessageInfo
 from paho.mqtt.enums import CallbackAPIVersion
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from ha_mqtt_discoverable.utils import clean_string
 
@@ -52,6 +52,9 @@ class DeviceInfo(BaseModel):
     """Identifier of a device that routes messages between this device and Home
         Assistant. Examples of such devices are hubs, or parent devices of a sub-device.
         This is used to show device topology in Home Assistant."""
+    node_id: str | None = Field(default=None, exclude=True)
+    """The node ID used in the MQTT topics. If not set, the device name is used instead.
+        Not sent to Home Assistant, which does not accept it as part of the device."""
 
     @model_validator(mode="before")
     @classmethod
@@ -186,9 +189,9 @@ class Discoverable(Generic[EntityType]):
         # Build the topic string: start from the type of component
         # e.g. `binary_sensor`
         self._entity_topic = f"{self._entity.component}"
-        # If present, append the device name, e.g. `binary_sensor/mydevice`
+        # If present, append the device node ID or name, e.g. `binary_sensor/mydevice`
         if self._entity.device:
-            self._entity_topic += f"/{clean_string(self._entity.device.name)}"
+            self._entity_topic += f"/{clean_string(self._entity.device.node_id or self._entity.device.name)}"
         # Append the sensor name, e.g. `binary_sensor/mydevice/mysensor`
         self._entity_topic += f"/{clean_string(self._entity.name)}"
 

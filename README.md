@@ -45,6 +45,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
   - [I'm having problems on 32-bit ARM platforms](#im-having-problems-on-32-bit-arm-platforms)
   - [I'm having problems running in systemd-Service](#im-having-problems-running-in-systemd-service)
   - [Using UTF-8 field names in Home Assistant UI](#using-utf-8-field-names-in-home-assistant-ui)
+  - [Using the same name for several devices](#using-the-same-name-for-several-devices)
 - [Contributing](#contributing)
 - [Users of ha-mqtt-discoverable](#users-of-ha-mqtt-discoverable)
 - [Contributors](#contributors)
@@ -912,6 +913,46 @@ sensor_info = SensorInfo(
     device_class="power",
     state_class="measurement",
 )
+```
+
+### Using the same name for several devices
+
+By default, the device name is part of the MQTT topics, so devices sharing a name (e.g. a "Thermostat" in each room) would also share their topics. Set _node_id_ on the device to use something else in the topics instead:
+
+```py
+from ha_mqtt_discoverable import Settings, DeviceInfo
+from ha_mqtt_discoverable.sensors import Sensor, SensorInfo
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+# Both devices are called "Thermostat" in Home Assistant, the node ID keeps their MQTT topics apart
+kitchen_info = DeviceInfo(name="Thermostat", identifiers="kitchen_thermostat", node_id="kitchen_thermostat")
+bedroom_info = DeviceInfo(name="Thermostat", identifiers="bedroom_thermostat", node_id="bedroom_thermostat")
+
+kitchen_sensor_info = SensorInfo(
+    name="Temperature",
+    device_class="temperature",
+    unit_of_measurement="°C",
+    unique_id="kitchen_thermostat_temperature",
+    device=kitchen_info,
+)
+bedroom_sensor_info = SensorInfo(
+    name="Temperature",
+    device_class="temperature",
+    unit_of_measurement="°C",
+    unique_id="bedroom_thermostat_temperature",
+    device=bedroom_info,
+)
+
+# Instantiate the sensors
+kitchen_sensor = Sensor(Settings(mqtt=mqtt_settings, entity=kitchen_sensor_info))
+bedroom_sensor = Sensor(Settings(mqtt=mqtt_settings, entity=bedroom_sensor_info))
+
+# Publishes to `hmd/sensor/kitchen_thermostat/Temperature/state`
+kitchen_sensor.set_state(20.5)
+# Publishes to `hmd/sensor/bedroom_thermostat/Temperature/state`
+bedroom_sensor.set_state(18.0)
 ```
 
 ## Contributing

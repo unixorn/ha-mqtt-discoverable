@@ -106,16 +106,18 @@ def test_mqtt_topics(fixture, request):
     assert d.attributes_topic == "hmd/binary_sensor/test/attributes"
 
 
-def test_mqtt_topics_with_device():
+@pytest.mark.parametrize("node_id", [None, "test_node"])
+def test_mqtt_topics_with_device(node_id):
     mqtt_settings = Settings.MQTT(host="localhost")
-    device = DeviceInfo(name="test_device", identifiers="id")
+    device = DeviceInfo(name="test_device", identifiers="id", node_id=node_id)
     sensor_info = EntityInfo(name="test", component="binary_sensor", device=device, unique_id="unique_id")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     d = Discoverable[EntityInfo](settings)
-    assert d._entity_topic == "binary_sensor/test_device/test"
-    assert d.config_topic == "homeassistant/binary_sensor/test_device/test/config"
-    assert d.state_topic == "hmd/binary_sensor/test_device/test/state"
-    assert d.attributes_topic == "hmd/binary_sensor/test_device/test/attributes"
+    topic_node = node_id or "test_device"
+    assert d._entity_topic == f"binary_sensor/{topic_node}/test"
+    assert d.config_topic == f"homeassistant/binary_sensor/{topic_node}/test/config"
+    assert d.state_topic == f"hmd/binary_sensor/{topic_node}/test/state"
+    assert d.attributes_topic == f"hmd/binary_sensor/{topic_node}/test/attributes"
 
 
 def test_generate_config(discoverable: Discoverable):
@@ -179,16 +181,17 @@ def test_state_helper_uses_discoverable_retain(mocker: MockerFixture, retain: bo
     mqtt_client.publish.assert_called_once_with(discoverable.state_topic, "test", retain=retain)
 
 
-def test_device_info(discoverable: Discoverable[EntityInfo]):
-    device_info = DeviceInfo(name="Test device", identifiers="test_device_id")
+@pytest.mark.parametrize("node_id", [None, "test_node"])
+def test_device_info(discoverable: Discoverable[EntityInfo], node_id):
+    device_info = DeviceInfo(name="Test device", identifiers="test_device_id", node_id=node_id)
     # Assign the sensor to a device
     discoverable._entity.device = device_info
     discoverable._entity.unique_id = "test_sensor"
     config = discoverable.generate_config()
 
-    # Check that the device info is put in the output config
-    assert config["device"] is not None
-    assert config["device"]["name"] == "Test device"
+    # Check that the device info is put in the output config,
+    # and the node ID is not sent to Home Assistant
+    assert config["device"] == {"name": "Test device", "identifiers": "test_device_id"}
 
     discoverable.write_config()
 
